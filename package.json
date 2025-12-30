@@ -12,7 +12,7 @@
     "db:migrate": "bun x prisma generate && bun x prisma migrate dev --name init",
     "db:studio": "bun x prisma studio",
     "db:reset": "bun x prisma migrate reset",
-    "dev:all":"mprocs"
+    "dev:all": "mprocs"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.1",

@@ -14,44 +14,44 @@ type Props = {
 };
 
 function RemotionComposition({ videoData }: Props) {
-  const captions = videoData?.captions;
-  const imageList = videoData?.images || [];
+  const captions = videoData?.captions || [];
+  const images = videoData?.images || [];
+  const imageList = images.map((img: any) => typeof img === 'string' ? img : img.url);
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
   const duration =
-    captions && captions.length > 0
+    captions.length > 0
       ? captions[captions.length - 1]?.end * fps
-      : 0;
+      : 300; // Default to 10 seconds if no captions
 
-      
+
 
   const getCurrentCaption = () => {
-    const currentTime = frame / 30;
-    const currentCaption = captions?.find(
+    const currentTime = frame / fps;
+    const currentCaption = captions.find(
       (item: any) => currentTime >= item?.start && currentTime <= item?.end
     );
-    console.log(currentCaption);
-
     return currentCaption ? currentCaption?.word : "";
   };
 
   return (
-    <div>
+    <div className="bg-black w-full h-full">
       <AbsoluteFill>
-        {imageList.map((item: any, index: number) => {
+        {imageList.map((url: string, index: number) => {
           const startTime = (index * duration) / imageList.length;
+          const sceneDuration = duration / imageList.length;
           const scale = interpolate(
             frame,
-            [startTime, startTime + duration / 2, startTime + duration],
-            [1, 2, 1],
+            [startTime, startTime + sceneDuration],
+            [1, 1.2],
             { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
           );
           return (
-            <Sequence key={index} from={startTime} durationInFrames={duration}>
+            <Sequence key={index} from={startTime} durationInFrames={sceneDuration}>
               <AbsoluteFill>
                 <Img
-                  src={item}
+                  src={url}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -68,20 +68,25 @@ function RemotionComposition({ videoData }: Props) {
         style={{
           color: "white",
           justifyContent: "center",
-          bottom: 50,
+          bottom: 100,
           height: 250,
           textAlign: "center",
           position: "absolute",
           left: 0,
           right: 0,
           top: undefined,
-          fontSize: 40,
+          fontSize: 60,
+          zIndex: 10,
+          textShadow: "0px 0px 20px rgba(0,0,0,0.8)",
+          padding: "0 40px"
         }}
-        className={videoData?.videoStyle?.className}
+        className={videoData?.captionStyle?.className}
       >
-        <h2>{getCurrentCaption()}</h2>
+        <h2 className="font-extrabold uppercase tracking-tighter drop-shadow-2xl">
+          {getCurrentCaption()}
+        </h2>
       </AbsoluteFill>
-      <Audio src={videoData.audioUrl} />
+      {videoData.audio?.audioUrl && <Audio src={videoData.audio.audioUrl} />}
     </div>
   );
 }

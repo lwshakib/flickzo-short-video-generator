@@ -6,20 +6,23 @@ type Props = {
 };
 
 function RemotionPlayer({ videoData }: Props) {
-
+  const fps = 30;
+  const captions = videoData.captions || [];
+  const durationInFrames = captions.length > 0
+    ? Math.max(Number((captions[captions.length - 1]?.end * fps).toFixed(0)), 30)
+    : 300; // 10 seconds default
 
   return (
     <Player
       component={RemotionComposition}
-      durationInFrames={Number(
-        (videoData.captions[videoData.captions.length - 1]?.end * 30).toFixed(0)
-      )}
+      durationInFrames={durationInFrames}
       compositionWidth={720}
       compositionHeight={1280}
-      fps={30}
+      fps={fps}
       controls
       style={{
-        height: "70vh",
+        width: "100%",
+        height: "100%",
       }}
       inputProps={{
         videoData: videoData,
@@ -27,5 +30,6 @@ function RemotionPlayer({ videoData }: Props) {
     />
   );
 }
+
 
 export default RemotionPlayer;

@@ -2,91 +2,83 @@
 
 import {
   IconDots,
-  IconFolder,
-  IconShare3,
-  IconTrash,
-  type Icon,
+  IconVideo,
+  IconSparkles,
+  IconAlertCircle,
 } from "@tabler/icons-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 
-export function NavDocuments({
-  items,
+export function NavRecentVideos({
+  videos,
 }: {
-  items: {
-    name: string
-    url: string
-    icon: Icon
-  }[]
+  videos: any[]
 }) {
-  const { isMobile } = useSidebar()
+  const pathname = usePathname()
+
+  if (!videos || videos.length === 0) {
+    return null
+  }
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Documents</SidebarGroupLabel>
+      <SidebarGroupLabel>Recent Videos</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </a>
-            </SidebarMenuButton>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuAction
-                  showOnHover
-                  className="data-[state=open]:bg-accent rounded-sm"
-                >
-                  <IconDots />
-                  <span className="sr-only">More</span>
-                </SidebarMenuAction>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-24 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
+        {videos.map((video) => {
+          const url = `/videos/${video.id}`
+          const isActive = pathname === url
+          const isPending = video.status === "PENDING"
+          const isFailed = video.status === "FAILED"
+
+          return (
+            <SidebarMenuItem key={video.id}>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive}
+                tooltip={video.title}
+                className={cn(
+                  "relative overflow-hidden group/sidebar-item",
+                  isPending && "bg-muted/30",
+                  isFailed && "bg-destructive/5 hover:bg-destructive/10"
+                )}
               >
-                <DropdownMenuItem>
-                  <IconFolder />
-                  <span>Open</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <IconShare3 />
-                  <span>Share</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">
-                  <IconTrash />
-                  <span>Delete</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        ))}
-        <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <IconDots className="text-sidebar-foreground/70" />
-            <span>More</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+                <Link href={url}>
+                  {isPending ? (
+                    <IconSparkles className="size-4 shrink-0 text-primary animate-spin" />
+                  ) : isFailed ? (
+                    <IconAlertCircle className="size-4 shrink-0 text-destructive" />
+                  ) : (
+                    <IconVideo className="size-4 shrink-0" />
+                  )}
+                  <span className={cn(
+                    "truncate",
+                    isFailed && "text-destructive/80 font-medium"
+                  )}>
+                    {video.title}
+                  </span>
+
+                  {/* AI Shimmer Loader for Pending Videos */}
+                  {isPending && (
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-primary/5 to-transparent -skew-x-12 animate-shine" />
+                    </div>
+                  )}
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )
+        })}
       </SidebarMenu>
     </SidebarGroup>
   )
 }
+

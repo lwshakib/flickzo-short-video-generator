@@ -108,7 +108,7 @@ export default function CreateVideoPage() {
                 title: selectedScript.title,
                 script: selectedScript.content,
                 topic: selectedTopic,
-                voice: selectedVoice,
+                voice: videoVoices.find(v => v.Id === selectedVoice)?.Model,
                 videoStyle: selectedStyle,
                 captionStyle: selectedCaptionStyle
             });

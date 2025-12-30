@@ -31,7 +31,7 @@ export async function POST(req: Request) {
                 voice,
                 videoStyle,
                 captionStyle,
-                script: script, // We'll store script in the script field (wait, does Video have a script field?)
+                script: script,
                 audio: {}, // Initial empty JSON
                 status: "PENDING",
             },

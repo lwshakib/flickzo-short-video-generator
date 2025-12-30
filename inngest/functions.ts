@@ -16,7 +16,7 @@ export const createVideo = inngest.createFunction(
   {
     event: "video.created",
   },
-  async ({ event, step }) => {
+  async ({ event, step, publish }) => {
     const { videoId, userId, topic, voice, videoStyle, captionStyle, script } = event?.data;
 
     try {
@@ -44,6 +44,16 @@ export const createVideo = inngest.createFunction(
         });
       });
 
+      // 5. Publish success update
+      await publish({
+        channel: `user:${userId}`,
+        topic: "video.status",
+        data: {
+          videoId,
+          status: "COMPLETED",
+        },
+      });
+
       return { success: true, videoId };
     } catch (error: any) {
       console.error("Video generation failed:", error);
@@ -57,7 +67,18 @@ export const createVideo = inngest.createFunction(
         });
       });
 
+      // Publish failed update
+      await publish({
+        channel: `user:${userId}`,
+        topic: "video.status",
+        data: {
+          videoId,
+          status: "FAILED",
+        },
+      });
+
       throw error; // Re-throw for Inngest to handle retries
     }
   }
+
 )
