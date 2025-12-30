@@ -2,7 +2,23 @@
 
 Flickzo is a powerful platform that leverages advanced AI to transform text and ideas into professional short-form videos. Built with modern web technologies, it automates the entire video creation process—from scriptwriting and voice generation to visual synthesis and video editing.
 
-## 🚀 Features
+## � App Demo
+
+<p align="center">
+  <img src="public/dark-demo.png" alt="Flickzo Dark Mode" width="100%">
+</p>
+<p align="center">
+  <em>Dark Mode Interface</em>
+</p>
+
+<p align="center">
+  <img src="public/light-demo.png" alt="Flickzo Light Mode" width="100%">
+</p>
+<p align="center">
+  <em>Light Mode Interface</em>
+</p>
+
+## �🚀 Features
 
 -   **AI Script Generation**: Automatically generates engaging video scripts based on user topics using LLMs.
 -   **Lifelike Voiceovers**: Converts text to speech using high-quality AI audio generation (Deepgram).
