@@ -20,6 +20,16 @@ export const createVideo = inngest.createFunction(
     const { videoId, userId, topic, voice, videoStyle, captionStyle, script } = event?.data;
 
     try {
+      // 0. Publish initial status to sync sidebar immediately
+      await publish({
+        channel: `user:${userId}`,
+        topic: "video.status",
+        data: {
+          videoId,
+          status: "PENDING",
+        },
+      });
+
       // 1. Generate Audio and upload to Cloudinary
       const audioData = await step.run('generate-audio', async () => {
         return await generateAudio(script, voice);

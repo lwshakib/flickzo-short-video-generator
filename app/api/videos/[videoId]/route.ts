@@ -3,7 +3,44 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { inngest } from "@/inngest/client";
 
+export async function GET(
+    req: Request,
+    { params }: { params: Promise<{ videoId: string }> }
+) {
+    try {
+        const session = await auth.api.getSession({
+            headers: req.headers,
+        });
+
+        if (!session || !session.user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { videoId } = await params;
+
+        const video = await prisma.video.findUnique({
+            where: {
+                id: videoId,
+                userId: session.user.id,
+            },
+        });
+
+        if (!video) {
+            return NextResponse.json({ error: "Video not found" }, { status: 404 });
+        }
+
+        return NextResponse.json(video);
+    } catch (error: any) {
+        console.error("Error fetching video:", error);
+        return NextResponse.json(
+            { error: error.message || "Failed to fetch video" },
+            { status: 500 }
+        );
+    }
+}
+
 export async function DELETE(
+
     req: Request,
     { params }: { params: Promise<{ videoId: string }> }
 ) {
