@@ -23,6 +23,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  videos        Video[]
 
   @@unique([email])
   @@map("user")
@@ -74,4 +75,21 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Video {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  audio         Json
+  captionStyle  Json
+  topic         String
+  voice         String
+  videoStyle    String
+  captions      Json[]
+  images        Json[]
+  status        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
