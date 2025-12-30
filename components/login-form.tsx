@@ -44,7 +44,7 @@ export function LoginForm({
         return;
       }
 
-      router.push("/workspaces");
+      router.push("/home");
       router.refresh();
     } catch {
       setError("An unexpected error occurred");
@@ -57,7 +57,7 @@ export function LoginForm({
     try {
       await authClient.signIn.social({
         provider,
-        callbackURL: "/workspaces",
+        callbackURL: "/home",
       });
     } catch {
       setError(`Failed to sign in with ${provider}`);

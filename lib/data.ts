@@ -1,11 +1,11 @@
 export const videoStyles = [
-  { label: "Anime", src: "/anime.png" },
-  { label: "GTA", src: "/gta.png" },
-  { label: "Cyberpunk", src: "/cyberpunk.png" },
-  { label: "Watercolor", src: "/watercolor.png" },
-  { label: "Cartoon", src: "/cartoon.png" },
-  { label: "Cinematic", src: "/cinematic.png" },
-  { label: "Realistic", src: "/realistic.png" },
+  { label: "Anime", src: "/styles/anime.png" },
+  { label: "GTA", src: "/styles/gta.png" },
+  { label: "Cyberpunk", src: "/styles/cyberpunk.png" },
+  { label: "Watercolor", src: "/styles/watercolor.png" },
+  { label: "Cartoon", src: "/styles/cartoon.png" },
+  { label: "Cinematic", src: "/styles/cinematic.png" },
+  { label: "Realistic", src: "/styles/realistic.png" },
 ];
 
 export const videoVoices = [
