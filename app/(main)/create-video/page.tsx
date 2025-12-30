@@ -210,10 +210,17 @@ export default function CreateVideoPage() {
                                         </h4>
                                         {scriptLoading ? (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <Skeleton className="h-40 w-full rounded-2xl bg-muted" />
-                                                <Skeleton className="h-40 w-full rounded-2xl bg-muted" />
+                                                {[1, 2].map((i) => (
+                                                    <div key={i} className="p-6 border-2 border-border/50 rounded-2xl space-y-3">
+                                                        <Skeleton className="h-4 w-1/3 mb-4" />
+                                                        <Skeleton className="h-3 w-full" />
+                                                        <Skeleton className="h-3 w-full" />
+                                                        <Skeleton className="h-3 w-4/5" />
+                                                    </div>
+                                                ))}
                                             </div>
                                         ) : (
+
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                                                 {generatedScripts.map((script, idx) => (
                                                     <div

@@ -9,7 +9,7 @@ import {
   IconVideo,
 } from "@tabler/icons-react"
 
-import { NavRecentVideos } from "@/components/nav-documents"
+import { NavRecentVideos } from "@/components/nav-recent-videos"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -27,6 +27,9 @@ import { authClient } from "@/lib/auth-client"
 import { useFlickzoStore } from "@/context"
 import { useInngestSubscription } from "@inngest/realtime/hooks";
 import { fetchRealtimeSubscriptionToken } from "@/actions/get-subscribe-token";
+import { Logo } from "./logo"
+import { SearchCommand } from "./search-command"
+import { SettingsDialog } from "./settings-dialog"
 
 const data = {
   navMain: [
@@ -41,34 +44,45 @@ const data = {
       icon: IconVideo,
     },
   ],
-  navSecondary: [
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session } = authClient.useSession();
+  const { recentVideos, setRecentVideos } = useFlickzoStore();
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [searchOpen, setSearchOpen] = React.useState(false);
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
+
+  const navSecondary = [
+    {
+      title: "Search",
+      url: "#",
+      icon: IconSearch,
+      onClick: () => setSearchOpen(true),
+    },
     {
       title: "Settings",
       url: "#",
       icon: IconSettings,
+      onClick: () => setSettingsOpen(true),
     },
     {
       title: "Get Help",
       url: "#",
       icon: IconHelp,
     },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
-  ],
-}
+  ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: session } = authClient.useSession();
-  const { recentVideos, setRecentVideos } = useFlickzoStore();
-
-  const fetchRecentVideos = React.useCallback(() => {
+  const fetchRecentVideos = React.useCallback(async () => {
     if (session?.user) {
-      axios.get("/api/videos/recent")
-        .then(res => setRecentVideos(res.data))
-        .catch(err => console.error("Failed to fetch recent videos", err));
+      try {
+        const res = await axios.get("/api/videos/recent");
+        setRecentVideos(res.data);
+      } catch (err) {
+        console.error("Failed to fetch recent videos", err);
+      } finally {
+        setIsLoading(false);
+      }
     }
   }, [session, setRecentVideos]);
 
@@ -88,35 +102,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, [latestData, fetchRecentVideos]);
 
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
-              <a href="/">
-                <div className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-lg shadow-md shadow-primary/20">
-                  <IconVideo className="size-4" />
-                </div>
-                <span className="text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-                  Flickzo
-                </span>
+    <>
+      <Sidebar collapsible="offcanvas" {...props}>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <a href="/" className="flex items-center gap-2 px-1.5 py-2 rounded-lg transition-none outline-none">
+                <Logo />
               </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavRecentVideos videos={recentVideos} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={session?.user as any || { name: "Guest", email: "" }} />
-      </SidebarFooter>
-    </Sidebar>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={data.navMain} />
+          <NavRecentVideos videos={recentVideos} isLoading={isLoading} />
+          <NavSecondary items={navSecondary} className="mt-auto" />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={session?.user as any || { name: "Guest", email: "" }} />
+        </SidebarFooter>
+      </Sidebar>
+      <SearchCommand open={searchOpen} setOpen={setSearchOpen} />
+      <SettingsDialog open={settingsOpen} setOpen={setSettingsOpen} />
+    </>
   )
 }
-
