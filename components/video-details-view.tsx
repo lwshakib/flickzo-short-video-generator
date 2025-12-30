@@ -18,7 +18,7 @@ import { Card } from "@/components/ui/card";
 import RemotionPlayer from "@/components/remotion-player";
 import { VideoControls } from "@/components/video-controls";
 import { useInngestSubscription } from "@inngest/realtime/hooks";
-import { fetchRealtimeSubscriptionToken } from "@/app/actions/get-subscribe-token";
+import { fetchRealtimeSubscriptionToken } from "@/actions/get-subscribe-token";
 import axios from "axios";
 
 export function VideoDetailsView({ initialVideo, voiceData }: { initialVideo: any; voiceData: any }) {

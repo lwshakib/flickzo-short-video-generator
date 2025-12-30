@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { videoStyles } from "@/lib/data";
 import { useInngestSubscription } from "@inngest/realtime/hooks";
-import { fetchRealtimeSubscriptionToken } from "@/app/actions/get-subscribe-token";
+import { fetchRealtimeSubscriptionToken } from "@/actions/get-subscribe-token";
 import axios from "axios";
 
 export function VideosGrid({ initialVideos }: { initialVideos: any[] }) {
