@@ -77,6 +77,13 @@ model Verification {
   @@map("verification")
 }
 
+enum VIDEO_STATUS {
+    PENDING
+    COMPLETED
+    FAILED
+}
+
+
 model Video {
   id            String    @id @default(cuid())
   userId        String
@@ -89,7 +96,7 @@ model Video {
   videoStyle    String
   captions      Json[]
   images        Json[]
-  status        String
+  status        VIDEO_STATUS
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }

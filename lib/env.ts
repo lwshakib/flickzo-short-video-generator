@@ -17,3 +17,7 @@ export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 
 // database (example you mentioned)
 export const DATABASE_URL = process.env.DATABASE_URL;
+
+export const DEEPGRAM_API_KEY=process.env.DEEPGRAM_API_KEY;
+
+export const NEBIUS_API_KEY=process.env.NEBIUS_API_KEY;

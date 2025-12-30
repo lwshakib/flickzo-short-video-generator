@@ -44,6 +44,18 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  @keyframes shine {
+    from {
+      transform: translateX(-100%) skewX(-12deg);
+    }
+
+    to {
+      transform: translateX(200%) skewX(-12deg);
+    }
+  }
+
+  --animate-shine: shine 2s infinite linear;
 }
 
 :root {
@@ -119,7 +131,36 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--background);
+  border-radius: var(--radius);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: var(--radius);
+  border: 2px solid var(--background);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: var(--muted);
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
 }
