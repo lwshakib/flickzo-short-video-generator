@@ -8,7 +8,7 @@ import { headers } from "next/headers";
  * These routes do not require authentication
  * @type {string[]}
  */
-export const publicRoutes = ["/"];
+export const publicRoutes = ["/", "/api/inngest"];
 
 /**
  * An array of routes that are used for authentication
@@ -28,7 +28,7 @@ export const apiAuthPrefix = "/api/auth";
  * The default redirect path after logging in
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = "/workspaces";
+export const DEFAULT_LOGIN_REDIRECT = "/home";
 
 /**
  * Proxy function that acts as middleware to handle route protection and session handling.
