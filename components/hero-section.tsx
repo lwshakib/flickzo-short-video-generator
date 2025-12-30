@@ -22,7 +22,7 @@ const transitionVariants = {
                 type: 'spring',
                 bounce: 0.3,
                 duration: 1.5,
-            },
+            } as const,
         },
     },
 }
@@ -62,7 +62,7 @@ export default function HeroSection() {
                                             type: 'spring',
                                             bounce: 0.3,
                                             duration: 2,
-                                        },
+                                        } as const,
                                     },
                                 },
                             }}

@@ -61,7 +61,7 @@ export function VideosGrid({ initialVideos }: { initialVideos: any[] }) {
     );
 }
 
-function VideoCard({ video }: { video: any }) {
+export function VideoCard({ video }: { video: any }) {
     const styleData = videoStyles.find((s) => s.label === video.videoStyle);
 
     return (
