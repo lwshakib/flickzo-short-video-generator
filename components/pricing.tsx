@@ -26,57 +26,57 @@ const plans = [
       yearly: "Free forever",
     },
     description:
-      "Perfect for students and hobbyists getting started with web development.",
+      "Perfect for creators exploring the world of AI cinematic synthesis.",
     features: [
-      "150K AI tokens / day",
-      "5 active workspaces",
-      "AI code completions",
-      "In-browser terminal",
-      "Live preview",
-      "Community support",
+      "2 AI Videos / month",
+      "720p Resolution Synthesis",
+      "Standard AI Voices",
+      "Community Synthesis Pool",
+      "Flickzo Watermark",
+      "Community Support",
     ],
-    cta: "Get started for free",
+    cta: "Start Synthesizing",
   },
   {
     id: "pro",
-    name: "Pro",
+    name: "Producer",
     icon: Zap,
     price: {
-      monthly: 19,
-      yearly: 15,
+      monthly: 29,
+      yearly: 24,
     },
-    description: "For professional developers building production apps.",
+    description: "For professional creators building high-quality content.",
     features: [
-      "Unlimited AI tokens",
-      "Unlimited workspaces",
-      "Priority AI processing",
-      "GitHub integration",
-      "Custom domains",
-      "Advanced analytics",
-      "Priority email support",
+      "30 AI Videos / month",
+      "1080p Cinematic Synthesis",
+      "Premium Neural Voices",
+      "Dedicated Synthesis Engine",
+      "No Watermarks",
+      "Commercial Rights",
+      "Priority Email Support",
     ],
-    cta: "Upgrade to Pro",
+    cta: "Become a Producer",
     popular: true,
   },
   {
     id: "enterprise",
-    name: "Enterprise",
+    name: "Studio",
     icon: Shield,
     price: {
-      monthly: "Custom pricing",
-      yearly: "Custom pricing",
+      monthly: "Custom",
+      yearly: "Custom",
     },
-    description: "For teams and organizations with advanced needs.",
+    description: "For production houses and teams with high-volume needs.",
     features: [
-      "Everything in Pro",
-      "Dedicated AI resources",
-      "Team collaboration",
-      "SSO & advanced security",
-      "Custom integrations",
-      "SLA guarantees",
-      "24/7 dedicated support",
+      "Everything in Producer",
+      "Unlimited 4K Synthesis",
+      "Custom AI Voice Cloning",
+      "Team Collaboration",
+      "API Access for Automation",
+      "White-label Player",
+      "24/7 Dedicated Support",
     ],
-    cta: "Contact sales",
+    cta: "Contact Studio Sales",
   },
 ];
 
@@ -124,8 +124,8 @@ export default function SimplePricing() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-muted-foreground max-w-md pt-2 text-lg"
           >
-            Start free and scale as you grow. All plans include AI-powered
-            coding and in-browser development.
+            Start free and scale as your vision grows. All plans include
+            access to our advanced AI synthesis engines.
           </motion.p>
         </div>
 
@@ -179,7 +179,7 @@ export default function SimplePricing() {
                     ? "ring-primary/50 dark:shadow-primary/10 shadow-md ring-2"
                     : "hover:border-primary/30",
                   plan.popular &&
-                    "from-primary/[0.03] bg-gradient-to-b to-transparent"
+                  "from-primary/[0.03] bg-gradient-to-b to-transparent"
                 )}
               >
                 {plan.popular && (
@@ -230,7 +230,7 @@ export default function SimplePricing() {
                             }}
                             value={
                               plan.price[
-                                frequency as keyof typeof plan.price
+                              frequency as keyof typeof plan.price
                               ] as number
                             }
                           />

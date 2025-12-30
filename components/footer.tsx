@@ -20,26 +20,21 @@ const data = () => ({
   navigation: {
     product: [
       { name: "Features", href: "#features" },
-      { name: "Workspaces", href: "/workspaces" },
-      { name: "Templates", href: "#" },
+      { name: "How it Works", href: "#how-it-works" },
+      { name: "Showcase", href: "#showcase" },
       { name: "Pricing", href: "#pricing" },
     ],
-    developers: [
-      { name: "Documentation", href: "#" },
-      { name: "API Reference", href: "#" },
-      { name: "Guides & Tutorials", href: "#" },
-      { name: "Examples", href: "#" },
+    company: [
+      { name: "About Us", href: "/about" },
+      { name: "Careers", href: "/careers" },
+      { name: "Blog", href: "/blog" },
+      { name: "Contact", href: "/contact" },
     ],
     resources: [
       { name: "Community", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Changelog", href: "#" },
-      { name: "Support", href: "#" },
-    ],
-    legal: [
-      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Help Center", href: "#" },
       { name: "Terms of Service", href: "/terms" },
-      { name: "Cookie Policy", href: "/cookies" },
+      { name: "Privacy Policy", href: "/privacy" },
     ],
   },
   socialLinks: [
@@ -77,12 +72,12 @@ export default function FooterSection() {
           <div className="space-y-6 lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-3">
               <Logo />
-     
+
             </Link>
             <p className="text-muted-foreground max-w-md">
-              The ultimate AI-powered coding platform. Build, preview, and
-              deploy full-stack applications directly in your browser with
-              WebContainer technology.
+              The next generation of video storytelling. Transform your ideas into
+              cinematic short-form videos with professional voiceovers and visuals
+              in seconds.
             </p>
             <div className="flex items-center gap-2">
               <div className="flex gap-2">
@@ -119,7 +114,7 @@ export default function FooterSection() {
               className="w-full max-w-md space-y-3"
             >
               <label htmlFor="email" className="block text-sm font-medium">
-                Stay updated with Vibe
+                Join the revolution
               </label>
               <div className="relative w-full">
                 <Input
@@ -142,13 +137,13 @@ export default function FooterSection() {
               </p>
             </form>
             <h1 className="from-muted-foreground/15 bg-gradient-to-b bg-clip-text text-5xl font-extrabold text-transparent lg:text-7xl">
-              Code
+              Flickzo
             </h1>
           </div>
 
           {/* Navigation Links */}
           <div className="grid w-full grid-cols-2 items-start justify-between gap-8 px-5 lg:col-span-3">
-            {(["product", "developers", "resources", "legal"] as const).map(
+            {(["product", "company", "resources"] as const).map(
               (section) => (
                 <div key={section} className="w-full">
                   <h3 className="border-primary mb-4 -ml-5 border-l-2 pl-5 text-sm font-semibold tracking-wider uppercase">
@@ -177,7 +172,7 @@ export default function FooterSection() {
         <div className="animate-rotate-3d via-primary h-px w-full bg-gradient-to-r from-transparent to-transparent" />
         <div className="text-muted-foreground container m-auto flex flex-col items-center justify-between gap-4 p-4 text-xs md:flex-row md:px-0 md:text-sm">
           <p className="">
-            &copy; {currentYear} Vibe Coding Platform. All rights reserved.
+            &copy; {currentYear} Flickzo AI. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             {data().bottomLinks.map(({ href, label }) => (
