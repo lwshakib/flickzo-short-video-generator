@@ -1,0 +1,8 @@
+procs:
+  inngest:
+    shell: "npx --ignore-scripts=false inngest-cli@1.15.1 dev"
+    autoRestart: true
+
+  next:
+    shell: "bun run dev"
+    autoRestart: true

@@ -15,14 +15,20 @@ import {
     videoVoices,
 } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import axios from "axios";
+import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function CreateVideoPage() {
+    const router = useRouter();
+    const { data: session } = authClient.useSession();
     // Topic selection state
     const [selectedTab, setSelectedTab] = useState("suggestions");
     const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
     const [customTopic, setCustomTopic] = useState("");
     const [scriptLoading, setScriptLoading] = useState(false);
-    const [generatedScripts, setGeneratedScripts] = useState<Array<{ content: string }>>([]);
+    const [generatedScripts, setGeneratedScripts] = useState<Array<{ title: string, content: string }>>([]);
     const [selectedScriptIdx, setSelectedScriptIdx] = useState<number | null>(null);
 
     // Customization state
@@ -50,15 +56,30 @@ export default function CreateVideoPage() {
         }
     };
 
-    const handleGenerateScript = () => {
+    const handleGenerateScript = async () => {
+        if (!selectedTopic) {
+            toast.error("Please select or enter a topic");
+            return;
+        }
+
         setScriptLoading(true);
-        setTimeout(() => {
-            setGeneratedScripts([
-                { content: "This is a placeholder for a generated script about " + selectedTopic + ". In a world where AI creates everything, one video stands alone..." },
-                { content: "Another script option: Discover the secrets of " + selectedTopic + " in this cinematic journey through time and space." }
-            ]);
+        try {
+            const promise = axios.post("/api/scripts", { topic: selectedTopic });
+
+            toast.promise(promise, {
+                loading: "Architecting your narratives...",
+                success: "Scripts generated successfully!",
+                error: "Failed to generate scripts. Please try again."
+            });
+
+            const response = await promise;
+            setGeneratedScripts(response.data.data.scripts);
+            setSelectedScriptIdx(0); // Select first script by default
+        } catch (error) {
+            console.error("Error generating scripts:", error);
+        } finally {
             setScriptLoading(false);
-        }, 1500);
+        }
     };
 
     const currentStyleData = useMemo(() => {
@@ -68,6 +89,43 @@ export default function CreateVideoPage() {
     const currentVoiceData = useMemo(() => {
         return videoVoices.find(v => v.Id === selectedVoice);
     }, [selectedVoice]);
+
+    const handleCreateVideo = async () => {
+        if (!session?.user) {
+            toast.error("Please sign in to create videos");
+            return;
+        }
+
+        if (selectedScriptIdx === null || !selectedStyle || !selectedVoice || !selectedCaptionStyle) {
+            toast.error("Please complete all steps before generating");
+            return;
+        }
+
+        const selectedScript = generatedScripts[selectedScriptIdx];
+
+        try {
+            const promise = axios.post("/api/videos/create", {
+                title: selectedScript.title,
+                script: selectedScript.content,
+                topic: selectedTopic,
+                voice: selectedVoice,
+                videoStyle: selectedStyle,
+                captionStyle: selectedCaptionStyle
+            });
+
+            toast.promise(promise, {
+                loading: "Initializing production pipeline...",
+                success: (res) => {
+                    router.push("/videos");
+                    return "Production started! You'll be notified when it's ready.";
+                },
+                error: "Failed to start production. Please try again."
+            });
+        } catch (error) {
+            console.error("Error starting video production:", error);
+            toast.error("An unexpected error occurred");
+        }
+    };
 
     return (
         <div className="flex flex-col lg:flex-row lg:h-screen lg:overflow-hidden bg-background">
@@ -168,7 +226,8 @@ export default function CreateVideoPage() {
                                                         )}
                                                         onClick={() => setSelectedScriptIdx(idx)}
                                                     >
-                                                        <p className="text-sm leading-relaxed font-medium opacity-80 italic italic">
+                                                        <h5 className="font-bold text-sm mb-2 uppercase tracking-tight">{script.title}</h5>
+                                                        <p className="text-xs leading-relaxed font-medium opacity-80 italic italic">
                                                             "{script.content}"
                                                         </p>
                                                         {selectedScriptIdx === idx && (
@@ -331,6 +390,9 @@ export default function CreateVideoPage() {
                             <Info className="size-3 text-primary" /> Configuration Summary
                         </div>
                         <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+                            <div className="col-span-2">
+                                <SummaryItem label="Video Title" value={selectedScriptIdx !== null ? generatedScripts[selectedScriptIdx].title : "---"} />
+                            </div>
                             <SummaryItem label="Aesthetic" value={selectedStyle} />
                             <SummaryItem label="Narration" value={currentVoiceData?.Name || "---"} />
                             <SummaryItem label="Captions" value={selectedCaptionStyle?.label} />
@@ -342,7 +404,7 @@ export default function CreateVideoPage() {
                         <Button
                             className="w-full h-14 font-bold uppercase tracking-widest text-sm shadow-xl shadow-primary/20 rounded-2xl hover:translate-y-[-2px] active:translate-y-[1px] transition-all group overflow-hidden relative bg-primary text-primary-foreground border-none"
                             disabled={selectedScriptIdx === null}
-                            onClick={() => console.log("Generating...")}
+                            onClick={handleCreateVideo}
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary-foreground/10 to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 

@@ -1,4 +1,6 @@
 import { inngest } from "./client";
+import { generateAudio, generateCaptions, generateImages } from "./helpers";
+import prisma from "@/lib/prisma";
 
 export const createVideo = inngest.createFunction(
   {
@@ -9,28 +11,53 @@ export const createVideo = inngest.createFunction(
         match: "data.videoId",
       },
     ],
+    retries: 3,
   },
   {
     event: "video.created",
   },
   async ({ event, step }) => {
-    const { videoId, userId, topic, voice, videoStyle, captionStyle, audio } = event?.data;
+    const { videoId, userId, topic, voice, videoStyle, captionStyle, script } = event?.data;
+
     try {
-      const audioData = await step.run('generate-audio', async()=>{
-
+      // 1. Generate Audio and upload to Cloudinary
+      const audioData = await step.run('generate-audio', async () => {
+        return await generateAudio(script, voice);
       });
 
-      const captionsData = await step.run('generate-captions', async()=>{
+      // 2. Generate Captions using Deepgram
+      const captionsData = await generateCaptions(audioData.audioUrl, step);
 
+      // 3. Generate Images using Flux
+      const imagesData = await generateImages(script, videoStyle, step);
+
+      // 4. Update Database with all generated content
+      await step.run('update-db-completed', async () => {
+        await prisma.video.update({
+          where: { id: videoId },
+          data: {
+            audio: audioData,
+            captions: captionsData,
+            images: imagesData,
+            status: "COMPLETED",
+          },
+        });
       });
 
-      const imagesData = await step.run('generate-images', async()=>{
-
-      });
-
-      return true;
+      return { success: true, videoId };
     } catch (error: any) {
-      return false;
+      console.error("Video generation failed:", error);
+
+      await step.run('update-db-failed', async () => {
+        await prisma.video.update({
+          where: { id: videoId },
+          data: {
+            status: "FAILED",
+          },
+        });
+      });
+
+      throw error; // Re-throw for Inngest to handle retries
     }
   }
 )

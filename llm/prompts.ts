@@ -29,9 +29,11 @@ Format the response strictly as follows:
 {
   "scripts": [
     {
+      "title": "Engaging 3-5 word title for script 1",
       "content": "Script 1 text only, written for natural speech delivery."
     },
     {
+      "title": "Engaging 3-5 word title for script 2",
       "content": "Script 2 text only, written for natural speech delivery."
     }
   ]
