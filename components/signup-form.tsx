@@ -75,14 +75,16 @@ export function SignUpForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold tracking-tight">Join Flickzo Today</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Join Flickzo Today
+          </h1>
           <p className="text-muted-foreground text-sm text-balance">
             Create an account to start generating short videos
           </p>
         </div>
 
         {error && (
-          <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md text-center">
+          <div className="bg-destructive/10 text-destructive rounded-md p-3 text-center text-sm">
             {error}
           </div>
         )}
@@ -126,7 +128,7 @@ export function SignUpForm({
           <Button type="submit" disabled={isLoading}>
             {isLoading ? (
               <>
-                <Loader2 className="size-4 animate-spin mr-2" />
+                <Loader2 className="mr-2 size-4 animate-spin" />
                 Creating account...
               </>
             ) : (
@@ -143,7 +145,7 @@ export function SignUpForm({
             onClick={() => handleSocialSignUp("google")}
           >
             {socialLoading === "google" ? (
-              <Loader2 className="size-4 animate-spin mr-2" />
+              <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
@@ -161,7 +163,7 @@ export function SignUpForm({
             onClick={() => handleSocialSignUp("github")}
           >
             {socialLoading === "github" ? (
-              <Loader2 className="size-4 animate-spin mr-2" />
+              <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"

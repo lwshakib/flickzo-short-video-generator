@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   IconHome,
   IconSettings,
   IconHelp,
   IconSearch,
   IconVideo,
-} from "@tabler/icons-react"
-import Link from "next/link"
+} from "@tabler/icons-react";
+import Link from "next/link";
 
-import { NavRecentVideos } from "@/components/nav-recent-videos"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavRecentVideos } from "@/components/nav-recent-videos";
+import { NavMain } from "@/components/nav-main";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -21,15 +21,15 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import axios from "axios"
-import { authClient } from "@/lib/auth-client"
-import { useFlickzoStore } from "@/context"
+} from "@/components/ui/sidebar";
+import axios from "axios";
+import { authClient } from "@/lib/auth-client";
+import { useFlickzoStore } from "@/context";
 import { useInngestSubscription } from "@inngest/realtime/hooks";
 import { fetchRealtimeSubscriptionToken } from "@/actions/get-subscribe-token";
-import { Logo } from "./logo"
-import { SearchCommand } from "./search-command"
-import { SettingsDialog } from "./settings-dialog"
+import { Logo } from "./logo";
+import { SearchCommand } from "./search-command";
+import { SettingsDialog } from "./settings-dialog";
 
 const data = {
   navMain: [
@@ -44,7 +44,7 @@ const data = {
       icon: IconVideo,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = authClient.useSession();
@@ -107,7 +107,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/" className="flex items-center gap-2 px-1.5 py-2 rounded-lg transition-none outline-none">
+              <Link
+                href="/"
+                className="flex items-center gap-2 rounded-lg px-1.5 py-2 transition-none outline-none"
+              >
                 <Logo />
               </Link>
             </SidebarMenuItem>
@@ -119,11 +122,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <NavSecondary items={navSecondary} className="mt-auto" />
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={(session?.user as { name: string; email: string; avatar?: string | null; image?: string | null }) || { name: "Guest", email: "" }} />
+          <NavUser
+            user={
+              (session?.user as {
+                name: string;
+                email: string;
+                avatar?: string | null;
+                image?: string | null;
+              }) || { name: "Guest", email: "" }
+            }
+          />
         </SidebarFooter>
       </Sidebar>
       <SearchCommand open={searchOpen} setOpen={setSearchOpen} />
       <SettingsDialog open={settingsOpen} setOpen={setSettingsOpen} />
     </>
-  )
+  );
 }

@@ -73,14 +73,16 @@ export function LoginForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold tracking-tight">Login to Flickzo</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Login to Flickzo
+          </h1>
           <p className="text-muted-foreground text-sm text-balance">
             Enter your email below to access your workspace
           </p>
         </div>
 
         {error && (
-          <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md text-center">
+          <div className="bg-destructive/10 text-destructive rounded-md p-3 text-center text-sm">
             {error}
           </div>
         )}
@@ -120,7 +122,7 @@ export function LoginForm({
           <Button type="submit" disabled={isLoading}>
             {isLoading ? (
               <>
-                <Loader2 className="size-4 animate-spin mr-2" />
+                <Loader2 className="mr-2 size-4 animate-spin" />
                 Signing in...
               </>
             ) : (
@@ -137,7 +139,7 @@ export function LoginForm({
             onClick={() => handleSocialLogin("google")}
           >
             {socialLoading === "google" ? (
-              <Loader2 className="size-4 animate-spin mr-2" />
+              <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
@@ -155,7 +157,7 @@ export function LoginForm({
             onClick={() => handleSocialLogin("github")}
           >
             {socialLoading === "github" ? (
-              <Loader2 className="size-4 animate-spin mr-2" />
+              <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -2,66 +2,65 @@ import { DEEPGRAM_API_KEY } from "@/lib/env";
 import { createClient } from "@deepgram/sdk";
 export const deepgramClient = createClient(DEEPGRAM_API_KEY);
 
-
 export interface GenerateAudioOptions {
-    text: string;
-    voice?: string;
+  text: string;
+  voice?: string;
 }
 
 export interface GenerateAudioResult {
-    success: boolean;
-    buffer?: Buffer;
-    text: string;
-    error?: string;
+  success: boolean;
+  buffer?: Buffer;
+  text: string;
+  error?: string;
 }
 
 async function getAudioBuffer(
-    stream: ReadableStream<Uint8Array>
+  stream: ReadableStream<Uint8Array>
 ): Promise<Buffer> {
-    const reader = stream.getReader();
-    const chunks: Uint8Array[] = [];
+  const reader = stream.getReader();
+  const chunks: Uint8Array[] = [];
 
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        if (value) chunks.push(value);
-    }
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (value) chunks.push(value);
+  }
 
-    return Buffer.concat(chunks.map((c) => Buffer.from(c)));
+  return Buffer.concat(chunks.map((c) => Buffer.from(c)));
 }
 
 export const generateAudio = async ({
-    text,
-    voice = "aura-2-thalia-en",
+  text,
+  voice = "aura-2-thalia-en",
 }: GenerateAudioOptions): Promise<GenerateAudioResult> => {
-    try {
-        if (!DEEPGRAM_API_KEY) {
-            throw new Error("Missing DEEPGRAM_API_KEY");
-        }
-
-        const response = await deepgramClient.speak.request({ text }, {
-            model: voice,
-            encoding: "mp3",
-        } as { model: string; encoding: "mp3" });
-
-        const stream = await response.getStream();
-
-        if (!stream) {
-            throw new Error("No audio stream received from Deepgram");
-        }
-
-        const buffer = await getAudioBuffer(stream);
-
-        return {
-            success: true,
-            buffer,
-            text,
-        };
-    } catch (error) {
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-            text,
-        };
+  try {
+    if (!DEEPGRAM_API_KEY) {
+      throw new Error("Missing DEEPGRAM_API_KEY");
     }
+
+    const response = await deepgramClient.speak.request({ text }, {
+      model: voice,
+      encoding: "mp3",
+    } as { model: string; encoding: "mp3" });
+
+    const stream = await response.getStream();
+
+    if (!stream) {
+      throw new Error("No audio stream received from Deepgram");
+    }
+
+    const buffer = await getAudioBuffer(stream);
+
+    return {
+      success: true,
+      buffer,
+      text,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      text,
+    };
+  }
 };

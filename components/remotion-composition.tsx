@@ -33,16 +33,14 @@ type Props = {
 function RemotionComposition({ videoData }: Props) {
   const captions = videoData?.captions || [];
   const images = videoData?.images || [];
-  const imageList = images.map((img) => typeof img === 'string' ? img : img.url);
+  const imageList = images.map((img) =>
+    typeof img === "string" ? img : img.url
+  );
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
   const duration =
-    captions.length > 0
-      ? captions[captions.length - 1]?.end * fps
-      : 300; // Default to 10 seconds if no captions
-
-
+    captions.length > 0 ? captions[captions.length - 1]?.end * fps : 300; // Default to 10 seconds if no captions
 
   const getCurrentCaption = () => {
     const currentTime = frame / fps;
@@ -53,7 +51,7 @@ function RemotionComposition({ videoData }: Props) {
   };
 
   return (
-    <div className="bg-black w-full h-full">
+    <div className="h-full w-full bg-black">
       <AbsoluteFill>
         {imageList.map((url: string, index: number) => {
           const startTime = (index * duration) / imageList.length;
@@ -65,7 +63,11 @@ function RemotionComposition({ videoData }: Props) {
             { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
           );
           return (
-            <Sequence key={index} from={startTime} durationInFrames={sceneDuration}>
+            <Sequence
+              key={index}
+              from={startTime}
+              durationInFrames={sceneDuration}
+            >
               <AbsoluteFill>
                 <Img
                   src={url}
@@ -95,11 +97,11 @@ function RemotionComposition({ videoData }: Props) {
           fontSize: 60,
           zIndex: 10,
           textShadow: "0px 0px 20px rgba(0,0,0,0.8)",
-          padding: "0 40px"
+          padding: "0 40px",
         }}
         className={videoData?.captionStyle?.className}
       >
-        <h2 className="font-extrabold uppercase tracking-tighter drop-shadow-2xl">
+        <h2 className="font-extrabold tracking-tighter uppercase drop-shadow-2xl">
           {getCurrentCaption()}
         </h2>
       </AbsoluteFill>

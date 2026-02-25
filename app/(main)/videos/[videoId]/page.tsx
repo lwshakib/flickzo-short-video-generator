@@ -6,38 +6,37 @@ import { videoVoices } from "@/lib/data";
 import { VideoDetailsView } from "@/components/video-details-view";
 
 export default async function VideoDetailsPage({
-    params,
+  params,
 }: {
-    params: Promise<{ videoId: string }>;
+  params: Promise<{ videoId: string }>;
 }) {
-    const { videoId } = await params;
+  const { videoId } = await params;
 
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-    if (!session) {
-        return notFound();
-    }
+  if (!session) {
+    return notFound();
+  }
 
-    const video = await prisma.video.findUnique({
-        where: {
-            id: videoId,
-            userId: session.user.id,
-        },
-    });
+  const video = await prisma.video.findUnique({
+    where: {
+      id: videoId,
+      userId: session.user.id,
+    },
+  });
 
-    if (!video) {
-        return notFound();
-    }
+  if (!video) {
+    return notFound();
+  }
 
-    const voiceData = videoVoices.find(v => v.Model === video.voice);
+  const voiceData = videoVoices.find((v) => v.Model === video.voice);
 
-    return (
-        <VideoDetailsView
-            initialVideo={JSON.parse(JSON.stringify(video))}
-            voiceData={voiceData}
-        />
-    );
+  return (
+    <VideoDetailsView
+      initialVideo={JSON.parse(JSON.stringify(video))}
+      voiceData={voiceData}
+    />
+  );
 }
-

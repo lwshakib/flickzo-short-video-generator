@@ -1,6 +1,7 @@
 import { inngest } from "./client";
 import { generateAudio, generateCaptions, generateImages } from "./helpers";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 
 export const createVideo = inngest.createFunction(
   {
@@ -31,7 +32,7 @@ export const createVideo = inngest.createFunction(
       });
 
       // 1. Generate Audio and upload to Cloudinary
-      const audioData = await step.run('generate-audio', async () => {
+      const audioData = await step.run("generate-audio", async () => {
         return await generateAudio(script, voice);
       });
 
@@ -42,13 +43,13 @@ export const createVideo = inngest.createFunction(
       const imagesData = await generateImages(script, videoStyle, step);
 
       // 4. Update Database with all generated content
-      await step.run('update-db-completed', async () => {
+      await step.run("update-db-completed", async () => {
         await prisma.video.update({
           where: { id: videoId },
           data: {
-            audio: audioData as any,
-            captions: captionsData as any,
-            images: imagesData as any,
+            audio: audioData as unknown as Prisma.InputJsonValue,
+            captions: captionsData as unknown as Prisma.InputJsonValue[],
+            images: imagesData as unknown as Prisma.InputJsonValue[],
             status: "COMPLETED",
           },
         });
@@ -68,7 +69,7 @@ export const createVideo = inngest.createFunction(
     } catch (error: unknown) {
       console.error("Video generation failed:", error);
 
-      await step.run('update-db-failed', async () => {
+      await step.run("update-db-failed", async () => {
         await prisma.video.update({
           where: { id: videoId },
           data: {
@@ -90,5 +91,4 @@ export const createVideo = inngest.createFunction(
       throw error; // Re-throw for Inngest to handle retries
     }
   }
-
-)
+);

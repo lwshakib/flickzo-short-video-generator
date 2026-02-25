@@ -82,8 +82,6 @@ Content:
 
 `;
 
-
-
 export const TITLE_GENERATE_PROMPT = `Generate a single, compelling title for the following content: {{CONTENT}}
 
 TITLE REQUIREMENTS:
@@ -97,8 +95,6 @@ TITLE REQUIREMENTS:
 - Consider these proven formats: "Why [X] Happens," "The [X] Secret," "[X] That Changed Everything," "Hidden [X] Truth"
 
 Return only the title in plain text with no additional formatting, explanations, or punctuation marks.`;
-
-
 
 export const ENHANCE_PROMPT_SCRIPT = `
 You are a prompt expert. Improve the following prompt to make it clearer, more useful, and effective.
@@ -114,8 +110,6 @@ Instructions:
 
 Return only the enhanced prompt as plain text. No markdown, no explanation, no formatting. Just as plain text no markdown also on the plain text.
 `;
-
-
 
 export const IMAGE_GENERATION_SCRIPT = `
 

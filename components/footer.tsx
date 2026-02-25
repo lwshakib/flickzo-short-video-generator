@@ -72,12 +72,11 @@ export default function FooterSection() {
           <div className="space-y-6 lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-3">
               <Logo />
-
             </Link>
             <p className="text-muted-foreground max-w-md">
-              The next generation of video storytelling. Transform your ideas into
-              cinematic short-form videos with professional voiceovers and visuals
-              in seconds.
+              The next generation of video storytelling. Transform your ideas
+              into cinematic short-form videos with professional voiceovers and
+              visuals in seconds.
             </p>
             <div className="flex items-center gap-2">
               <div className="flex gap-2">
@@ -143,28 +142,26 @@ export default function FooterSection() {
 
           {/* Navigation Links */}
           <div className="grid w-full grid-cols-2 items-start justify-between gap-8 px-5 lg:col-span-3">
-            {(["product", "company", "resources"] as const).map(
-              (section) => (
-                <div key={section} className="w-full">
-                  <h3 className="border-primary mb-4 -ml-5 border-l-2 pl-5 text-sm font-semibold tracking-wider uppercase">
-                    {section.charAt(0).toUpperCase() + section.slice(1)}
-                  </h3>
-                  <ul className="space-y-3">
-                    {data().navigation[section].map((item) => (
-                      <li key={item.name}>
-                        <Link
-                          href={item.href}
-                          className="group text-muted-foreground hover:text-foreground decoration-primary -ml-5 inline-flex items-center gap-2 underline-offset-8 transition-all duration-500 hover:pl-5 hover:underline"
-                        >
-                          <ArrowDownLeft className="text-primary rotate-[225deg] opacity-30 transition-all duration-500 group-hover:scale-150 group-hover:opacity-100 sm:group-hover:rotate-[225deg] md:rotate-0" />
-                          {item.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )
-            )}
+            {(["product", "company", "resources"] as const).map((section) => (
+              <div key={section} className="w-full">
+                <h3 className="border-primary mb-4 -ml-5 border-l-2 pl-5 text-sm font-semibold tracking-wider uppercase">
+                  {section.charAt(0).toUpperCase() + section.slice(1)}
+                </h3>
+                <ul className="space-y-3">
+                  {data().navigation[section].map((item) => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className="group text-muted-foreground hover:text-foreground decoration-primary -ml-5 inline-flex items-center gap-2 underline-offset-8 transition-all duration-500 hover:pl-5 hover:underline"
+                      >
+                        <ArrowDownLeft className="text-primary rotate-[225deg] opacity-30 transition-all duration-500 group-hover:scale-150 group-hover:opacity-100 sm:group-hover:rotate-[225deg] md:rotate-0" />
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
 

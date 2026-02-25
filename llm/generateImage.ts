@@ -8,9 +8,6 @@ export const nebiusClient = new OpenAI({
   apiKey: NEBIUS_API_KEY,
 });
 
-
-
-
 export interface GenerateImageOptions {
   prompt: string;
   width?: number;
@@ -66,7 +63,8 @@ export const generateImage = async ({
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        (errorData as { error?: { message?: string } }).error?.message || `API error: ${response.statusText}`
+        (errorData as { error?: { message?: string } }).error?.message ||
+          `API error: ${response.statusText}`
       );
     }
 

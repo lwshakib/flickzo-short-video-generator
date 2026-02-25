@@ -20,25 +20,25 @@ Flickzo is a powerful platform that leverages advanced AI to transform text and 
 
 ## �🚀 Features
 
--   **AI Script Generation**: Automatically generates engaging video scripts based on user topics using LLMs.
--   **Lifelike Voiceovers**: Converts text to speech using high-quality AI audio generation (Deepgram).
--   **Visual Synthesis**: Generates relevant imagery to match the script content.
--   **Automated Video Editing**: Stitches together audio, images, and captions into a polished video using Remotion.
--   **Background Processing**: Handles complex generation tasks asynchronously using Inngest.
--   **Responsive Design**: A beautiful, modern interface built with Tailwind CSS and Next.js.
+- **AI Script Generation**: Automatically generates engaging video scripts based on user topics using LLMs.
+- **Lifelike Voiceovers**: Converts text to speech using high-quality AI audio generation (Deepgram).
+- **Visual Synthesis**: Generates relevant imagery to match the script content.
+- **Automated Video Editing**: Stitches together audio, images, and captions into a polished video using Remotion.
+- **Background Processing**: Handles complex generation tasks asynchronously using Inngest.
+- **Responsive Design**: A beautiful, modern interface built with Tailwind CSS and Next.js.
 
 ## 🛠️ Tech Stack
 
--   **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
--   **Language**: [TypeScript](https://www.typescriptlang.org/)
--   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
--   **Database**: [PostgreSQL](https://www.postgresql.org/) (via [Prisma ORM](https://www.prisma.io/))
--   **Video Engine**: [Remotion](https://www.remotion.dev/)
--   **Background Jobs**: [Inngest](https://www.inngest.com/)
--   **AI Services**:
-    -   **LLM**: Nebius AI
-    -   **Audio**: Deepgram
-    -   **Storage/Media**: Cloudinary
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) (via [Prisma ORM](https://www.prisma.io/))
+- **Video Engine**: [Remotion](https://www.remotion.dev/)
+- **Background Jobs**: [Inngest](https://www.inngest.com/)
+- **AI Services**:
+  - **LLM**: Nebius AI
+  - **Audio**: Deepgram
+  - **Storage/Media**: Cloudinary
 
 ## 🏗️ Architecture
 
@@ -47,7 +47,7 @@ graph TD
     User([User]) -->|1. Enter Topic| Client[Next.js Client]
     Client -->|2. Request Video Generation| API[Next.js API Routes]
     API -->|3. Trigger Event| Inngest[Inngest Event Bus]
-    
+
     subgraph "Background Workers"
         Inngest -->|4. Generate Script| Workflow[Video Creation Workflow]
         Workflow -->|5a. Call LLM| LLM[Nebius AI]
@@ -55,10 +55,10 @@ graph TD
         Workflow -->|5c. Generate Images| ImgGen[Image Generator]
         Workflow -->|6. Render Video| Remotion[Remotion Engine]
     end
-    
+
     Remotion -->|7. Upload Video| Cloudinary[Cloudinary]
     Workflow -->|8. Update Status| DB[(Postgres DB)]
-    
+
     Client -.->|9. Poll Status| DB
 ```
 
@@ -66,10 +66,10 @@ graph TD
 
 ### Prerequisites
 
--   Node.js (v18+)
--   Bun (recommended) or npm/pnpm
--   PostgreSQL database
--   Accounts for: Deepgram, Nebius AI, Cloudinary
+- Node.js (v18+)
+- Bun (recommended) or npm/pnpm
+- PostgreSQL database
+- Accounts for: Deepgram, Nebius AI, Cloudinary
 
 ### Installation
 
@@ -133,4 +133,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **lwshakib**
 
--   GitHub: [@lwshakib](https://github.com/lwshakib)
+- GitHub: [@lwshakib](https://github.com/lwshakib)

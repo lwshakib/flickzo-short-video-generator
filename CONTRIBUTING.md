@@ -6,14 +6,14 @@ The following is a set of guidelines for contributing to Flickzo. These are most
 
 ## 📚 Table of Contents
 
--   [Code of Conduct](#code-of-conduct)
--   [How Can I Contribute?](#how-can-i-contribute)
-    -   [Reporting Bugs](#reporting-bugs)
-    -   [Suggesting Enhancements](#suggesting-enhancements)
-    -   [Pull Requests](#pull-requests)
--   [Styleguides](#styleguides)
-    -   [Git Commit Messages](#git-commit-messages)
-    -   [JavaScript/TypeScript Style](#javascripttypescript-style)
+- [Code of Conduct](#code-of-conduct)
+- [How Can I Contribute?](#how-can-i-contribute)
+  - [Reporting Bugs](#reporting-bugs)
+  - [Suggesting Enhancements](#suggesting-enhancements)
+  - [Pull Requests](#pull-requests)
+- [Styleguides](#styleguides)
+  - [Git Commit Messages](#git-commit-messages)
+  - [JavaScript/TypeScript Style](#javascripttypescript-style)
 
 ## Code of Conduct
 
@@ -25,28 +25,28 @@ This project and everyone participating in it is governed by the [Flickzo Code o
 
 This section guides you through submitting a bug report for Flickzo. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
 
--   **Use a clear and descriptive title** for the issue to identify the problem.
--   **Describe the exact steps to reproduce the problem** in as many details as possible.
--   **Provide specific examples** to demonstrate the steps.
--   **Describe the behavior you observed** after following the steps and point out what constitutes the problem.
--   **Explain which behavior you expected to see instead** and why.
--   **Include screenshots** which show you following the described steps and clearly demonstrate the problem.
+- **Use a clear and descriptive title** for the issue to identify the problem.
+- **Describe the exact steps to reproduce the problem** in as many details as possible.
+- **Provide specific examples** to demonstrate the steps.
+- **Describe the behavior you observed** after following the steps and point out what constitutes the problem.
+- **Explain which behavior you expected to see instead** and why.
+- **Include screenshots** which show you following the described steps and clearly demonstrate the problem.
 
 ### Suggesting Enhancements
 
 This section guides you through submitting an enhancement suggestion for Flickzo, including completely new features and minor improvements to existing functionality.
 
--   **Use a clear and descriptive title** for the issue to identify the suggestion.
--   **Provide a step-by-step description of the suggested enhancement** in as many details as possible.
--   **Explain why this enhancement would be useful** to most Flickzo users.
+- **Use a clear and descriptive title** for the issue to identify the suggestion.
+- **Provide a step-by-step description of the suggested enhancement** in as many details as possible.
+- **Explain why this enhancement would be useful** to most Flickzo users.
 
 ### Pull Requests
 
 The process described here has several goals:
 
--   Maintain Flickzo's quality.
--   Fix problems that are important to users.
--   Engage the community in working toward the best possible Flickzo.
+- Maintain Flickzo's quality.
+- Fix problems that are important to users.
+- Engage the community in working toward the best possible Flickzo.
 
 1.  Fork the repo and create your branch from `main`.
 2.  If you've added code that should be tested, add tests.
@@ -59,20 +59,20 @@ The process described here has several goals:
 
 ### Git Commit Messages
 
--   Use the present tense ("Add feature" not "Added feature")
--   Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
--   Limit the first line to 72 characters or less
--   Reference issues and pull requests liberally after the first line
+- Use the present tense ("Add feature" not "Added feature")
+- Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
+- Limit the first line to 72 characters or less
+- Reference issues and pull requests liberally after the first line
 
 ### JavaScript/TypeScript Style
 
--   We use **Prettier** for code formatting. Please ensure your code is formatted before submitting.
--   We use **ESLint** for linting. Fix any linting errors before pushing.
--   Prioritize functional components and Hooks for React.
--   Use **TypeScript** for all new files. Strong typing is encouraged.
+- We use **Prettier** for code formatting. Please ensure your code is formatted before submitting.
+- We use **ESLint** for linting. Fix any linting errors before pushing.
+- Prioritize functional components and Hooks for React.
+- Use **TypeScript** for all new files. Strong typing is encouraged.
 
 ## 🤝 Community
 
 Join the conversation and help us build the best short video generator!
 
--   GitHub: [lwshakib](https://github.com/lwshakib)
+- GitHub: [lwshakib](https://github.com/lwshakib)

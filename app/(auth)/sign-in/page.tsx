@@ -6,13 +6,16 @@ import Image from "next/image";
 export default function SignInPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="flex flex-col gap-4 p-6 md:p-10 bg-background">
+      <div className="bg-background flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-lg shadow-lg shadow-primary/20">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-xl font-bold tracking-tight"
+          >
+            <div className="bg-primary text-primary-foreground shadow-primary/20 flex size-8 items-center justify-center rounded-lg shadow-lg">
               <Video className="size-5" />
             </div>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+            <span className="from-primary to-primary/60 bg-gradient-to-r bg-clip-text text-transparent">
               Flickzo
             </span>
           </Link>
@@ -23,8 +26,8 @@ export default function SignInPage() {
           </div>
         </div>
       </div>
-      <div className="relative hidden lg:block overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+      <div className="relative hidden overflow-hidden lg:block">
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/60 to-transparent" />
         <Image
           src="/signin-bg.png"
           alt="Short Video Generation"
@@ -33,8 +36,12 @@ export default function SignInPage() {
           sizes="50vw"
         />
         <div className="absolute bottom-12 left-12 z-20 max-w-md">
-          <h2 className="text-3xl font-bold text-white mb-2">Create cinematic short videos in seconds.</h2>
-          <p className="text-white/80 text-lg">AI-powered generation tailored for your brand.</p>
+          <h2 className="mb-2 text-3xl font-bold text-white">
+            Create cinematic short videos in seconds.
+          </h2>
+          <p className="text-lg text-white/80">
+            AI-powered generation tailored for your brand.
+          </p>
         </div>
       </div>
     </div>

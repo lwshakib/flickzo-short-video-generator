@@ -125,8 +125,8 @@ export default function SimplePricing() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-muted-foreground max-w-md pt-2 text-lg"
           >
-            Start free and scale as your vision grows. All plans include
-            access to our advanced AI synthesis engines.
+            Start free and scale as your vision grows. All plans include access
+            to our advanced AI synthesis engines.
           </motion.p>
         </div>
 
@@ -180,7 +180,7 @@ export default function SimplePricing() {
                     ? "ring-primary/50 dark:shadow-primary/10 shadow-md ring-2"
                     : "hover:border-primary/30",
                   plan.popular &&
-                  "from-primary/[0.03] bg-gradient-to-b to-transparent"
+                    "from-primary/[0.03] bg-gradient-to-b to-transparent"
                 )}
               >
                 {plan.popular && (
@@ -231,7 +231,7 @@ export default function SimplePricing() {
                             }}
                             value={
                               plan.price[
-                              frequency as keyof typeof plan.price
+                                frequency as keyof typeof plan.price
                               ] as number
                             }
                           />

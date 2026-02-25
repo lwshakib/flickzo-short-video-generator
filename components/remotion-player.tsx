@@ -11,9 +11,13 @@ type Props = {
 function RemotionPlayer({ videoData }: Props) {
   const fps = 30;
   const captions = videoData.captions || [];
-  const durationInFrames = captions.length > 0
-    ? Math.max(Number((captions[captions.length - 1]?.end * fps).toFixed(0)), 30)
-    : 300; // 10 seconds default
+  const durationInFrames =
+    captions.length > 0
+      ? Math.max(
+          Number((captions[captions.length - 1]?.end * fps).toFixed(0)),
+          30
+        )
+      : 300; // 10 seconds default
 
   return (
     <Player
@@ -33,6 +37,5 @@ function RemotionPlayer({ videoData }: Props) {
     />
   );
 }
-
 
 export default RemotionPlayer;

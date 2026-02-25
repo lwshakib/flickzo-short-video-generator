@@ -12,7 +12,6 @@ export const getModelName = () => {
   return allowedModels[Math.floor(Math.random() * allowedModels.length)];
 };
 
-
 export const GeminiModel = () => {
   const gemini = createGoogleGenerativeAI({
     apiKey: getSingleApiKey(),
