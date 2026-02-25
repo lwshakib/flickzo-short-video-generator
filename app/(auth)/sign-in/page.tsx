@@ -1,4 +1,4 @@
-import { Video } from "lucide-react";
+import { Logo } from "@/components/logo";
 import { LoginForm } from "@/components/login-form";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,12 +12,7 @@ export default function SignInPage() {
             href="/"
             className="flex items-center gap-2 text-xl font-bold tracking-tight"
           >
-            <div className="bg-primary text-primary-foreground shadow-primary/20 flex size-8 items-center justify-center rounded-lg shadow-lg">
-              <Video className="size-5" />
-            </div>
-            <span className="from-primary to-primary/60 bg-gradient-to-r bg-clip-text text-transparent">
-              Flickzo
-            </span>
+            <Logo />
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
