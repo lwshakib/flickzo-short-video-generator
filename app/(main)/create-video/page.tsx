@@ -8,14 +8,12 @@ import {
   Type,
   ChevronRight,
   CheckCircle2,
-  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import {
   captionStyles,
   suggestions,
@@ -321,10 +319,11 @@ export default function CreateVideoPage() {
                     onClick={() => setSelectedStyle(style.label)}
                   >
                     <div className="relative aspect-[3/4] overflow-hidden">
-                      <img
+                      <Image
                         src={style.src}
                         alt={style.label}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-2.5">
                         <span className="text-[10px] font-bold text-white uppercase">
@@ -419,9 +418,10 @@ export default function CreateVideoPage() {
           {/* Compact Phone Mockup */}
           <div className="border-foreground/10 relative aspect-[9/16] w-full overflow-hidden rounded-[32px] border-8 bg-black shadow-xl">
             <div className="animate-in fade-in absolute inset-0 duration-1000">
-              <img
+              <Image
                 src={currentStyleData?.src || "/placeholder.png"}
-                className="h-full w-full object-cover opacity-70 brightness-75 transition-all duration-[10s]"
+                fill
+                className="object-cover opacity-70 brightness-75 transition-all duration-[10s]"
                 alt="Style Preview"
               />
             </div>

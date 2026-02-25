@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { VideoCard } from "@/components/videos-grid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Plus, LayoutGrid, ArrowRight } from "lucide-react";
+import { Plus } from "lucide-react";
 
 /**
  * Fetches the current authenticated user session.
@@ -21,20 +21,16 @@ async function getUser() {
  * Retrieves dashboard statistics and recent video activity for the user.
  */
 async function getDashboardData(userId: string) {
-  const [videos, totalCount, pendingCount] = await Promise.all([
+  const [videos] = await Promise.all([
     // Get the 4 most recent videos
     prisma.video.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
       take: 4,
     }),
-    // Count total videos ever created
-    prisma.video.count({ where: { userId } }),
-    // Count videos currently in the production pipeline
-    prisma.video.count({ where: { userId, status: "PENDING" } }),
   ]);
 
-  return { videos, totalCount, pendingCount };
+  return { videos };
 }
 
 /**
@@ -48,7 +44,7 @@ export default async function Home() {
     return redirect("/");
   }
 
-  const { videos, totalCount, pendingCount } = await getDashboardData(user.id);
+  const { videos } = await getDashboardData(user.id);
 
   return (
     <div className="flex w-full flex-col gap-10 p-4 sm:p-6 lg:p-10">

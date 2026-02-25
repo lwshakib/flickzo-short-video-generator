@@ -3,13 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import {
-  Play,
-  Clock,
-  AlertCircle,
-  CheckCircle2,
-  Video as VideoIcon,
-} from "lucide-react";
+import { Play, Clock, AlertCircle, Video as VideoIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { videoStyles } from "@/lib/data";
