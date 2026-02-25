@@ -1,6 +1,6 @@
 import { serve } from "inngest/next";
 import { inngest } from "@/inngest/client";
-import { createVideo } from "@/inngest/functions";
+import { createVideo, resetDailyLimits } from "@/inngest/functions";
 
 /**
  * Inngest API endpoint.
@@ -9,5 +9,5 @@ import { createVideo } from "@/inngest/functions";
  */
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [createVideo], // List of all background workflows
+  functions: [createVideo, resetDailyLimits], // List of all background workflows
 });

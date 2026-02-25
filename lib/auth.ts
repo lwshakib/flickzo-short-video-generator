@@ -1,17 +1,8 @@
-/**
- * Server-side authentication configuration.
- * This file sets up Better-Auth with Prisma as the database adapter,
- * configures email/password and social providers, and handles
- * transactional emails for verification and password resets.
- */
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
-import { Resend } from "resend";
+import { resend } from "./resend";
 import { AuthEmailTemplate } from "@/components/emails/auth-email-template";
-
-// Initialize the Resend mail client using the secret API key from environment variables.
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Create and export the configured authentication service instance.
 export const auth = betterAuth({
@@ -81,7 +72,6 @@ export const auth = betterAuth({
     },
   },
 
-  // Adjust application-wide account level settings.
   account: {
     accountLinking: {
       enabled: true, // Enables linking multiple identity providers (Google, Email) to a single user account context if the emails match.

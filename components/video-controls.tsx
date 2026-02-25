@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, Download, Share2, Loader2, XCircle } from "lucide-react";
+import { Trash2, Loader2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
@@ -59,23 +59,6 @@ export function VideoControls({ videoId, status }: Props) {
 
   return (
     <div className="flex flex-col gap-3 pt-4">
-      {status === "COMPLETED" && (
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            variant="default"
-            className="bg-foreground text-background h-12 rounded-xl font-bold transition-opacity hover:opacity-90"
-          >
-            <Download className="mr-2 size-4" /> Download
-          </Button>
-          <Button
-            variant="secondary"
-            className="bg-muted hover:bg-muted/80 h-12 rounded-xl font-bold transition-colors"
-          >
-            <Share2 className="mr-2 size-4" /> Share
-          </Button>
-        </div>
-      )}
-
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button
@@ -98,33 +81,26 @@ export function VideoControls({ videoId, status }: Props) {
             {status === "PENDING" ? "Cancel & Delete" : "Delete Video"}
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent className="ring-border/50 bg-background/95 max-w-[400px] rounded-3xl border-none ring-1 backdrop-blur-xl">
-          <AlertDialogHeader className="space-y-3">
-            <div className="mb-2 flex size-14 items-center justify-center rounded-2xl bg-red-500/10">
-              <Trash2 className="size-7 text-red-500" />
-            </div>
-            <AlertDialogTitle className="text-2xl leading-none font-black tracking-tight uppercase">
-              {status === "PENDING"
-                ? "Stop Production?"
-                : "Delete Masterpiece?"}
+        <AlertDialogContent className="max-w-[380px] rounded-2xl">
+          <AlertDialogHeader className="space-y-2">
+            <AlertDialogTitle className="text-lg font-bold">
+              {status === "PENDING" ? "Stop Production?" : "Delete Video?"}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-muted-foreground text-sm leading-relaxed font-medium">
+            <AlertDialogDescription className="text-muted-foreground text-sm leading-relaxed">
               {status === "PENDING"
-                ? "This will immediately halt all AI synthesis and delete the draft. This action cannot be reversed."
-                : "This video will be permanently removed from your library. This action cannot be undone."}
+                ? "This will halt all AI processing and delete the draft. This cannot be undone."
+                : "This video will be permanently removed from your library."}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="mt-6 gap-3">
-            <AlertDialogCancel className="bg-muted hover:bg-muted/80 h-12 rounded-xl border-none font-bold transition-colors">
+          <AlertDialogFooter className="mt-4">
+            <AlertDialogCancel className="h-10 rounded-lg text-xs font-semibold">
               Keep it
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="h-12 rounded-xl border-none bg-red-500 font-bold text-white shadow-lg shadow-red-500/20 transition-colors hover:bg-red-600"
+              className="h-10 rounded-lg bg-red-600 text-xs font-semibold text-white hover:bg-red-700"
             >
-              {status === "PENDING"
-                ? "Yes, Cancel Production"
-                : "Yes, Delete Forever"}
+              {status === "PENDING" ? "Cancel Production" : "Delete Forever"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

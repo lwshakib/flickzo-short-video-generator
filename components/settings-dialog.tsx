@@ -28,40 +28,27 @@ export function SettingsDialog({
   const { theme, setTheme } = useTheme();
 
   const themes = [
-    {
-      name: "Light",
-      value: "light",
-      icon: IconSun,
-    },
-    {
-      name: "Dark",
-      value: "dark",
-      icon: IconMoon,
-    },
-    {
-      name: "System",
-      value: "system",
-      icon: IconDeviceDesktop,
-    },
+    { name: "Light", value: "light", icon: IconSun },
+    { name: "Dark", value: "dark", icon: IconMoon },
+    { name: "System", value: "system", icon: IconDeviceDesktop },
   ];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="rounded-[32px] border-none shadow-2xl sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-black tracking-tighter uppercase">
-            Settings
-          </DialogTitle>
-          <DialogDescription className="font-medium">
-            Customize your Flickzo experience.
+      <DialogContent className="rounded-xl sm:max-w-xs">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-lg font-bold">Settings</DialogTitle>
+          <DialogDescription className="text-xs">
+            Personalize your interface.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-6 py-6">
-          <div className="space-y-3">
-            <h4 className="text-muted-foreground px-1 text-xs font-black tracking-widest uppercase">
-              Interface Theme
+
+        <div className="space-y-4 py-2">
+          <div className="space-y-2">
+            <h4 className="text-muted-foreground text-[10px] font-bold tracking-wider uppercase">
+              Appearance
             </h4>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="flex flex-col gap-1">
               {themes.map((t) => {
                 const isActive = theme === t.value;
                 return (
@@ -69,36 +56,19 @@ export function SettingsDialog({
                     key={t.value}
                     onClick={() => setTheme(t.value)}
                     className={cn(
-                      "flex flex-col items-center justify-center gap-2 rounded-2xl border-2 p-4 transition-all duration-300",
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       isActive
-                        ? "border-primary bg-primary/5 text-primary shadow-primary/10 shadow-lg"
-                        : "border-border bg-muted/20 text-muted-foreground hover:border-primary/40 hover:bg-muted/40"
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted text-muted-foreground"
                     )}
                   >
-                    <t.icon
-                      className={cn(
-                        "size-6",
-                        isActive ? "animate-in zoom-in-50" : ""
-                      )}
-                    />
-                    <span className="text-[10px] font-black tracking-tight uppercase">
-                      {t.name}
-                    </span>
-                    {isActive && (
-                      <div className="absolute top-2 right-2">
-                        <IconCheck className="size-3" />
-                      </div>
-                    )}
+                    <t.icon className="size-4" />
+                    <span>{t.name}</span>
+                    {isActive && <IconCheck className="ml-auto size-3.5" />}
                   </button>
                 );
               })}
             </div>
-          </div>
-
-          <div className="border-border/50 border-t pt-4">
-            <p className="text-muted-foreground text-center text-[10px] font-medium tracking-tighter uppercase opacity-50">
-              v1.0.0 • AI-Powered Cinematic Synthesis
-            </p>
           </div>
         </div>
       </DialogContent>

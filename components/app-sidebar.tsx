@@ -30,6 +30,7 @@ import { fetchRealtimeSubscriptionToken } from "@/actions/get-subscribe-token";
 import { Logo } from "./logo";
 import { SearchCommand } from "./search-command";
 import { SettingsDialog } from "./settings-dialog";
+import { HelpDialog } from "./help-dialog";
 
 const data = {
   navMain: [
@@ -52,6 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [helpOpen, setHelpOpen] = React.useState(false);
 
   const navSecondary = [
     {
@@ -70,6 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Get Help",
       url: "#",
       icon: IconHelp,
+      onClick: () => setHelpOpen(true),
     },
   ];
 
@@ -136,6 +139,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </Sidebar>
       <SearchCommand open={searchOpen} setOpen={setSearchOpen} />
       <SettingsDialog open={settingsOpen} setOpen={setSettingsOpen} />
+      <HelpDialog open={helpOpen} setOpen={setHelpOpen} />
     </>
   );
 }

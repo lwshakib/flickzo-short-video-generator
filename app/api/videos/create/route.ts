@@ -30,7 +30,47 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Create the initial "PENDING" video record in Prisma
+    // 3. Check and update daily video generation limit
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { dailyVideosGenerated: true, lastResetDate: true },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const now = new Date();
+    const lastReset = new Date(user.lastResetDate);
+    const isNewDay =
+      now.getUTCDate() !== lastReset.getUTCDate() ||
+      now.getUTCMonth() !== lastReset.getUTCMonth() ||
+      now.getUTCFullYear() !== lastReset.getUTCFullYear();
+
+    let currentDailyCount = user.dailyVideosGenerated;
+
+    if (isNewDay) {
+      currentDailyCount = 0;
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: {
+          dailyVideosGenerated: 0,
+          lastResetDate: now,
+        },
+      });
+    }
+
+    if (currentDailyCount >= 1) {
+      return NextResponse.json(
+        {
+          error:
+            "Daily limit reached. Pro accounts are coming soon for more videos!",
+        },
+        { status: 429 }
+      );
+    }
+
+    // 4. Create the initial "PENDING" video record in Prisma
     const video = await prisma.video.create({
       data: {
         userId: session.user.id,
@@ -38,10 +78,18 @@ export async function POST(req: Request) {
         topic,
         voice,
         videoStyle,
-        captionStyle,
+        captionStyle: captionStyle as object,
         script: script,
         audio: {}, // Initial empty JSON metadata
         status: "PENDING",
+      },
+    });
+
+    // 5. Increment the daily counter
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        dailyVideosGenerated: { increment: 1 },
       },
     });
 

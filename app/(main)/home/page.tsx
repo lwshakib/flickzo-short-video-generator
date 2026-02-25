@@ -4,9 +4,8 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { VideoCard } from "@/components/videos-grid";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import Link from "next/link";
-import { Plus, Video, Activity, Zap, ArrowRight } from "lucide-react";
+import { Plus, LayoutGrid, ArrowRight } from "lucide-react";
 
 /**
  * Fetches the current authenticated user session.
@@ -39,8 +38,7 @@ async function getDashboardData(userId: string) {
 }
 
 /**
- * Home (Dashboard) component.
- * Provides an overview of user activity, stats, and quick actions.
+ * Home (Dashboard) component with a minimalist layout.
  */
 export default async function Home() {
   const user = await getUser();
@@ -53,85 +51,25 @@ export default async function Home() {
   const { videos, totalCount, pendingCount } = await getDashboardData(user.id);
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 p-6 lg:p-10">
-      {/* Header & Quick Action */}
-      <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3">
-        <div className="space-y-2 md:col-span-2">
-          <h1 className="text-foreground text-3xl font-black tracking-tight lg:text-4xl">
-            Welcome back, {user.name?.split(" ")[0]}
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            You have{" "}
-            <span className="text-primary font-bold">
-              {pendingCount} videos
-            </span>{" "}
-            processing and {totalCount} total creations.
-          </p>
-        </div>
-        <div className="flex justify-end">
-          <Link href="/create-video" className="w-full md:w-auto">
-            <Button
-              size="lg"
-              className="shadow-primary/20 h-14 w-full gap-2 text-base font-bold shadow-xl transition-transform hover:scale-105"
-            >
-              <Plus className="size-5" />
-              Create New Video
-            </Button>
-          </Link>
-        </div>
-      </div>
+    <div className="flex w-full flex-col gap-10 p-4 sm:p-6 lg:p-10">
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-bold tracking-tight">Dashboard</h1>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card className="bg-muted/30 hover:bg-muted/50 flex items-center gap-4 border-none p-6 transition-colors">
-          <div className="flex size-12 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
-            <Video className="size-6" />
-          </div>
-          <div>
-            <p className="text-muted-foreground text-sm font-medium">
-              Total Projects
-            </p>
-            <h3 className="text-2xl font-black">{totalCount}</h3>
-          </div>
-        </Card>
-        <Card className="bg-muted/30 hover:bg-muted/50 flex items-center gap-4 border-none p-6 transition-colors">
-          <div className="flex size-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-500">
-            <Activity className="size-6" />
-          </div>
-          <div>
-            <p className="text-muted-foreground text-sm font-medium">
-              Processing
-            </p>
-            <h3 className="text-2xl font-black">{pendingCount}</h3>
-          </div>
-        </Card>
-        <Card className="bg-muted/30 hover:bg-muted/50 flex items-center gap-4 border-none p-6 transition-colors">
-          <div className="flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
-            <Zap className="size-6" />
-          </div>
-          <div>
-            <p className="text-muted-foreground text-sm font-medium">
-              Credits Left
-            </p>
-            <h3 className="text-2xl font-black">Unlimited</h3>
-          </div>
-        </Card>
-      </div>
-
-      {/* Recent Section */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">Recent Activity</h2>
-          <Link
-            href="/videos"
-            className="text-primary flex items-center gap-1 text-sm font-medium hover:underline"
+        <Link href="/create-video">
+          <Button
+            size="sm"
+            className="h-9 rounded-xl px-4 text-xs font-bold shadow-sm"
           >
-            View all library <ArrowRight className="size-4" />
-          </Link>
-        </div>
+            <Plus className="mr-2 size-3.5" />
+            Create
+          </Button>
+        </Link>
+      </div>
 
+      {/* Videos Section without header */}
+      <div className="space-y-6">
         {videos.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="3xl:grid-cols-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8">
             {videos.map((video) => (
               <VideoCard
                 key={video.id}
@@ -143,10 +81,15 @@ export default async function Home() {
             ))}
           </div>
         ) : (
-          <div className="border-border/50 rounded-3xl border-2 border-dashed py-20 text-center">
-            <p className="text-muted-foreground">
-              No recent activity. Start your first project!
+          <div className="bg-muted/10 hover:bg-muted/20 flex h-64 flex-col items-center justify-center rounded-xl border-2 border-dashed transition-colors">
+            <p className="text-muted-foreground text-sm font-medium">
+              No recent activity found.
             </p>
+            <Link href="/create-video" className="mt-4">
+              <Button variant="outline" size="sm">
+                Start your first project
+              </Button>
+            </Link>
           </div>
         )}
       </div>

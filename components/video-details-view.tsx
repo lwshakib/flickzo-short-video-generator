@@ -3,22 +3,14 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import {
-  Clock,
-  Video as VideoIcon,
-  Sparkles,
-  Mic2,
-  Palette,
-  FileText,
-  ArrowLeft,
-} from "lucide-react";
+import { Video as VideoIcon, ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import RemotionPlayer from "@/components/remotion-player";
 import { VideoControls } from "@/components/video-controls";
 import { useInngestSubscription } from "@inngest/realtime/hooks";
 import { fetchRealtimeSubscriptionToken } from "@/actions/get-subscribe-token";
 import axios from "axios";
+import { motion, AnimatePresence } from "motion/react";
 
 interface Video {
   id: string;
@@ -67,142 +59,122 @@ export function VideoDetailsView({
   }, [latestData, video.id, fetchVideo]);
 
   return (
-    <div className="bg-background flex h-full flex-col overflow-hidden lg:flex-row">
+    <div className="bg-background relative flex h-full flex-col overflow-hidden lg:flex-row">
       {/* Left Column - Preview */}
-      <div className="bg-muted/5 border-border/50 flex flex-1 flex-col items-center justify-center border-r p-6 lg:p-10">
-        <div className="w-full max-w-4xl space-y-6">
+      <div className="flex flex-1 flex-col items-center justify-center p-6 lg:p-12">
+        <div className="w-full max-w-3xl space-y-6">
           <div className="flex items-center justify-between">
             <Link
               href="/videos"
-              className="text-muted-foreground hover:text-foreground group flex items-center gap-2 text-sm font-bold transition-colors"
+              className="text-muted-foreground hover:text-foreground group flex items-center gap-1.5 text-xs font-medium transition-colors"
             >
-              <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-              Back to Videos
+              <ChevronLeft className="size-4" />
+              Back
             </Link>
-            <div className="flex items-center gap-2">
-              <Badge
-                variant="outline"
-                className="bg-background/50 backdrop-blur-sm"
-              >
-                {video.status === "COMPLETED" ? "GENERATED" : video.status}
-              </Badge>
-            </div>
+            <Badge variant="secondary" className="text-[10px] font-medium">
+              {video.status === "COMPLETED" ? "GENERATED" : video.status}
+            </Badge>
           </div>
 
-          <div className="ring-border/50 relative mx-auto aspect-[9/16] max-h-[75vh] overflow-hidden rounded-[32px] bg-black shadow-2xl ring-1">
-            {video.status === "COMPLETED" ? (
-              <RemotionPlayer videoData={video} />
-            ) : video.status === "FAILED" ? (
-              <div className="text-muted-foreground absolute inset-0 flex flex-col items-center justify-center gap-4 p-12 text-center">
-                <div className="flex size-20 items-center justify-center rounded-full bg-red-500/10">
-                  <VideoIcon className="size-10 text-red-500/40" />
-                </div>
-                <h3 className="text-foreground text-xl font-bold">
-                  Generation Failed
-                </h3>
-                <p className="text-sm font-medium">
-                  Something went wrong while casting your masterpiece. Please
-                  try creating it again.
-                </p>
-                <div className="mt-4 w-full max-w-[200px]">
-                  <VideoControls videoId={video.id} status={video.status} />
-                </div>
-              </div>
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 p-12 text-center">
-                <div className="border-primary/20 border-t-primary size-24 animate-spin rounded-full border-4" />
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-black tracking-tight uppercase">
-                    Architecting...
-                  </h3>
-                  <p className="text-muted-foreground text-sm font-medium">
-                    Sit tight, your cinematic short is being synthesized by our
-                    AI core.
-                  </p>
-                </div>
-                <div className="w-full max-w-[200px]">
-                  <VideoControls videoId={video.id} status={video.status} />
-                </div>
-              </div>
-            )}
+          <div className="ring-border relative mx-auto aspect-[9/16] max-h-[80vh] overflow-hidden rounded-xl bg-black shadow-sm ring-1">
+            <AnimatePresence mode="wait">
+              {video.status === "COMPLETED" ? (
+                <motion.div
+                  key="completed"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="size-full"
+                >
+                  <RemotionPlayer videoData={video} />
+                </motion.div>
+              ) : video.status === "FAILED" ? (
+                <motion.div
+                  key="failed"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-muted-foreground absolute inset-0 flex flex-col items-center justify-center gap-4 p-12 text-center"
+                >
+                  <VideoIcon className="text-muted-foreground/40 size-10" />
+                  <div className="space-y-1">
+                    <h3 className="text-foreground text-base font-semibold">
+                      Failed
+                    </h3>
+                  </div>
+                  <div className="mt-2 w-full max-w-[160px]">
+                    <VideoControls videoId={video.id} status={video.status} />
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="pending"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-6 p-12 text-center"
+                >
+                  <div className="border-primary/20 border-t-primary size-10 animate-spin rounded-full border-2" />
+                  <span className="text-muted-foreground text-xs font-medium">
+                    Generating...
+                  </span>
+                  <div className="w-full max-w-[160px]">
+                    <VideoControls videoId={video.id} status={video.status} />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
 
       {/* Right Column - Details */}
-      <div className="bg-background custom-scrollbar border-border/50 flex h-full w-full flex-col overflow-y-auto border-l lg:w-[450px]">
-        <div className="space-y-10 p-8 md:p-10">
-          <div className="space-y-4">
-            <Badge className="bg-primary/10 text-primary border-none px-3 py-1 text-[10px] font-black tracking-[0.2em] uppercase">
-              Production Details
-            </Badge>
-            <h1 className="text-3xl leading-none font-black tracking-tighter uppercase">
-              {video.title}
-            </h1>
-            <div className="text-muted-foreground flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
-              <Clock className="size-3.5" />
-              Generated{" "}
-              {formatDistanceToNow(new Date(video.createdAt), {
-                addSuffix: true,
-              })}
-            </div>
-          </div>
+      <div className="border-border/40 flex h-full w-full flex-col border-l lg:w-[380px]">
+        <div className="custom-scrollbar flex-1 overflow-y-auto p-8 lg:p-10">
+          <div className="space-y-10">
+            <header className="space-y-2">
+              <h1 className="text-xl font-bold tracking-tight">
+                {video.title}
+              </h1>
+              <div className="text-muted-foreground text-[11px] font-medium">
+                {formatDistanceToNow(new Date(video.createdAt), {
+                  addSuffix: true,
+                })}
+              </div>
+            </header>
 
-          <div className="grid grid-cols-1 gap-4">
-            <DetailItem
-              icon={<Sparkles className="size-4" />}
-              label="Topic / Vision"
-              value={video.topic || "Untitled"}
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <DetailItem
-                icon={<Palette className="size-4" />}
-                label="Aesthetic Style"
-                value={video.videoStyle}
-              />
-              <DetailItem
-                icon={<Mic2 className="size-4" />}
-                label="Narration Voice"
-                value={voiceData?.Name || "AI Voice"}
-              />
+            <div className="space-y-6">
+              <DetailItem label="Style" value={video.videoStyle} />
+              <DetailItem label="Voice" value={voiceData?.Name || "AI Voice"} />
+              <DetailItem label="Topic" value={video.topic || "—"} />
             </div>
-          </div>
 
-          <div className="space-y-4">
-            <div className="text-muted-foreground flex items-center gap-2 text-[10px] font-black tracking-[0.2em] uppercase">
-              <FileText className="size-3.5" /> Generated Script
-            </div>
-            <Card className="bg-muted/30 ring-border/50 rounded-2xl border-none p-6 ring-1">
-              <p className="text-muted-foreground text-sm leading-relaxed font-medium italic">
-                &ldquo;{video.script}&rdquo;
+            <div className="space-y-3">
+              <div className="text-muted-foreground text-[10px] font-bold tracking-wider uppercase">
+                Script
+              </div>
+              <p className="text-muted-foreground/80 text-sm leading-relaxed font-medium">
+                {video.script}
               </p>
-            </Card>
-          </div>
+            </div>
 
-          <VideoControls videoId={video.id} status={video.status} />
+            <div className="pt-6">
+              <VideoControls videoId={video.id} status={video.status} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function DetailItem({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
+function DetailItem({ label, value }: { label: string; value: string }) {
   return (
-    <Card className="bg-muted/20 ring-border/50 space-y-2 rounded-2xl border-none p-4 ring-1">
-      <div className="text-muted-foreground flex items-center gap-2 text-[9px] font-black tracking-widest uppercase">
-        {icon} {label}
+    <div className="space-y-0.5">
+      <div className="text-muted-foreground text-[10px] font-medium tracking-tight uppercase">
+        {label}
       </div>
-      <div className="truncate text-sm font-black tracking-tight uppercase">
-        {value}
-      </div>
-    </Card>
+      <div className="text-foreground text-sm font-medium">{value}</div>
+    </div>
   );
 }

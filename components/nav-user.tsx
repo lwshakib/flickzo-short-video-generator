@@ -9,6 +9,7 @@ import {
 } from "@tabler/icons-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -113,24 +114,27 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle className="size-4" />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard className="size-4" />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification className="size-4" />
-                Notifications
-              </DropdownMenuItem>
+              <Link href="/account">
+                <DropdownMenuItem className="cursor-pointer">
+                  <IconUserCircle className="size-4" />
+                  Account
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/billing">
+                <DropdownMenuItem className="cursor-pointer">
+                  <IconCreditCard className="size-4" />
+                  Billing
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/notifications">
+                <DropdownMenuItem className="cursor-pointer">
+                  <IconNotification className="size-4" />
+                  Notifications
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleLogout}
-              className="cursor-pointer text-red-500 focus:text-red-500"
-            >
+            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
               <IconLogout className="size-4" />
               Log out
             </DropdownMenuItem>
