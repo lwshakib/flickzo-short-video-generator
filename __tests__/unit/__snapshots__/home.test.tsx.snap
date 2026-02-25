@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Home Page matches snapshot 1`] = `
+<div>
+  <div
+    class="min-h-screen w-full"
+  >
+    <section>
+      <h1>
+        Architect Cinematic Stories with AI
+      </h1>
+    </section>
+    <section>
+      Features
+    </section>
+    <section>
+      How It Works
+    </section>
+    <section>
+      Pricing
+    </section>
+    <section>
+      FAQ
+    </section>
+    <footer>
+      Footer
+    </footer>
+  </div>
+</div>
+`;

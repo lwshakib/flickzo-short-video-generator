@@ -6,8 +6,9 @@ import { Mail, CheckCircle2, ArrowLeft, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
 
-export default function VerifyEmailPage() {
+function VerifyEmail() {
   const searchParams = useSearchParams();
   const state = searchParams.get("state");
 
@@ -31,7 +32,7 @@ export default function VerifyEmailPage() {
               <div className="text-center md:text-left">
                 <Link
                   href="/sign-in"
-                  className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
+                  className="group text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
                 >
                   <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
                   Back to Login
@@ -41,19 +42,21 @@ export default function VerifyEmailPage() {
 
             <div className="flex flex-col items-center gap-2 text-center md:items-start md:text-left">
               {isVerified ? (
-                <div className="mb-4 flex size-20 animate-in zoom-in-50 items-center justify-center rounded-full bg-green-500/10 text-green-500 ring-8 ring-green-500/5 duration-500">
+                <div className="animate-in zoom-in-50 mb-4 flex size-20 items-center justify-center rounded-full bg-green-500/10 text-green-500 ring-8 ring-green-500/5 duration-500">
                   <CheckCircle2 className="size-12" />
                 </div>
               ) : (
-                <div className="mb-4 flex size-20 items-center justify-center rounded-full bg-primary/10 text-primary ring-8 ring-primary/5">
+                <div className="bg-primary/10 text-primary ring-primary/5 mb-4 flex size-20 items-center justify-center rounded-full ring-8">
                   <Mail className="size-10" />
                 </div>
               )}
 
               <h1 className="text-3xl font-bold tracking-tight">
-                {isVerified ? "Email verified successfully" : "Check your email"}
+                {isVerified
+                  ? "Email verified successfully"
+                  : "Check your email"}
               </h1>
-              <p className="text-lg text-muted-foreground text-balance">
+              <p className="text-muted-foreground text-lg text-balance">
                 {isVerified
                   ? "Your email address has been successfully verified. You can now access all features of Flickzo."
                   : "We've sent a verification link to your email address. Please click the link to verify your account."}
@@ -65,7 +68,7 @@ export default function VerifyEmailPage() {
                 <Button
                   asChild
                   size="lg"
-                  className="w-full text-base font-semibold shadow-lg shadow-primary/20"
+                  className="shadow-primary/20 w-full text-base font-semibold shadow-lg"
                 >
                   <a
                     href="https://mail.google.com"
@@ -82,7 +85,7 @@ export default function VerifyEmailPage() {
                 <Button
                   asChild
                   size="lg"
-                  className="w-full text-base font-semibold shadow-lg shadow-primary/20"
+                  className="shadow-primary/20 w-full text-base font-semibold shadow-lg"
                 >
                   <Link href="/sign-in">Back to Login</Link>
                 </Button>
@@ -90,7 +93,7 @@ export default function VerifyEmailPage() {
             </div>
 
             {!isVerified && (
-              <p className="text-center text-sm text-muted-foreground md:text-left">
+              <p className="text-muted-foreground text-center text-sm md:text-left">
                 Didn&apos;t receive the email? Check your spam folder or contact
                 support.
               </p>
@@ -118,5 +121,13 @@ export default function VerifyEmailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmail />
+    </Suspense>
   );
 }

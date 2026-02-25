@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +19,6 @@ export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -72,20 +70,26 @@ export function SignUpForm({
 
   if (isSuccess) {
     return (
-      <div className="flex flex-col items-center gap-6 text-center animate-in fade-in zoom-in-95 duration-300">
+      <div className="animate-in fade-in zoom-in-95 flex flex-col items-center gap-6 text-center duration-300">
         <div className="flex flex-col items-center gap-2">
-          <div className="flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary ring-8 ring-primary/5">
+          <div className="bg-primary/10 text-primary ring-primary/5 flex size-16 items-center justify-center rounded-full ring-8">
             <Mail className="size-8" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Email has been sent</h1>
-          <p className="text-muted-foreground text-sm text-balance max-w-[280px]">
+          <h1 className="text-2xl font-bold tracking-tight">
+            Email has been sent
+          </h1>
+          <p className="text-muted-foreground max-w-[280px] text-sm text-balance">
             You have to verify your email to continue.
           </p>
         </div>
 
         <div className="flex w-full flex-col gap-3">
           <Button asChild className="w-full">
-            <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://mail.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Go to Gmail
             </a>
           </Button>

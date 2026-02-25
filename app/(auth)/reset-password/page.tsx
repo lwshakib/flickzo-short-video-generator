@@ -1,9 +1,9 @@
 "use client";
 
 import { Logo } from "@/components/logo";
-import { useState, useEffect } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { CheckCircle2, Loader2, Lock, AlertCircle } from "lucide-react";
+import { CheckCircle2, Loader2, Lock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 
-export default function ResetPasswordPage() {
+function ResetPassword() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const state = searchParams.get("state");
@@ -23,11 +23,11 @@ export default function ResetPasswordPage() {
 
   const isSuccess = state === "success";
 
-  useEffect(() => {
-    if (!token && !isSuccess) {
-      setError("Missing reset token. Please request a new password reset link.");
-    }
-  }, [token, isSuccess]);
+  const missingTokenError =
+    !token && !isSuccess
+      ? "Missing reset token. Please request a new password reset link."
+      : "";
+  const displayError = error || missingTokenError;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +44,9 @@ export default function ResetPasswordPage() {
     }
 
     if (!token) {
-      setError("Reset token is missing. Please request a new password reset link.");
+      setError(
+        "Reset token is missing. Please request a new password reset link."
+      );
       setIsLoading(false);
       return;
     }
@@ -59,10 +61,10 @@ export default function ResetPasswordPage() {
 
       if (error) {
         // If the error is specifically about the token, make it clearer
-        const message = error.message?.toLowerCase().includes("token") 
+        const message = error.message?.toLowerCase().includes("token")
           ? "The reset link is invalid or has expired. Please request a new one."
-          : (error.message || "Failed to reset password");
-        
+          : error.message || "Failed to reset password";
+
         setError(message);
         setIsLoading(false);
         return;
@@ -110,35 +112,42 @@ export default function ResetPasswordPage() {
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md space-y-8 text-center md:text-left">
             <div className="flex flex-col items-center gap-2 md:items-start">
-              <div className={`${isSuccess ? 'bg-green-500/10 text-green-500' : 'bg-primary/10 text-primary'} mb-4 flex size-20 items-center justify-center rounded-full ring-8 ring-offset-0 ${isSuccess ? 'ring-green-500/5' : 'ring-primary/5'}`}>
-                {isSuccess ? <CheckCircle2 className="size-12" /> : <Lock className="size-10" />}
+              <div
+                className={`${isSuccess ? "bg-green-500/10 text-green-500" : "bg-primary/10 text-primary"} mb-4 flex size-20 items-center justify-center rounded-full ring-8 ring-offset-0 ${isSuccess ? "ring-green-500/5" : "ring-primary/5"}`}
+              >
+                {isSuccess ? (
+                  <CheckCircle2 className="size-12" />
+                ) : (
+                  <Lock className="size-10" />
+                )}
               </div>
-              
+
               <h1 className="text-3xl font-bold tracking-tight">
                 {isSuccess ? "Password reset successfully" : "Set new password"}
               </h1>
               <p className="text-muted-foreground text-lg text-balance">
-                {isSuccess 
+                {isSuccess
                   ? "Your password has been successfully updated. You can now login with your new credentials."
-                  : "Please enter your new password below."
-                }
+                  : "Please enter your new password below."}
               </p>
             </div>
 
             {isSuccess ? (
               <div className="pt-4">
-                <Button asChild size="lg" className="w-full text-base font-semibold shadow-lg shadow-primary/20">
-                  <Link href="/sign-in">
-                    Back to Login
-                  </Link>
+                <Button
+                  asChild
+                  size="lg"
+                  className="shadow-primary/20 w-full text-base font-semibold shadow-lg"
+                >
+                  <Link href="/sign-in">Back to Login</Link>
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="text-left space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6 text-left">
                 <FieldGroup>
-                  {error && (
+                  {displayError && (
                     <div className="bg-destructive/10 text-destructive rounded-md p-3 text-center text-sm">
-                      {error}
+                      {displayError}
                     </div>
                   )}
                   <Field>
@@ -154,7 +163,9 @@ export default function ResetPasswordPage() {
                     />
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="confirmPassword">Confirm New Password</FieldLabel>
+                    <FieldLabel htmlFor="confirmPassword">
+                      Confirm New Password
+                    </FieldLabel>
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -165,7 +176,12 @@ export default function ResetPasswordPage() {
                       disabled={isLoading}
                     />
                   </Field>
-                  <Button type="submit" size="lg" className="w-full font-semibold" disabled={isLoading}>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full font-semibold"
+                    disabled={isLoading}
+                  >
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 size-5 animate-spin" />
@@ -182,5 +198,13 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense>
+      <ResetPassword />
+    </Suspense>
   );
 }
