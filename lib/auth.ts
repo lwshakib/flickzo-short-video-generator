@@ -1,12 +1,14 @@
 /**
- * Better-Auth server-side configuration.
- * Handles database integration via Prisma and configures authentication providers.
+ * Server-side authentication configuration.
+ * This file sets up Better-Auth with Prisma as the database adapter,
+ * configures email/password and social providers, and handles
+ * transactional emails for verification and password resets.
  */
-import { betterAuth } from "better-auth"; // Core library function to initialize the Better-Auth service
-import { prismaAdapter } from "better-auth/adapters/prisma"; // Prisma database adapter tailored for Better-Auth
-import prisma from "./prisma"; // The project's singleton Prisma database client instance
-import { Resend } from "resend"; // Resend SDK for sending transactional emails
-import { AuthEmailTemplate } from "@/components/emails/auth-email-template"; // React component acting as template for auth emails
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import prisma from "./prisma";
+import { Resend } from "resend";
+import { AuthEmailTemplate } from "@/components/emails/auth-email-template";
 
 // Initialize the Resend mail client using the secret API key from environment variables.
 const resend = new Resend(process.env.RESEND_API_KEY);

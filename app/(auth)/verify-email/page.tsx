@@ -8,9 +8,13 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
 
+/**
+ * VerifyEmail component.
+ * Displays state-dependent information about the email verification process.
+ */
 function VerifyEmail() {
   const searchParams = useSearchParams();
-  const state = searchParams.get("state");
+  const state = searchParams.get("state"); // Checks if email is already "verified" or "sent"
 
   const isVerified = state === "verified";
   const isSent = state === "sent";
@@ -42,10 +46,12 @@ function VerifyEmail() {
 
             <div className="flex flex-col items-center gap-2 text-center md:items-start md:text-left">
               {isVerified ? (
+                // Success State: Email verified
                 <div className="animate-in zoom-in-50 mb-4 flex size-20 items-center justify-center rounded-full bg-green-500/10 text-green-500 ring-8 ring-green-500/5 duration-500">
                   <CheckCircle2 className="size-12" />
                 </div>
               ) : (
+                // Pending State: Check your inbox
                 <div className="bg-primary/10 text-primary ring-primary/5 mb-4 flex size-20 items-center justify-center rounded-full ring-8">
                   <Mail className="size-10" />
                 </div>
@@ -65,6 +71,7 @@ function VerifyEmail() {
 
             <div className="flex flex-col gap-4">
               {isSent && (
+                // Contextual action for Gmail users
                 <Button
                   asChild
                   size="lg"
@@ -82,6 +89,7 @@ function VerifyEmail() {
               )}
 
               {isVerified && (
+                // Call to action after successful verification
                 <Button
                   asChild
                   size="lg"
@@ -101,6 +109,7 @@ function VerifyEmail() {
           </div>
         </div>
       </div>
+      {/* Decorative desktop section */}
       <div className="relative hidden overflow-hidden lg:block">
         <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/60 to-transparent" />
         <Image
@@ -124,6 +133,10 @@ function VerifyEmail() {
   );
 }
 
+/**
+ * VerifyEmailPage export.
+ * Wrapped in Suspense to handle useSearchParams safely during build.
+ */
 export default function VerifyEmailPage() {
   return (
     <Suspense>

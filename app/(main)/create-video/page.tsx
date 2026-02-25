@@ -28,10 +28,15 @@ import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
+/**
+ * CreateVideoPage component.
+ * The primary interface for users to configure and trigger cinematic video generation.
+ */
 export default function CreateVideoPage() {
   const router = useRouter();
-  const { data: session } = authClient.useSession();
-  // Topic selection state
+  const { data: session } = authClient.useSession(); // Client-side session hook
+
+  // 1. TOPIC SELECTION STATE
   const [selectedTab, setSelectedTab] = useState("suggestions");
   const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(
     null
@@ -45,20 +50,23 @@ export default function CreateVideoPage() {
     null
   );
 
-  // Customization state
+  // 2. VISUAL & AUDIO CUSTOMIZATION STATE
   const [selectedStyle, setSelectedStyle] = useState<string>("Anime");
   const [selectedVoice, setSelectedVoice] = useState<string>("Thalia");
   const [selectedCaptionStyle, setSelectedCaptionStyle] = useState<
     (typeof captionStyles)[number]
   >(captionStyles[0]);
 
-  // Using a ref for the audio instance to ensure we can stop/start reliably
+  // Audio preview instance for voice selection
   const playerRef = useState(() =>
     typeof Audio !== "undefined" ? new Audio() : null
   )[0];
 
   const selectedTopic = selectedSuggestion || customTopic;
 
+  /**
+   * Plays a voice sample when a narrator is selected.
+   */
   const handleVoicePlay = (voiceId: string, model: string) => {
     setSelectedVoice(voiceId);
 
@@ -72,6 +80,9 @@ export default function CreateVideoPage() {
     }
   };
 
+  /**
+   * Generates AI scripts based on the chosen topic.
+   */
   const handleGenerateScript = async () => {
     if (!selectedTopic) {
       toast.error("Please select or enter a topic");
@@ -98,6 +109,7 @@ export default function CreateVideoPage() {
     }
   };
 
+  // Helper selectors for preview UI
   const currentStyleData = useMemo(() => {
     return videoStyles.find((s) => s.label === selectedStyle);
   }, [selectedStyle]);
@@ -106,6 +118,9 @@ export default function CreateVideoPage() {
     return videoVoices.find((v) => v.Id === selectedVoice);
   }, [selectedVoice]);
 
+  /**
+   * Final step: Triggers the Inngest workflow to create the video.
+   */
   const handleCreateVideo = async () => {
     if (!session?.user) {
       toast.error("Please sign in to create videos");
@@ -125,6 +140,7 @@ export default function CreateVideoPage() {
     const selectedScript = generatedScripts[selectedScriptIdx];
 
     try {
+      // POST to our API which triggers the Inngest background function
       const promise = axios.post("/api/videos/create", {
         title: selectedScript.title,
         script: selectedScript.content,

@@ -8,6 +8,9 @@ import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Plus, Video, Activity, Zap, ArrowRight } from "lucide-react";
 
+/**
+ * Fetches the current authenticated user session.
+ */
 async function getUser() {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -15,23 +18,34 @@ async function getUser() {
   return session?.user;
 }
 
+/**
+ * Retrieves dashboard statistics and recent video activity for the user.
+ */
 async function getDashboardData(userId: string) {
   const [videos, totalCount, pendingCount] = await Promise.all([
+    // Get the 4 most recent videos
     prisma.video.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
       take: 4,
     }),
+    // Count total videos ever created
     prisma.video.count({ where: { userId } }),
+    // Count videos currently in the production pipeline
     prisma.video.count({ where: { userId, status: "PENDING" } }),
   ]);
 
   return { videos, totalCount, pendingCount };
 }
 
+/**
+ * Home (Dashboard) component.
+ * Provides an overview of user activity, stats, and quick actions.
+ */
 export default async function Home() {
   const user = await getUser();
 
+  // Redirect to landing page if no active session
   if (!user) {
     return redirect("/");
   }

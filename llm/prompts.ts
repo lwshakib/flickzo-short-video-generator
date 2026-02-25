@@ -1,3 +1,13 @@
+/**
+ * AI Prompt Templates.
+ * This file contains the system prompts and instruction sets used to guide the LLM
+ * in generating consistent, high-quality content for videos, scripts, and metadata.
+ */
+
+/**
+ * Prompt for generating short-form video scripts.
+ * Focuses on hooks, retention, and TTS-friendly language.
+ */
 export const SCRIPT_GENERATE_PROMPT = `Generate two distinct, high-quality scripts on the topic of {{TOPIC}}. Each script should be specifically crafted for 40-second video content and optimized for AI text-to-speech conversion.
 
 SCRIPT REQUIREMENTS:
@@ -41,6 +51,10 @@ Format the response strictly as follows:
 
 Do not include any commentary, explanations, hashtags, markdown formatting, or emojis outside of the JSON structure. Only include clean, speech-optimized text in the content fields.`;
 
+/**
+ * Prompt for breaking down a script into scene-specific image prompts.
+ * Used to provide visual descriptions for image generation models (e.g., Flux).
+ */
 export const IMAGE_PROMPT_SCRIPT = `
 Generate detailed image prompts in the {{STYLE}} style for each key scene of a 30-second video.
 
@@ -63,6 +77,9 @@ Schema:
 ]
 `;
 
+/**
+ * Prompt for generating SEO-optimized YouTube metadata (title, description, tags).
+ */
 export const YOUTUBE_METADATA_GENERATE_SCRIPT = `
 I will provide a script or content. Based on that content, generate the following SEO metadata for youtube in JSON format:
 
@@ -82,6 +99,9 @@ Content:
 
 `;
 
+/**
+ * Prompt for generating a short, punchy title for individual video scripts.
+ */
 export const TITLE_GENERATE_PROMPT = `Generate a single, compelling title for the following content: {{CONTENT}}
 
 TITLE REQUIREMENTS:
@@ -96,6 +116,9 @@ TITLE REQUIREMENTS:
 
 Return only the title in plain text with no additional formatting, explanations, or punctuation marks.`;
 
+/**
+ * Utility prompt for refining and enhancing raw user prompts into professional AI prompts.
+ */
 export const ENHANCE_PROMPT_SCRIPT = `
 You are a prompt expert. Improve the following prompt to make it clearer, more useful, and effective.
 
@@ -111,6 +134,10 @@ Instructions:
 Return only the enhanced prompt as plain text. No markdown, no explanation, no formatting. Just as plain text no markdown also on the plain text.
 `;
 
+/**
+ * Detailed prompt analyzer for image generation, specializing in YouTube assets.
+ * Handles LOGO, BANNER, and THUMBNAIL types with specific technical requirements.
+ */
 export const IMAGE_GENERATION_SCRIPT = `
 
 {{TYPE}}
@@ -179,5 +206,4 @@ Return the result in this format as plain text (no markdown, no extra lines):
 }
 
 Only return the above JSON structure. No extra comments, no markdown, no formatting.
-
 `;

@@ -2,8 +2,13 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
+/**
+ * Recent Activity API.
+ * Retrieves a limited list of the user's most recently interacted-with videos.
+ */
 export async function GET(req: Request) {
   try {
+    // 1. Authenticate the user
     const session = await auth.api.getSession({
       headers: req.headers,
     });
@@ -12,6 +17,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // 2. Query the database for the 5 latest videos
     const videos = await prisma.video.findMany({
       where: {
         userId: session.user.id,
@@ -19,7 +25,7 @@ export async function GET(req: Request) {
       orderBy: {
         createdAt: "desc",
       },
-      take: 5, // Limit to recent 5
+      take: 5, // Return a small subset for efficiency
     });
 
     return NextResponse.json(videos);

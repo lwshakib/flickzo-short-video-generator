@@ -11,15 +11,22 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 
+/**
+ * ForgotPassword component.
+ * Handles the password reset request flow.
+ */
 function ForgotPassword() {
   const searchParams = useSearchParams();
-  const state = searchParams.get("state");
+  const state = searchParams.get("state"); // Checks if the email was successfully "sent"
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const isSent = state === "sent";
 
+  /**
+   * Submits the password reset request to Better-Auth.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -37,7 +44,7 @@ function ForgotPassword() {
         return;
       }
 
-      // Redirect to same page with sent state
+      // Update URL state to show success message without a full page reload
       window.history.pushState(null, "", "?state=sent");
       setIsLoading(false);
     } catch {
@@ -75,6 +82,7 @@ function ForgotPassword() {
             </div>
 
             {isSent ? (
+              // Success State: Email sent
               <div className="flex flex-col gap-4">
                 <Button
                   asChild
@@ -104,6 +112,7 @@ function ForgotPassword() {
                 </Button>
               </div>
             ) : (
+              // Initial State: Request form
               <form onSubmit={handleSubmit} className="space-y-6 text-left">
                 <FieldGroup>
                   {error && (
@@ -152,6 +161,7 @@ function ForgotPassword() {
           </div>
         </div>
       </div>
+      {/* Visual background section for large screens */}
       <div className="relative hidden overflow-hidden lg:block">
         <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/60 to-transparent" />
         <Image
@@ -175,6 +185,10 @@ function ForgotPassword() {
   );
 }
 
+/**
+ * ForgotPasswordPage export.
+ * Wrapped in Suspense to handle useSearchParams.
+ */
 export default function ForgotPasswordPage() {
   return (
     <Suspense>

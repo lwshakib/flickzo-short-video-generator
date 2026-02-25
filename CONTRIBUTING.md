@@ -1,4 +1,4 @@
-# Contributing to Flickzo
+# <img src="public/logo.svg" width="32" height="32" align="center" /> Contributing to Flickzo
 
 First off, thanks for taking the time to contribute! 🎉
 

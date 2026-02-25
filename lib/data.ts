@@ -1,3 +1,7 @@
+/**
+ * Preset styles for the generated videos.
+ * Each style includes a user-friendly label and a corresponding preview image path.
+ */
 export const videoStyles = [
   { label: "Anime", src: "/styles/anime.png" },
   { label: "GTA", src: "/styles/gta.png" },
@@ -8,6 +12,10 @@ export const videoStyles = [
   { label: "Realistic", src: "/styles/realistic.png" },
 ];
 
+/**
+ * Available voices for Text-to-Speech (TTS) using Deepgram Aura.
+ * Each voice includes metadata such as gender, model ID, and descriptive traits.
+ */
 export const videoVoices = [
   {
     Gender: "Female",
@@ -49,9 +57,12 @@ export const videoVoices = [
     SupportedEngines: ["aura-2"],
     Description: "Deep, Trustworthy, Smooth",
   },
-  // …you may extend with other Aura-2 voices such as Andromeda, Athena, Orion, etc.
 ];
 
+/**
+ * Styling presets for the video captions.
+ * These map to CSS utility classes (Tailwind) used in the video player or generator.
+ */
 export const captionStyles = [
   { label: "YOUTUBER", className: "text-yellow-400 font-extrabold" },
   { label: "Supreme", className: "italic text-white font-semibold" },
@@ -61,6 +72,9 @@ export const captionStyles = [
   { label: "Futuristic", className: "text-cyan-400 font-bold" },
 ];
 
+/**
+ * Suggestion keywords for the video generator prompt input.
+ */
 export const suggestions = [
   "History",
   "Kids Story",

@@ -5,6 +5,10 @@ import {
   CLOUDINARY_CLOUD_NAME,
 } from "./env";
 
+/**
+ * Cloudinary configuration.
+ * Configures the Cloudinary SDK with credentials from environment variables.
+ */
 cloudinary.config({
   cloud_name: CLOUDINARY_CLOUD_NAME,
   api_key: CLOUDINARY_API_KEY,
@@ -14,15 +18,26 @@ cloudinary.config({
 
 export const cloudinaryClient = cloudinary;
 
+/**
+ * Result structure for the audio upload.
+ */
 export interface SaveAudioToCloudinaryResult {
   audioUrl: string;
   publicId: string;
 }
 
+/**
+ * Uploads an audio buffer to Cloudinary using a stream.
+ *
+ * @param buffer The Buffer containing audio data (e.g., from an AI TTS engine).
+ * @param folder The target folder in Cloudinary for the uploaded file.
+ * @returns A promise resolving to the secure URL and public ID of the uploaded asset.
+ */
 export const saveAudioToCloudinary = async (
   buffer: Buffer,
   folder = "infera-notebook/audio"
 ): Promise<SaveAudioToCloudinaryResult> => {
+  // Wrap the Cloudinary upload_stream in a Promise for async/await compatibility
   const uploadResult = await new Promise<{
     secure_url: string;
     public_id: string;
@@ -31,7 +46,7 @@ export const saveAudioToCloudinary = async (
       .upload_stream(
         {
           folder,
-          resource_type: "video", // Audio is treated as video resource type in Cloudinary usually
+          resource_type: "video", // Important: Audio files are typically categorized as "video" in Cloudinary.
         },
         (error, result) => {
           if (error) {
@@ -46,7 +61,7 @@ export const saveAudioToCloudinary = async (
           }
         }
       )
-      .end(buffer);
+      .end(buffer); // Pipe the buffer to the upload stream
   });
 
   return {

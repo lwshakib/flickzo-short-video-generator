@@ -3,6 +3,10 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { inngest } from "@/inngest/client";
 
+/**
+ * Single Video Detail API.
+ * Returns the full JSON object for a specific video record.
+ */
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ videoId: string }> }
@@ -18,6 +22,7 @@ export async function GET(
 
     const { videoId } = await params;
 
+    // Fetch the specific video while ensuring it belongs to the requester
     const video = await prisma.video.findUnique({
       where: {
         id: videoId,
@@ -41,6 +46,11 @@ export async function GET(
   }
 }
 
+/**
+ * Video Deletion & Cancellation API.
+ * Permanently removes a video record and cancels any active generation
+ * background processes if applicable.
+ */
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ videoId: string }> }
@@ -56,7 +66,7 @@ export async function DELETE(
 
     const { videoId } = await params;
 
-    // 1. Check if the video exists and belongs to the user
+    // 1. Verify ownership and existence
     const video = await prisma.video.findUnique({
       where: {
         id: videoId,
@@ -68,7 +78,10 @@ export async function DELETE(
       return NextResponse.json({ error: "Video not found" }, { status: 404 });
     }
 
-    // 2. If it's pending, send the cancel event to Inngest
+    /**
+     * 2. If the video is still "PENDING", attempt to cancel the Inngest workflow.
+     * This saves computational resources (API credits) by stopping generation.
+     */
     if (video.status === "PENDING") {
       await inngest.send({
         name: "video.canceled",
@@ -78,7 +91,7 @@ export async function DELETE(
       });
     }
 
-    // 3. Delete the record from the database
+    // 3. Purge the record from the database
     await prisma.video.delete({
       where: {
         id: videoId,

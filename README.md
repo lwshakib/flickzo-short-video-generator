@@ -1,4 +1,4 @@
-# Flickzo - AI Short Video Generator
+# <img src="public/logo.svg" width="32" height="32" align="center" /> Flickzo - AI Short Video Generator
 
 Flickzo is a powerful platform that leverages advanced AI to transform text and ideas into professional short-form videos. Built with modern web technologies, it automates the entire video creation process—from scriptwriting and voice generation to visual synthesis and video editing.
 
@@ -36,9 +36,10 @@ Flickzo is a powerful platform that leverages advanced AI to transform text and 
 - **Video Engine**: [Remotion](https://www.remotion.dev/)
 - **Background Jobs**: [Inngest](https://www.inngest.com/)
 - **AI Services**:
-  - **LLM**: Nebius AI
-  - **Audio**: Deepgram
-  - **Storage/Media**: Cloudinary
+  - **LLM (Script)**: [Google Gemini](https://deepmind.google/technologies/gemini/)
+  - **Image Generation**: [Nebius AI](https://nebius.ai/)
+  - **Audio**: [Deepgram](https://deepgram.com/)
+  - **Storage/Media**: [Cloudinary](https://cloudinary.com/)
 
 ## 🏗️ Architecture
 
@@ -50,7 +51,7 @@ graph TD
 
     subgraph "Background Workers"
         Inngest -->|4. Generate Script| Workflow[Video Creation Workflow]
-        Workflow -->|5a. Call LLM| LLM[Nebius AI]
+        Workflow -->|5a. Call LLM| LLM[Google Gemini]
         Workflow -->|5b. Generate Audio| Audio[Deepgram]
         Workflow -->|5c. Generate Images| ImgGen[Image Generator]
         Workflow -->|6. Render Video| Remotion[Remotion Engine]

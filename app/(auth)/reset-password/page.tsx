@@ -11,11 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 
+/**
+ * ResetPassword component.
+ * Allows users to set a new password using a token received via email.
+ */
 function ResetPassword() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const state = searchParams.get("state");
-  const token = searchParams.get("token");
+  const state = searchParams.get("state"); // Checks if reset was a "success"
+  const token = searchParams.get("token"); // The secure reset token from the URL
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -23,16 +27,21 @@ function ResetPassword() {
 
   const isSuccess = state === "success";
 
+  // Validate token presence immediately
   const missingTokenError =
     !token && !isSuccess
       ? "Missing reset token. Please request a new password reset link."
       : "";
   const displayError = error || missingTokenError;
 
+  /**
+   * Submits the new password to Better-Auth.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
+    // Basic client-side validation
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -60,7 +69,7 @@ function ResetPassword() {
       });
 
       if (error) {
-        // If the error is specifically about the token, make it clearer
+        // Handle token-specific errors (expired or invalid)
         const message = error.message?.toLowerCase().includes("token")
           ? "The reset link is invalid or has expired. Please request a new one."
           : error.message || "Failed to reset password";
@@ -70,7 +79,7 @@ function ResetPassword() {
         return;
       }
 
-      // Redirect or show success
+      // On success, redirect to the success state of the same page
       router.push("/reset-password?state=success");
       setIsLoading(false);
     } catch {
@@ -81,6 +90,7 @@ function ResetPassword() {
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
+      {/* Visual background section */}
       <div className="relative hidden overflow-hidden lg:block">
         <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/60 to-transparent" />
         <Image
@@ -133,6 +143,7 @@ function ResetPassword() {
             </div>
 
             {isSuccess ? (
+              // Success State: Redirect to login
               <div className="pt-4">
                 <Button
                   asChild
@@ -143,6 +154,7 @@ function ResetPassword() {
                 </Button>
               </div>
             ) : (
+              // Initial State: Reset form
               <form onSubmit={handleSubmit} className="space-y-6 text-left">
                 <FieldGroup>
                   {displayError && (
@@ -201,6 +213,10 @@ function ResetPassword() {
   );
 }
 
+/**
+ * ResetPasswordPage export.
+ * Wrapped in Suspense to handle useSearchParams.
+ */
 export default function ResetPasswordPage() {
   return (
     <Suspense>
