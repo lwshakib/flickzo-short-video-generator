@@ -52,10 +52,10 @@ export async function POST(req: Request) {
         });
 
         return NextResponse.json({ videoId: video.id });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error creating video:", error);
         return NextResponse.json(
-            { error: error.message || "Failed to create video" },
+            { error: error instanceof Error ? error.message : "Failed to create video" },
             { status: 500 }
         );
     }

@@ -1,7 +1,6 @@
 "use client"
 
 import {
-    IconDots,
     IconVideo,
     IconSparkles,
     IconAlertCircle,
@@ -24,7 +23,7 @@ export function NavRecentVideos({
     videos,
     isLoading,
 }: {
-    videos: any[]
+    videos: { id: string; title: string; status: string }[]
     isLoading?: boolean
 }) {
     const pathname = usePathname()

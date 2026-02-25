@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { Play, Clock, AlertCircle, CheckCircle2, Video as VideoIcon } from "lucide-react";
@@ -11,17 +11,26 @@ import { useInngestSubscription } from "@inngest/realtime/hooks";
 import { fetchRealtimeSubscriptionToken } from "@/actions/get-subscribe-token";
 import axios from "axios";
 
-export function VideosGrid({ initialVideos }: { initialVideos: any[] }) {
+interface VideoItem {
+    id: string;
+    title: string;
+    videoStyle: string;
+    images: { url: string }[];
+    createdAt: string | Date;
+    status: string;
+}
+
+export function VideosGrid({ initialVideos }: { initialVideos: VideoItem[] }) {
     const [videos, setVideos] = useState(initialVideos);
 
-    const fetchVideos = async () => {
+    const fetchVideos = useCallback(async () => {
         try {
             const res = await axios.get("/api/videos/recent?take=50"); // Fetch more for the library
             setVideos(res.data);
         } catch (err) {
             console.error("Failed to fetch videos", err);
         }
-    };
+    }, []);
 
     const { latestData } = useInngestSubscription({
         refreshToken: fetchRealtimeSubscriptionToken,
@@ -29,9 +38,10 @@ export function VideosGrid({ initialVideos }: { initialVideos: any[] }) {
 
     useEffect(() => {
         if (latestData) {
-            fetchVideos();
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            void fetchVideos();
         }
-    }, [latestData]);
+    }, [latestData, fetchVideos]);
 
     if (videos.length === 0) {
         return (
@@ -61,7 +71,7 @@ export function VideosGrid({ initialVideos }: { initialVideos: any[] }) {
     );
 }
 
-export function VideoCard({ video }: { video: any }) {
+export function VideoCard({ video }: { video: VideoItem }) {
     const styleData = videoStyles.find((s) => s.label === video.videoStyle);
 
     return (
@@ -69,12 +79,14 @@ export function VideoCard({ video }: { video: any }) {
             <Card className="group relative overflow-hidden rounded-2xl border-none ring-1 ring-border/50 bg-muted/20 hover:ring-primary/50 transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 p-0">
                 <div className="aspect-[9/16] relative overflow-hidden bg-black">
                     {video.images && video.images.length > 0 ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img
-                            src={(video.images[0] as any).url}
+                            src={(video.images[0]).url}
                             alt={video.title}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80"
                         />
                     ) : (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                             src={styleData?.src}
                             alt={video.title}

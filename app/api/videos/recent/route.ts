@@ -23,10 +23,10 @@ export async function GET(req: Request) {
         });
 
         return NextResponse.json(videos);
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error fetching recent videos:", error);
         return NextResponse.json(
-            { error: error.message || "Failed to fetch recent videos" },
+            { error: error instanceof Error ? error.message : "Failed to fetch recent videos" },
             { status: 500 }
         );
     }

@@ -2,7 +2,10 @@
 import { Player } from "@remotion/player";
 import RemotionComposition from "./remotion-composition";
 type Props = {
-  videoData: any;
+  videoData: {
+    captions?: { start: number; end: number; word: string }[];
+    [key: string]: unknown;
+  };
 };
 
 function RemotionPlayer({ videoData }: Props) {

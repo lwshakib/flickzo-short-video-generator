@@ -5,6 +5,21 @@ import { generateObjectFromAI } from "@/llm/generateObject";
 import { IMAGE_PROMPT_SCRIPT } from "@/llm/prompts";
 import { z } from "zod";
 
+interface CaptionWord {
+    word: string;
+    start: number;
+    end: number;
+    confidence: number;
+    punctuated_word?: string;
+}
+
+interface ImageResult {
+    url: string;
+    publicId: string;
+    prompt: string;
+    content: string;
+}
+
 export async function generateAudio(text: string, voice: string) {
     const audioResult = await llmGenerateAudio({ text, voice });
     if (!audioResult.success || !audioResult.buffer) {
@@ -20,7 +35,7 @@ export async function generateAudio(text: string, voice: string) {
     };
 }
 
-export async function generateCaptions(audioUrl: string, step: any) {
+export async function generateCaptions(audioUrl: string, step: any): Promise<CaptionWord[]> {
     const captions = await step.run("transcribe-audio", async () => {
         const { result, error } =
             await deepgramClient.listen.prerecorded.transcribeUrl(
@@ -33,12 +48,12 @@ export async function generateCaptions(audioUrl: string, step: any) {
                 }
             );
         if (error) throw error;
-        return result.results.channels[0]?.alternatives[0].words;
+        return result.results.channels[0]?.alternatives[0].words as CaptionWord[];
     });
     return captions;
 }
 
-export async function generateImages(script: string, style: string, step: any) {
+export async function generateImages(script: string, style: string, step: any): Promise<ImageResult[]> {
     const imagePromptsPrompt = IMAGE_PROMPT_SCRIPT
         .replace("{{STYLE}}", style)
         .replace("{{SCRIPT}}", script);
@@ -52,12 +67,12 @@ export async function generateImages(script: string, style: string, step: any) {
 
     const imagePrompts = await step.run("generate-image-prompts", async () => {
         return await generateObjectFromAI(imagePromptsPrompt, imagePromptsSchema);
-    });
+    }) as { imagePrompt: string, sceneContent: string }[];
 
     const images = [];
     for (let i = 0; i < imagePrompts.length; i++) {
         const promptData = imagePrompts[i];
-        const imageResult = await step.run(`generate-image-${i+1}/${imagePrompts.length}`, async () => {
+        const imageResult = (await step.run(`generate-image-${i+1}/${imagePrompts.length}`, async () => {
             const result = await generateImage({
                 prompt: promptData.imagePrompt,
                 width: 1024,
@@ -68,11 +83,11 @@ export async function generateImages(script: string, style: string, step: any) {
             }
             return {
                 url: result.image,
-                publicId: result.publicId,
+                publicId: result.publicId!,
                 prompt: result.prompt,
                 content: promptData.sceneContent
             };
-        });
+        })) as ImageResult;
         images.push(imageResult);
     }
 

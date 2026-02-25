@@ -25,10 +25,10 @@ export async function POST(req: Request) {
         const object = await generateObjectFromAI(prompt, schema);
 
         return NextResponse.json({ data: object });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error generating script:", error);
         return NextResponse.json(
-            { error: error.message || "Failed to generate script" },
+            { error: error instanceof Error ? error.message : "Failed to generate script" },
             { status: 500 }
         );
     }

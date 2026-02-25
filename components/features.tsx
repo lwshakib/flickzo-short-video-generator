@@ -5,8 +5,6 @@ import {
     Wand2,
     Share2,
     Video,
-    Database,
-    Globe,
     Lock,
 } from "lucide-react"
 

@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -21,14 +20,26 @@ import { useInngestSubscription } from "@inngest/realtime/hooks";
 import { fetchRealtimeSubscriptionToken } from "@/actions/get-subscribe-token";
 import axios from "axios";
 
-export function VideoDetailsView({ initialVideo, voiceData }: { initialVideo: any; voiceData: any }) {
-    const [video, setVideo] = useState(initialVideo);
-    const router = useRouter();
+interface Video {
+    id: string;
+    title: string;
+    status: "PENDING" | "COMPLETED" | "FAILED";
+    videoStyle: string;
+    voice: string;
+    topic: string;
+    script: string;
+    createdAt: string | Date;
+    audio: Record<string, unknown>;
+    captions: { start: number; end: number; word: string }[];
+    images: { url: string }[];
+    [key: string]: unknown;
+}
 
-    const fetchVideo = async () => {
+export function VideoDetailsView({ initialVideo, voiceData }: { initialVideo: Video; voiceData: { Name: string } | null | undefined }) {
+    const [video, setVideo] = useState<Video>(initialVideo);
+
+    const fetchVideo = useCallback(async () => {
         try {
-            // We can use a simple GET endpoint or refetch from the current page data
-            // For simplicity, let's refresh the router or fetch the specific video
             const res = await axios.get(`/api/videos/${video.id}`);
             if (res.data) {
                 setVideo(res.data);
@@ -36,7 +47,7 @@ export function VideoDetailsView({ initialVideo, voiceData }: { initialVideo: an
         } catch (err) {
             console.error("Failed to fetch video", err);
         }
-    };
+    }, [video.id]);
 
     const { latestData } = useInngestSubscription({
         refreshToken: fetchRealtimeSubscriptionToken,
@@ -44,9 +55,10 @@ export function VideoDetailsView({ initialVideo, voiceData }: { initialVideo: an
 
     useEffect(() => {
         if (latestData && latestData.data.videoId === video.id) {
-            fetchVideo();
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            void fetchVideo();
         }
-    }, [latestData]);
+    }, [latestData, video.id, fetchVideo]);
 
     return (
         <div className="flex flex-col lg:flex-row h-full overflow-hidden bg-background">
@@ -137,7 +149,7 @@ export function VideoDetailsView({ initialVideo, voiceData }: { initialVideo: an
                         </div>
                         <Card className="p-6 bg-muted/30 border-none ring-1 ring-border/50 rounded-2xl">
                             <p className="text-sm leading-relaxed font-medium text-muted-foreground italic">
-                                "{video.script}"
+                                &ldquo;{video.script}&rdquo;
                             </p>
                         </Card>
                     </div>

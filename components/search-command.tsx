@@ -4,7 +4,6 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import {
     IconVideo,
-    IconSearch,
     IconPlus,
     IconHome,
 } from "@tabler/icons-react"

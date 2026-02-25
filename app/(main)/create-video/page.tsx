@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Sparkles, Video, Mic2, Type, Palette, Search, ChevronRight, Play, CheckCircle2, Info } from "lucide-react";
+import { Sparkles, Video, Mic2, Type, ChevronRight, CheckCircle2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -34,9 +34,7 @@ export default function CreateVideoPage() {
     // Customization state
     const [selectedStyle, setSelectedStyle] = useState<string>("Anime");
     const [selectedVoice, setSelectedVoice] = useState<string>("Thalia");
-    const [selectedCaptionStyle, setSelectedCaptionStyle] = useState<any>(captionStyles[0]);
-
-    const audioRef = useState<HTMLAudioElement | null>(null)[0]; // We'll manage this via a ref technically but let's use a standard audio tag approach or JS Audio.
+    const [selectedCaptionStyle, setSelectedCaptionStyle] = useState<typeof captionStyles[number]>(captionStyles[0]);
 
     // Using a ref for the audio instance to ensure we can stop/start reliably
     const playerRef = useState(() => typeof Audio !== "undefined" ? new Audio() : null)[0];
@@ -115,7 +113,7 @@ export default function CreateVideoPage() {
 
             toast.promise(promise, {
                 loading: "Initializing production pipeline...",
-                success: (res) => {
+                success: () => {
                     router.push("/videos");
                     return "Production started! You'll be notified when it's ready.";
                 },
@@ -235,7 +233,7 @@ export default function CreateVideoPage() {
                                                     >
                                                         <h5 className="font-bold text-sm mb-2 uppercase tracking-tight">{script.title}</h5>
                                                         <p className="text-xs leading-relaxed font-medium opacity-80 italic italic">
-                                                            "{script.content}"
+                                                            &ldquo;{script.content}&rdquo;
                                                         </p>
                                                         {selectedScriptIdx === idx && (
                                                             <CheckCircle2 className="absolute top-3 right-3 size-5 text-primary fill-background" />
@@ -264,6 +262,7 @@ export default function CreateVideoPage() {
                                         onClick={() => setSelectedStyle(style.label)}
                                     >
                                         <div className="relative aspect-[3/4] overflow-hidden">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img
                                                 src={style.src}
                                                 alt={style.label}
@@ -351,6 +350,7 @@ export default function CreateVideoPage() {
                     <div className="relative aspect-[9/16] w-full rounded-[48px] border-[10px] border-[#151515] bg-[#000] shadow-2xl ring-4 ring-muted/50 overflow-hidden group">
                         {/* Dynamic Content */}
                         <div className="absolute inset-0 animate-in fade-in duration-1000">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                                 src={currentStyleData?.src || "/placeholder.png"}
                                 className="w-full h-full object-cover opacity-80 brightness-75 scale-110 group-hover:scale-100 transition-transform duration-[10s] linear animate-pulse"

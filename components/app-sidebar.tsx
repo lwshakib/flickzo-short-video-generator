@@ -8,6 +8,7 @@ import {
   IconSearch,
   IconVideo,
 } from "@tabler/icons-react"
+import Link from "next/link"
 
 import { NavRecentVideos } from "@/components/nav-recent-videos"
 import { NavMain } from "@/components/nav-main"
@@ -19,7 +20,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import axios from "axios"
@@ -107,9 +107,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <a href="/" className="flex items-center gap-2 px-1.5 py-2 rounded-lg transition-none outline-none">
+              <Link href="/" className="flex items-center gap-2 px-1.5 py-2 rounded-lg transition-none outline-none">
                 <Logo />
-              </a>
+              </Link>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
@@ -119,7 +119,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <NavSecondary items={navSecondary} className="mt-auto" />
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={session?.user as any || { name: "Guest", email: "" }} />
+          <NavUser user={(session?.user as { name: string; email: string; avatar?: string | null; image?: string | null }) || { name: "Guest", email: "" }} />
         </SidebarFooter>
       </Sidebar>
       <SearchCommand open={searchOpen} setOpen={setSearchOpen} />

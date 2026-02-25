@@ -17,7 +17,7 @@ export const createVideo = inngest.createFunction(
     event: "video.created",
   },
   async ({ event, step, publish }) => {
-    const { videoId, userId, topic, voice, videoStyle, captionStyle, script } = event?.data;
+    const { videoId, userId, voice, videoStyle, script } = event?.data;
 
     try {
       // 0. Publish initial status to sync sidebar immediately
@@ -46,9 +46,9 @@ export const createVideo = inngest.createFunction(
         await prisma.video.update({
           where: { id: videoId },
           data: {
-            audio: audioData,
-            captions: captionsData,
-            images: imagesData,
+            audio: audioData as any,
+            captions: captionsData as any,
+            images: imagesData as any,
             status: "COMPLETED",
           },
         });
@@ -65,7 +65,7 @@ export const createVideo = inngest.createFunction(
       });
 
       return { success: true, videoId };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Video generation failed:", error);
 
       await step.run('update-db-failed', async () => {

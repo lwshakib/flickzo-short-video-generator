@@ -139,6 +139,7 @@ export function LoginForm({
             {socialLoading === "google" ? (
               <Loader2 className="size-4 animate-spin mr-2" />
             ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
                 alt="Google"

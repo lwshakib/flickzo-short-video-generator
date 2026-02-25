@@ -1,4 +1,4 @@
-import { generateObject, UIMessage, convertToModelMessages } from "ai";
+import { generateObject } from "ai";
 import { GeminiModel } from "./model";
 import { z } from "zod";
 

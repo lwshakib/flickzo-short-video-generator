@@ -42,7 +42,7 @@ export const generateAudio = async ({
         const response = await deepgramClient.speak.request({ text }, {
             model: voice,
             encoding: "mp3",
-        } as any);
+        } as { model: string; encoding: "mp3" });
 
         const stream = await response.getStream();
 

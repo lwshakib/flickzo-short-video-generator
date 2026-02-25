@@ -46,7 +46,7 @@ export default function FAQSection() {
                         Frequently asked questions
                     </p>
                     <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                        Have a different question and can't find the answer you're looking for? Reach out to our support team.
+                        Have a different question and can&apos;t find the answer you&apos;re looking for? Reach out to our support team.
                     </p>
                 </div>
                 <div className="mx-auto mt-16 max-w-2xl px-4 sm:mt-20 lg:mt-24 lg:max-w-4xl">

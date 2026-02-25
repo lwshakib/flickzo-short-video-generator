@@ -9,14 +9,31 @@ import {
   useVideoConfig,
 } from "remotion";
 
+interface Caption {
+  start: number;
+  end: number;
+  word: string;
+}
+
+interface VideoData {
+  captions?: Caption[];
+  images?: (string | { url: string })[];
+  audio?: {
+    audioUrl: string;
+  };
+  captionStyle?: {
+    className?: string;
+  };
+}
+
 type Props = {
-  videoData: any;
+  videoData: VideoData;
 };
 
 function RemotionComposition({ videoData }: Props) {
   const captions = videoData?.captions || [];
   const images = videoData?.images || [];
-  const imageList = images.map((img: any) => typeof img === 'string' ? img : img.url);
+  const imageList = images.map((img) => typeof img === 'string' ? img : img.url);
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
@@ -30,7 +47,7 @@ function RemotionComposition({ videoData }: Props) {
   const getCurrentCaption = () => {
     const currentTime = frame / fps;
     const currentCaption = captions.find(
-      (item: any) => currentTime >= item?.start && currentTime <= item?.end
+      (item) => currentTime >= item?.start && currentTime <= item?.end
     );
     return currentCaption ? currentCaption?.word : "";
   };

@@ -1,5 +1,5 @@
 "use client"
-import Image from "next/image"
+
 
 export default function HowItWorksSection() {
     return (
@@ -14,7 +14,7 @@ export default function HowItWorksSection() {
                             From idea to video in 3 steps
                         </p>
                         <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                            We've simplified the video production process. You don't need to be a video editor or have a camera crew. Just bring your ideas.
+                            We&apos;ve simplified the video production process. You don&apos;t need to be a video editor or have a camera crew. Just bring your ideas.
                         </p>
                     </div>
                     <dl className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 text-base leading-7 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3">
