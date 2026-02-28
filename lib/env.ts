@@ -27,5 +27,5 @@ export const DATABASE_URL = process.env.DATABASE_URL;
 // Deepgram API key for TTS and Speech-to-Text
 export const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 
-// Nebius API key (potentially for specialized compute or AI models)
-export const NEBIUS_API_KEY = process.env.NEBIUS_API_KEY;
+// A4F API key (potentially for specialized compute or AI models)
+export const A4F_API_KEY = process.env.A4F_API_KEY;

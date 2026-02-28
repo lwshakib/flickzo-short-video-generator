@@ -136,7 +136,7 @@ export async function generateImages(
           throw new Error(result.error || "Failed to generate image");
         }
         return {
-          url: result.image,
+          url: result.url!,
           publicId: result.publicId!,
           prompt: result.prompt,
           content: promptData.sceneContent,

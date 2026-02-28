@@ -12,4 +12,5 @@ export const inngest = new Inngest({
   // Middleware to enable real-time event capabilities,
   // allowing the frontend to receive updates via Inngest Realtime.
   middleware: [realtimeMiddleware()],
+  eventKey: process.env.INNGEST_EVENT_KEY,
 });

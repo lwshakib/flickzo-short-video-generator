@@ -1,127 +1,130 @@
-import OpenAI from "openai";
+import { v2 as cloudinary } from "cloudinary";
+import { A4F_API_KEY } from "@/lib/env";
 
-import { NEBIUS_API_KEY } from "@/lib/env";
-import { cloudinaryClient } from "@/lib/save-audio-to-cloudinary";
-
-/**
- * Nebius AI client initialization.
- * Used for high-performance image generation using models like Flux.
- * It uses an OpenAI-compatible SDK for easier integration.
- */
-export const nebiusClient = new OpenAI({
-  baseURL: "https://api.studio.nebius.com/v1/",
-  apiKey: NEBIUS_API_KEY,
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-/**
- * Options for the image generation function.
- */
 export interface GenerateImageOptions {
-  prompt: string; // The visual description for the AI to generate
-  width?: number; // Image width in pixels
-  height?: number; // Image height in pixels
-  negative_prompt?: string; // Things to exclude from the image
-}
-
-/**
- * Result structure for the image generation process.
- */
-export interface GenerateImageResult {
-  success: boolean;
-  image?: string; // The Resulting Cloudinary URL
-  publicId?: string; // Cloudinary public ID for asset management
-  prompt: string; // The final prompt used
+  prompt: string;
   width?: number;
   height?: number;
-  model?: string; // The model name used for generation
-  error?: string; // Error message if the process fails
+  negativePrompt?: string;
+}
+
+export interface GenerateImageResult {
+  success: boolean;
+  url?: string;
+  secure_url?: string;
+  publicId?: string;
+  error?: string;
+  prompt: string;
+  width: number;
+  height: number;
 }
 
 /**
- * Generates an image using Nebius AI (Flux Model) and uploads it to Cloudinary.
- *
- * @param options - Generation settings including prompt, dimensions, and styling.
- * @returns A promise resolving to the final image metadata and storage URLs.
+ * Autonomous image generation function.
+ * Handles API call to A4F and persistence to Cloudinary.
  */
-export const generateImage = async ({
+export async function generateImage({
   prompt,
   width = 1024,
   height = 1024,
-  negative_prompt = "",
-}: GenerateImageOptions): Promise<GenerateImageResult> => {
-  // Ensure the API key is present before proceeding
-  if (!NEBIUS_API_KEY) {
-    throw new Error("Missing NEBIUS_API_KEY");
+}: GenerateImageOptions): Promise<GenerateImageResult> {
+  console.log(
+    `[IMAGE_GEN] Generating | Prompt: "${prompt}" | Size: ${width}x${height}`
+  );
+
+  if (!A4F_API_KEY) {
+    console.warn("[IMAGE_GEN] Missing A4F_API_KEY");
+    return {
+      success: false,
+      error: "Missing A4F_API_KEY",
+      prompt,
+      width,
+      height,
+    };
+  }
+
+  // Snap to standard supported sizes
+  const standardSizes = ["1024x1024", "1792x1024", "1024x1792"];
+  let size = `${width}x${height}`;
+  if (!standardSizes.includes(size)) {
+    size =
+      width > height ? "1792x1024" : width < height ? "1024x1792" : "1024x1024";
   }
 
   try {
-    // Perform a POST request to the Nebius image generation endpoint
-    const response = await fetch(
-      "https://api.tokenfactory.nebius.com/v1/images/generations",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${NEBIUS_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "black-forest-labs/flux-schnell", // High-speed Flux model
-          response_format: "b64_json", // Request base64 response for immediate buffer conversion
-          response_extension: "png",
-          width,
-          height,
-          num_inference_steps: 4, // optimized for speed/quality balance with "schnell" model
-          negative_prompt: negative_prompt || "",
-          seed: -1, // Random seed for variability
-          loras: null,
-          prompt,
-        }),
-      }
-    );
+    const response = await fetch("https://api.a4f.co/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${A4F_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "provider-4/imagen-3.5",
+        prompt,
+        n: 1,
+        size,
+      }),
+    });
 
-    // Handle non-200 responses from the AI provider
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(
-        (errorData as { error?: { message?: string } }).error?.message ||
-          `API error: ${response.statusText}`
-      );
+      const errorText = await response.text();
+      console.error(`[IMAGE_GEN] API error (${response.status}):`, errorText);
+      return {
+        success: false,
+        error: `API error: ${response.status}`,
+        prompt,
+        width,
+        height,
+      };
     }
 
-    const data = (await response.json()) as {
-      data?: { b64_json?: string }[];
-    };
+    const data = await response.json();
     const base64Image = data.data?.[0]?.b64_json;
+    const imageUrl = data.data?.[0]?.url;
 
-    if (!base64Image) {
-      throw new Error("No image generated in response");
+    let imageBuffer: Buffer;
+
+    if (base64Image) {
+      imageBuffer = Buffer.from(base64Image, "base64");
+    } else if (imageUrl) {
+      const imgResponse = await fetch(imageUrl);
+      imageBuffer = Buffer.from(await imgResponse.arrayBuffer());
+    } else {
+      return {
+        success: false,
+        error: "No image in response",
+        prompt,
+        width,
+        height,
+      };
     }
 
-    // Convert the base64 string provided by Nebius into a Buffer for Cloudinary
-    const imageBuffer = Buffer.from(base64Image, "base64");
-
-    // Upload the buffer directly to Cloudinary via a stream
+    // Upload to Cloudinary
     const uploadResult = await new Promise<{
       secure_url: string;
       public_id: string;
     }>((resolve, reject) => {
-      cloudinaryClient.uploader
+      cloudinary.uploader
         .upload_stream(
           {
             folder: "flickzo/images", // Organized folder for app images
             resource_type: "image",
           },
           (error, result) => {
-            if (error) {
-              reject(error);
-            } else if (result) {
+            if (error) reject(error);
+            else if (result)
               resolve({
                 secure_url: result.secure_url,
                 public_id: result.public_id,
               });
-            } else {
-              reject(new Error("Upload returned no result"));
-            }
+            else reject(new Error("Upload failed"));
           }
         )
         .end(imageBuffer);
@@ -129,19 +132,21 @@ export const generateImage = async ({
 
     return {
       success: true,
-      image: uploadResult.secure_url,
+      url: uploadResult.secure_url,
+      secure_url: uploadResult.secure_url,
       publicId: uploadResult.public_id,
       prompt,
       width,
       height,
-      model: "black-forest-labs/flux-schnell",
     };
   } catch (error) {
-    // Categorize and return the error to the caller (e.g., Inngest workflow)
+    console.error("[IMAGE_GEN] Error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : "Generation failed",
       prompt,
+      width,
+      height,
     };
   }
-};
+}
