@@ -20,7 +20,7 @@ export const getSingleApiKey = () => {
  * @returns The string identifier for the Gemini model.
  */
 export const getModelName = () => {
-  const allowedModels = ["gemini-2.0-flash-lite"];
+  const allowedModels = ["gemini-2.5-flash-lite", "gemini-2.5-flash"];
   return allowedModels[Math.floor(Math.random() * allowedModels.length)];
 };
 
