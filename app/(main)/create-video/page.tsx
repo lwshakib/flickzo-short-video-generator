@@ -246,16 +246,26 @@ export default function CreateVideoPage() {
                 </TabsContent>
               </Tabs>
 
-              <Button
-                size="sm"
-                variant={scriptLoading ? "outline" : "default"}
-                className="mt-6 font-bold"
-                onClick={handleGenerateScript}
-                disabled={!selectedTopic && !scriptLoading}
-              >
-                {scriptLoading ? "Cancel Generation" : "Generate Scripts"}
-                {!scriptLoading && <ChevronRight className="ml-1 size-3.5" />}
-              </Button>
+              <div className="relative group w-fit mt-6">
+                {scriptLoading && (
+                  <div className="absolute -inset-[2px] overflow-hidden rounded-xl">
+                    <div className="animate-border-spin absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0deg,var(--sidebar-primary)_90deg,transparent_180deg,var(--sidebar-primary)_270deg,transparent_360deg)] opacity-40 blur-[1px]" />
+                  </div>
+                )}
+                <Button
+                  size="sm"
+                  variant={scriptLoading ? "outline" : "default"}
+                  className={cn(
+                    "relative font-bold transition-all",
+                    scriptLoading ? "bg-background border-transparent" : "mt-0"
+                  )}
+                  onClick={handleGenerateScript}
+                  disabled={!selectedTopic && !scriptLoading}
+                >
+                  {scriptLoading ? "Cancel Generation" : "Generate Scripts"}
+                  {!scriptLoading && <ChevronRight className="ml-1 size-3.5" />}
+                </Button>
+              </div>
 
               {(scriptLoading || generatedScripts.length > 0) && (
                 <div className="animate-in fade-in slide-in-from-top-4 mt-8 space-y-3 duration-700">

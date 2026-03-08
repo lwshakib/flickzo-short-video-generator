@@ -60,7 +60,7 @@ export async function POST(req: Request) {
       });
     }
 
-    if (currentDailyCount >= 1) {
+    if (currentDailyCount >= 5) {
       return NextResponse.json(
         {
           error:

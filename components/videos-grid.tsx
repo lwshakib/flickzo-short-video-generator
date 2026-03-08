@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Play, Clock, AlertCircle, Video as VideoIcon, X } from "lucide-react";
+import { Play, Clock, AlertCircle, Video as VideoIcon, X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { videoStyles } from "@/lib/data";
@@ -23,8 +23,18 @@ interface VideoItem {
   status: string;
 }
 
-export function VideosGrid({ initialVideos }: { initialVideos: VideoItem[] }) {
+export function VideosGrid({
+  initialVideos,
+  limit,
+}: {
+  initialVideos: VideoItem[];
+  limit?: number;
+}) {
   const [videos, setVideos] = useState(initialVideos);
+
+  const handleDelete = (id: string) => {
+    setVideos((prev) => prev.filter((v) => v.id !== id));
+  };
 
   const fetchVideos = useCallback(async () => {
     try {
@@ -67,29 +77,53 @@ export function VideosGrid({ initialVideos }: { initialVideos: VideoItem[] }) {
     );
   }
 
+  const displayVideos = limit ? videos.slice(0, limit) : videos;
+
   return (
     <div className="3xl:grid-cols-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8">
-      {videos.map((video) => (
-        <VideoCard key={video.id} video={video} />
+      {displayVideos.map((video) => (
+        <VideoCard key={video.id} video={video} onDelete={handleDelete} />
       ))}
     </div>
   );
 }
 
-export function VideoCard({ video }: { video: VideoItem }) {
+export function VideoCard({
+  video,
+  onDelete,
+}: {
+  video: VideoItem;
+  onDelete?: (id: string) => void;
+}) {
   const styleData = videoStyles.find((s) => s.label === video.videoStyle);
   const isPending = video.status === "PENDING";
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCancel = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
+    if (isDeleting) return;
+
+    setIsDeleting(true);
     const promise = deleteVideo(video.id);
+
     toast.promise(promise, {
       loading: "Canceling production...",
       success: "Production canceled successfully",
       error: "Failed to cancel production",
     });
+
+    try {
+      const result = await promise;
+      if (result.success) {
+        onDelete?.(video.id);
+      } else {
+        setIsDeleting(false);
+      }
+    } catch (error) {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -126,9 +160,14 @@ export function VideoCard({ video }: { video: VideoItem }) {
             {/* Cancel Icon */}
             <button
               onClick={handleCancel}
-              className="bg-background/20 hover:bg-background/40 active:scale-95 relative z-20 flex size-12 items-center justify-center rounded-full border border-white/20 shadow-2xl backdrop-blur-md transition-all duration-200"
+              disabled={isDeleting}
+              className="bg-background/20 hover:bg-background/40 active:scale-95 relative z-20 flex size-12 items-center justify-center rounded-full border border-white/20 shadow-2xl backdrop-blur-md transition-all duration-200 disabled:opacity-50"
             >
-              <X className="text-white size-6" />
+              {isDeleting ? (
+                <Loader2 className="text-white size-6 animate-spin" />
+              ) : (
+                <X className="text-white size-6" />
+              )}
             </button>
           </div>
         )}
@@ -149,7 +188,7 @@ export function VideoCard({ video }: { video: VideoItem }) {
       </div>
 
       <div className="mt-2.5 space-y-0.5 px-0.5">
-        <h3 className="text-foreground line-clamp-1 text-[11px] font-bold tracking-tight uppercase">
+        <h3 className="text-foreground line-clamp-1 text-[11px] font-bold tracking-tight">
           {video.title}
         </h3>
         <p className="text-muted-foreground text-[10px] font-medium">
@@ -169,7 +208,7 @@ function StatusBadge({ status }: { status: string }) {
       return null;
     case "FAILED":
       return (
-        <Badge className="border-red-500/20 bg-red-500/10 px-2 py-0.5 text-[10px] font-black tracking-widest text-red-500 uppercase backdrop-blur-md">
+        <Badge className="border-red-500/20 bg-red-500/10 px-2 py-0.5 text-[10px] font-black tracking-widest text-red-500 backdrop-blur-md">
           <AlertCircle className="mr-1 size-2.5" /> Failed
         </Badge>
       );

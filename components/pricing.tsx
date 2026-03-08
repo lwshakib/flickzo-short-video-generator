@@ -28,7 +28,7 @@ const plans = [
     description:
       "Perfect for creators exploring the world of AI cinematic synthesis.",
     features: [
-      "2 AI Videos / month",
+      "5 AI Videos / day",
       "720p Resolution Synthesis",
       "Standard AI Voices",
       "Community Synthesis Pool",
@@ -47,7 +47,7 @@ const plans = [
     },
     description: "For professional creators building high-quality content.",
     features: [
-      "30 AI Videos / month",
+      "Unlimited AI Videos",
       "1080p Cinematic Synthesis",
       "Premium Neural Voices",
       "Dedicated Synthesis Engine",

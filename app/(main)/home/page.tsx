@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
-import { VideoCard } from "@/components/videos-grid";
+import { VideosGrid } from "@/components/videos-grid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -65,17 +65,10 @@ export default async function Home() {
       {/* Videos Section without header */}
       <div className="space-y-6">
         {videos.length > 0 ? (
-          <div className="3xl:grid-cols-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8">
-            {videos.map((video) => (
-              <VideoCard
-                key={video.id}
-                video={{
-                  ...video,
-                  images: video.images as unknown as { url: string }[],
-                }}
-              />
-            ))}
-          </div>
+          <VideosGrid
+            limit={4}
+            initialVideos={JSON.parse(JSON.stringify(videos))}
+          />
         ) : (
           <div className="bg-muted/10 hover:bg-muted/20 flex h-64 flex-col items-center justify-center rounded-xl border-2 border-dashed transition-colors">
             <p className="text-muted-foreground text-sm font-medium">
