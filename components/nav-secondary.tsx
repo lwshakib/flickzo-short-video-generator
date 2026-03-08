@@ -31,7 +31,7 @@ export function NavSecondary({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               {item.unclickable ? (
-                <div className="px-2 py-1.5 flex items-center">
+                <div className="flex items-center px-2 py-1.5">
                   {item.content}
                 </div>
               ) : (

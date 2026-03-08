@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import {
   Sparkles,
   Video,
-  Mic2,
   Type,
   ChevronRight,
   CheckCircle2,
@@ -14,7 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import Image from "next/image";
 import {
   captionStyles,
@@ -52,7 +57,8 @@ export default function CreateVideoPage() {
   const [selectedScriptIdx, setSelectedScriptIdx] = useState<number | null>(
     null
   );
-  const [abortController, setAbortController] = useState<AbortController | null>(null);
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
 
   // 2. VISUAL & AUDIO CUSTOMIZATION STATE
   const [selectedStyle, setSelectedStyle] = useState<string>("Anime");
@@ -63,8 +69,6 @@ export default function CreateVideoPage() {
   >(captionStyles[0]);
 
   const selectedTopic = selectedSuggestion || customTopic;
-
-
 
   const handleGenerateScript = async () => {
     if (scriptLoading && abortController) {
@@ -85,8 +89,9 @@ export default function CreateVideoPage() {
     setScriptLoading(true);
 
     try {
-      const promise = axios.post("/api/scripts", 
-        { topic: selectedTopic }, 
+      const promise = axios.post(
+        "/api/scripts",
+        { topic: selectedTopic },
         { signal: controller.signal }
       );
 
@@ -168,307 +173,312 @@ export default function CreateVideoPage() {
   };
 
   return (
- 
-      <div className="custom-scrollbar flex-1 overflow-y-auto w-full">
-        <div className="mx-auto max-w-3xl space-y-10 p-4 py-8 sm:p-8 lg:p-10 lg:pb-8">
-          {/* Header */}
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight">
-              Create New Video
-            </h1>
-            <p className="text-muted-foreground text-sm font-medium">
-              Transform your ideas into cinematic shorts.
-            </p>
-          </div>
+    <div className="custom-scrollbar w-full flex-1 overflow-y-auto">
+      <div className="mx-auto max-w-3xl space-y-10 p-4 py-8 sm:p-8 lg:p-10 lg:pb-8">
+        {/* Header */}
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold tracking-tight">
+            Create New Video
+          </h1>
+          <p className="text-muted-foreground text-sm font-medium">
+            Transform your ideas into cinematic shorts.
+          </p>
+        </div>
 
-          <div className="flex flex-col gap-12">
-            {/* Step 1: Topic */}
-            <StepWrapper
-              title="The Topic"
-              description="Define the vision for your narrative."
+        <div className="flex flex-col gap-12">
+          {/* Step 1: Topic */}
+          <StepWrapper
+            title="The Topic"
+            description="Define the vision for your narrative."
+          >
+            <Tabs
+              defaultValue="suggestions"
+              value={selectedTab}
+              onValueChange={setSelectedTab}
+              className="w-full"
             >
-              <Tabs
-                defaultValue="suggestions"
-                value={selectedTab}
-                onValueChange={setSelectedTab}
-                className="w-full"
-              >
-                <TabsList className="bg-muted/50 mb-6 w-full justify-start p-1 sm:w-auto">
-                  <TabsTrigger
-                    value="suggestions"
-                    className="flex items-center gap-2 px-6"
-                  >
-                    <Sparkles className="size-3.5" /> Suggestions
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="your-topic"
-                    className="flex items-center gap-2 px-6"
-                  >
-                    <Type className="size-3.5" /> Custom
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="suggestions">
-                  <div className="flex flex-wrap gap-2">
-                    {suggestions.map((s) => (
-                      <button
-                        key={s}
-                        className={cn(
-                          "rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all duration-300",
-                          selectedSuggestion === s
-                            ? "bg-primary border-primary text-primary-foreground shadow-sm"
-                            : "bg-background border-border hover:border-primary/40 text-muted-foreground"
-                        )}
-                        onClick={() => {
-                          setSelectedSuggestion(s);
-                          setCustomTopic("");
-                        }}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="your-topic">
-                  <Input
-                    placeholder="e.g. The history of the Samurai"
-                    value={customTopic}
-                    className="bg-background h-12 rounded-lg text-sm font-semibold"
-                    onChange={(e) => {
-                      setCustomTopic(e.target.value);
-                      setSelectedSuggestion(null);
-                    }}
-                  />
-                </TabsContent>
-              </Tabs>
-
-              <div className="relative group w-fit mt-6">
-                {scriptLoading && (
-                  <div className="absolute -inset-[2px] overflow-hidden rounded-xl">
-                    <div className="animate-border-spin absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0deg,var(--primary)_90deg,transparent_180deg,var(--primary)_270deg,transparent_360deg)] opacity-40 blur-[1px]" />
-                  </div>
-                )}
-                <Button
-                  size="sm"
-                  variant={scriptLoading ? "outline" : "default"}
-                  className={cn(
-                    "relative font-bold transition-all",
-                    scriptLoading ? "bg-background border-transparent" : "mt-0"
-                  )}
-                  onClick={handleGenerateScript}
-                  disabled={!selectedTopic && !scriptLoading}
+              <TabsList className="bg-muted/50 mb-6 w-full justify-start p-1 sm:w-auto">
+                <TabsTrigger
+                  value="suggestions"
+                  className="flex items-center gap-2 px-6"
                 >
-                  {scriptLoading ? "Cancel Generation" : "Generate Scripts"}
-                  {!scriptLoading && <ChevronRight className="ml-1 size-3.5" />}
-                </Button>
-              </div>
+                  <Sparkles className="size-3.5" /> Suggestions
+                </TabsTrigger>
+                <TabsTrigger
+                  value="your-topic"
+                  className="flex items-center gap-2 px-6"
+                >
+                  <Type className="size-3.5" /> Custom
+                </TabsTrigger>
+              </TabsList>
 
-              {(scriptLoading || generatedScripts.length > 0) && (
-                <div className="animate-in fade-in slide-in-from-top-4 mt-8 space-y-3 duration-700">
-                  <h4 className="text-muted-foreground text-[10px] font-bold tracking-wider">
-                    Select a script
-                  </h4>
-                  {scriptLoading ? (
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {[1, 2].map((i) => (
-                        <div
-                          key={i}
-                          className="border-border/50 space-y-3 rounded-xl border p-4"
-                        >
-                          <Skeleton className="h-3 w-1/3" />
-                          <Skeleton className="h-2 w-full" />
-                          <Skeleton className="h-2 w-4/5" />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {generatedScripts.map((script, idx) => (
-                        <div
-                          key={idx}
-                          className={cn(
-                            "relative cursor-pointer rounded-xl border p-4 transition-all duration-300",
-                            selectedScriptIdx === idx
-                              ? "border-primary bg-primary/5 shadow-sm"
-                              : "border-border hover:border-primary/40 bg-background"
-                          )}
-                          onClick={() => setSelectedScriptIdx(idx)}
-                        >
-                          <h5 className="mb-1 text-xs font-bold tracking-tight">
-                            {script.title}
-                          </h5>
-                          <p className="text-[11px] leading-relaxed font-medium italic opacity-70">
-                            &ldquo;{script.content}&rdquo;
-                          </p>
-                          {selectedScriptIdx === idx && (
-                            <CheckCircle2 className="text-primary absolute top-2 right-2 size-4" />
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+              <TabsContent value="suggestions">
+                <div className="flex flex-wrap gap-2">
+                  {suggestions.map((s) => (
+                    <button
+                      key={s}
+                      className={cn(
+                        "rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all duration-300",
+                        selectedSuggestion === s
+                          ? "bg-primary border-primary text-primary-foreground shadow-sm"
+                          : "bg-background border-border hover:border-primary/40 text-muted-foreground"
+                      )}
+                      onClick={() => {
+                        setSelectedSuggestion(s);
+                        setCustomTopic("");
+                      }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="your-topic">
+                <Input
+                  placeholder="e.g. The history of the Samurai"
+                  value={customTopic}
+                  className="bg-background h-12 rounded-lg text-sm font-semibold"
+                  onChange={(e) => {
+                    setCustomTopic(e.target.value);
+                    setSelectedSuggestion(null);
+                  }}
+                />
+              </TabsContent>
+            </Tabs>
+
+            <div className="group relative mt-6 w-fit">
+              {scriptLoading && (
+                <div className="absolute -inset-[2px] overflow-hidden rounded-xl">
+                  <div className="animate-border-spin absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0deg,var(--primary)_90deg,transparent_180deg,var(--primary)_270deg,transparent_360deg)] opacity-40 blur-[1px]" />
                 </div>
               )}
-            </StepWrapper>
-
-            {/* Step 2: Visual Aesthetic */}
-            <StepWrapper
-              title="Aesthetic"
-              description="Choose the visual style for your video."
-            >
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {videoStyles.map((style) => (
-                  <div
-                    key={style.label}
-                    className={cn(
-                      "group cursor-pointer overflow-hidden rounded-xl border-2 transition-all",
-                      selectedStyle === style.label
-                        ? "border-primary shadow-sm"
-                        : "hover:border-muted border-transparent"
-                    )}
-                    onClick={() => setSelectedStyle(style.label)}
-                  >
-                    <div className="relative aspect-[3/4] overflow-hidden">
-                      <Image
-                        src={style.src}
-                        alt={style.label}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-2.5">
-                        <span className="text-[10px] font-bold text-white">
-                          {style.label}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </StepWrapper>
-
-            {/* Step 3: Narration */}
-            <StepWrapper
-              title="Narration"
-              description="Professional AI voice for your story."
-            >
-              <div className="w-full">
-                <VoicePicker
-                  voices={videoVoices}
-                  value={selectedVoice}
-                  onValueChange={setSelectedVoice}
-                  placeholder="Search and select a voice..."
-                />
-              </div>
-            </StepWrapper>
-
-            {/* Step 4: Typography */}
-            <StepWrapper
-              title="Typography"
-              description="Style the on-screen captions."
-            >
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
-                {captionStyles.map((style) => (
-                  <button
-                    key={style.label}
-                    className={cn(
-                      "group relative flex aspect-square items-center justify-center overflow-hidden rounded-xl border-2 p-4 transition-all",
-                      selectedCaptionStyle?.label === style.label
-                        ? "border-primary bg-muted/20"
-                        : "border-border hover:border-muted-foreground/20"
-                    )}
-                    onClick={() => setSelectedCaptionStyle(style)}
-                  >
-                    <div
-                      className={cn(
-                        "text-center text-sm font-bold transition-transform group-hover:scale-105",
-                        style.className
-                      )}
-                    >
-                      {style.label}
-                    </div>
-                    {selectedCaptionStyle?.label === style.label && (
-                      <CheckCircle2 className="text-primary absolute top-2 right-2 size-3.5" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </StepWrapper>
-          </div>
-        </div>
-
-        {/* Bottom Action Bar - Now inline */}
-        <div className="mx-auto max-w-3xl px-4 pb-8 sm:px-8 lg:px-10 lg:pb-12">
-          <div className="flex flex-col gap-2 border-t border-border/50 pt-8 mt-2">
-            <div className="flex flex-col sm:flex-row items-center gap-3">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" className="h-12 w-full font-bold shadow-sm sm:w-auto flex-1 text-xs sm:text-sm">
-                    <Eye className="mr-2 size-4" />
-                    Show Preview
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-[85vw] sm:max-w-[400px] flex flex-col items-center justify-center border-l p-0 bg-background">
-                  <SheetHeader className="sr-only">
-                    <SheetTitle>Video Preview</SheetTitle>
-                  </SheetHeader>
-                  <div className="w-full max-w-[300px] p-4 flex flex-col items-center justify-center h-full">
-                    {/* Compact Phone Mockup */}
-                    <div className="border-foreground/10 relative aspect-[9/16] w-full overflow-hidden rounded-[32px] border-8 bg-black shadow-xl">
-                      <div className="animate-in fade-in absolute inset-0 duration-1000">
-                        <Image
-                          src={currentStyleData?.src || "/placeholder.png"}
-                          fill
-                          className="object-cover opacity-70 brightness-75 transition-all duration-[10s]"
-                          alt="Style Preview"
-                        />
-                      </div>
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-
-                      <div className="absolute top-6 left-6 scale-50 origin-top-left opacity-40">
-                        <Logo />
-                      </div>
-
-                      <div className="pointer-events-none absolute inset-0 flex items-end justify-center p-6 pb-20 text-center">
-                        <div
-                          className={cn(
-                            "animate-in zoom-in-50 text-xl duration-500",
-                            selectedCaptionStyle?.className
-                          )}
-                        >
-                          {(selectedScriptIdx !== null && generatedScripts[selectedScriptIdx]
-                              ? generatedScripts[selectedScriptIdx].title
-                              : customTopic) || "Preview"}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </SheetContent>
-              </Sheet>
-
               <Button
-                className="group bg-primary relative h-12 w-full font-bold shadow-sm sm:w-auto flex-[2] text-xs sm:text-sm"
-                disabled={selectedScriptIdx === null}
-                onClick={handleCreateVideo}
+                size="sm"
+                variant={scriptLoading ? "outline" : "default"}
+                className={cn(
+                  "relative font-bold transition-all",
+                  scriptLoading ? "bg-background border-transparent" : "mt-0"
+                )}
+                onClick={handleGenerateScript}
+                disabled={!selectedTopic && !scriptLoading}
               >
-                <div className="flex items-center gap-2">
-                  <Video className="size-4" />
-                  <span>Generate Video</span>
-                </div>
+                {scriptLoading ? "Cancel Generation" : "Generate Scripts"}
+                {!scriptLoading && <ChevronRight className="ml-1 size-3.5" />}
               </Button>
             </div>
-            <p className="text-muted-foreground text-center text-[10px] font-bold mt-2">
-              It will consume 1 credit.
-            </p>
-          </div>
+
+            {(scriptLoading || generatedScripts.length > 0) && (
+              <div className="animate-in fade-in slide-in-from-top-4 mt-8 space-y-3 duration-700">
+                <h4 className="text-muted-foreground text-[10px] font-bold tracking-wider">
+                  Select a script
+                </h4>
+                {scriptLoading ? (
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {[1, 2].map((i) => (
+                      <div
+                        key={i}
+                        className="border-border/50 space-y-3 rounded-xl border p-4"
+                      >
+                        <Skeleton className="h-3 w-1/3" />
+                        <Skeleton className="h-2 w-full" />
+                        <Skeleton className="h-2 w-4/5" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {generatedScripts.map((script, idx) => (
+                      <div
+                        key={idx}
+                        className={cn(
+                          "relative cursor-pointer rounded-xl border p-4 transition-all duration-300",
+                          selectedScriptIdx === idx
+                            ? "border-primary bg-primary/5 shadow-sm"
+                            : "border-border hover:border-primary/40 bg-background"
+                        )}
+                        onClick={() => setSelectedScriptIdx(idx)}
+                      >
+                        <h5 className="mb-1 text-xs font-bold tracking-tight">
+                          {script.title}
+                        </h5>
+                        <p className="text-[11px] leading-relaxed font-medium italic opacity-70">
+                          &ldquo;{script.content}&rdquo;
+                        </p>
+                        {selectedScriptIdx === idx && (
+                          <CheckCircle2 className="text-primary absolute top-2 right-2 size-4" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </StepWrapper>
+
+          {/* Step 2: Visual Aesthetic */}
+          <StepWrapper
+            title="Aesthetic"
+            description="Choose the visual style for your video."
+          >
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {videoStyles.map((style) => (
+                <div
+                  key={style.label}
+                  className={cn(
+                    "group cursor-pointer overflow-hidden rounded-xl border-2 transition-all",
+                    selectedStyle === style.label
+                      ? "border-primary shadow-sm"
+                      : "hover:border-muted border-transparent"
+                  )}
+                  onClick={() => setSelectedStyle(style.label)}
+                >
+                  <div className="relative aspect-[3/4] overflow-hidden">
+                    <Image
+                      src={style.src}
+                      alt={style.label}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-2.5">
+                      <span className="text-[10px] font-bold text-white">
+                        {style.label}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </StepWrapper>
+
+          {/* Step 3: Narration */}
+          <StepWrapper
+            title="Narration"
+            description="Professional AI voice for your story."
+          >
+            <div className="w-full">
+              <VoicePicker
+                voices={videoVoices}
+                value={selectedVoice}
+                onValueChange={setSelectedVoice}
+                placeholder="Search and select a voice..."
+              />
+            </div>
+          </StepWrapper>
+
+          {/* Step 4: Typography */}
+          <StepWrapper
+            title="Typography"
+            description="Style the on-screen captions."
+          >
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+              {captionStyles.map((style) => (
+                <button
+                  key={style.label}
+                  className={cn(
+                    "group relative flex aspect-square items-center justify-center overflow-hidden rounded-xl border-2 p-4 transition-all",
+                    selectedCaptionStyle?.label === style.label
+                      ? "border-primary bg-muted/20"
+                      : "border-border hover:border-muted-foreground/20"
+                  )}
+                  onClick={() => setSelectedCaptionStyle(style)}
+                >
+                  <div
+                    className={cn(
+                      "text-center text-sm font-bold transition-transform group-hover:scale-105",
+                      style.className
+                    )}
+                  >
+                    {style.label}
+                  </div>
+                  {selectedCaptionStyle?.label === style.label && (
+                    <CheckCircle2 className="text-primary absolute top-2 right-2 size-3.5" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </StepWrapper>
         </div>
       </div>
-   
+
+      {/* Bottom Action Bar - Now inline */}
+      <div className="mx-auto max-w-3xl px-4 pb-8 sm:px-8 lg:px-10 lg:pb-12">
+        <div className="border-border/50 mt-2 flex flex-col gap-2 border-t pt-8">
+          <div className="flex flex-col items-center gap-3 sm:flex-row">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-12 w-full flex-1 text-xs font-bold shadow-sm sm:w-auto sm:text-sm"
+                >
+                  <Eye className="mr-2 size-4" />
+                  Show Preview
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side="right"
+                className="bg-background flex w-[85vw] flex-col items-center justify-center border-l p-0 sm:max-w-[400px]"
+              >
+                <SheetHeader className="sr-only">
+                  <SheetTitle>Video Preview</SheetTitle>
+                </SheetHeader>
+                <div className="flex h-full w-full max-w-[300px] flex-col items-center justify-center p-4">
+                  {/* Compact Phone Mockup */}
+                  <div className="border-foreground/10 relative aspect-[9/16] w-full overflow-hidden rounded-[32px] border-8 bg-black shadow-xl">
+                    <div className="animate-in fade-in absolute inset-0 duration-1000">
+                      <Image
+                        src={currentStyleData?.src || "/placeholder.png"}
+                        fill
+                        className="object-cover opacity-70 brightness-75 transition-all duration-[10s]"
+                        alt="Style Preview"
+                      />
+                    </div>
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+                    <div className="absolute top-6 left-6 origin-top-left scale-50 opacity-40">
+                      <Logo />
+                    </div>
+
+                    <div className="pointer-events-none absolute inset-0 flex items-end justify-center p-6 pb-20 text-center">
+                      <div
+                        className={cn(
+                          "animate-in zoom-in-50 text-xl duration-500",
+                          selectedCaptionStyle?.className
+                        )}
+                      >
+                        {(selectedScriptIdx !== null &&
+                        generatedScripts[selectedScriptIdx]
+                          ? generatedScripts[selectedScriptIdx].title
+                          : customTopic) || "Preview"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            <Button
+              className="group bg-primary relative h-12 w-full flex-[2] text-xs font-bold shadow-sm sm:w-auto sm:text-sm"
+              disabled={selectedScriptIdx === null}
+              onClick={handleCreateVideo}
+            >
+              <div className="flex items-center gap-2">
+                <Video className="size-4" />
+                <span>Generate Video</span>
+              </div>
+            </Button>
+          </div>
+          <p className="text-muted-foreground mt-2 text-center text-[10px] font-bold">
+            It will consume 1 credit.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
 
- function StepWrapper({
+function StepWrapper({
   title,
   description,
   children,

@@ -1,10 +1,14 @@
-import { CLOUDFLARE_API_KEY, FLUX_KLEIN_WORKER_URL } from '@/lib/env';
-import { saveImageToCloudinary } from '@/lib/cloudinary';
+import { CLOUDFLARE_API_KEY, FLUX_KLEIN_WORKER_URL } from "@/lib/env";
+import { saveImageToCloudinary } from "@/lib/cloudinary";
 
 /**
  * Supported generation modes for the Flux Klein model.
  */
-export type GenerateImageMode = 'text-to-image' | 'image-to-image' | 'blend' | 'inpaint';
+export type GenerateImageMode =
+  | "text-to-image"
+  | "image-to-image"
+  | "blend"
+  | "inpaint";
 
 /**
  * Options for generating an image.
@@ -51,7 +55,7 @@ export interface GenerateImageResult {
   error?: string;
 }
 
-const MODEL_NAME = 'FLUX.2 [klein] 9B';
+const MODEL_NAME = "FLUX.2 [klein] 9B";
 
 /**
  * Generates or manipulates an image using the Flux Klein model.
@@ -64,7 +68,7 @@ export const generateImage = async (
   options: GenerateImageOptions
 ): Promise<GenerateImageResult> => {
   const {
-    mode = 'text-to-image',
+    mode = "text-to-image",
     prompt,
     images = [],
     mask,
@@ -76,10 +80,10 @@ export const generateImage = async (
   } = options;
 
   if (!CLOUDFLARE_API_KEY) {
-    console.error('[GENERATE_IMAGE] Missing CLOUDFLARE_API_KEY');
+    console.error("[GENERATE_IMAGE] Missing CLOUDFLARE_API_KEY");
     return {
       success: false,
-      error: 'Missing CLOUDFLARE_API_KEY',
+      error: "Missing CLOUDFLARE_API_KEY",
       prompt,
       model: MODEL_NAME,
     };
@@ -89,14 +93,15 @@ export const generateImage = async (
     let response: Response;
 
     // Determine if we should use JSON or FormData
-    const isFormDataNeeded = mode !== 'text-to-image' || images.length > 0 || !!mask;
+    const isFormDataNeeded =
+      mode !== "text-to-image" || images.length > 0 || !!mask;
 
     if (!isFormDataNeeded) {
       // Simple Text-to-Image (JSON)
       response = await fetch(FLUX_KLEIN_WORKER_URL!, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${CLOUDFLARE_API_KEY}`,
         },
         body: JSON.stringify({
@@ -110,31 +115,32 @@ export const generateImage = async (
     } else {
       // Advanced Workflows (FormData)
       const form = new FormData();
-      form.append('prompt', prompt);
-      if (width) form.append('width', width.toString());
-      if (height) form.append('height', height.toString());
-      if (steps) form.append('steps', steps.toString());
-      if (seed !== undefined) form.append('seed', seed.toString());
+      form.append("prompt", prompt);
+      if (width) form.append("width", width.toString());
+      if (height) form.append("height", height.toString());
+      if (steps) form.append("steps", steps.toString());
+      if (seed !== undefined) form.append("seed", seed.toString());
 
-      // Add images from the array. 
+      // Add images from the array.
       // Single image uses 'image', multiple use 'image0', 'image1', etc.
       if (images.length === 1) {
-        form.append('image', images[0] as Blob);
+        form.append("image", images[0] as Blob);
       } else if (images.length > 1) {
         images.forEach((img, index) => {
           form.append(`image${index}`, img as Blob);
         });
       }
 
-      if (mode === 'image-to-image' || mode === 'inpaint') {
-        if (strength !== undefined) form.append('strength', strength.toString());
-        if (mode === 'inpaint' && mask) {
-          form.append('mask', mask as Blob);
+      if (mode === "image-to-image" || mode === "inpaint") {
+        if (strength !== undefined)
+          form.append("strength", strength.toString());
+        if (mode === "inpaint" && mask) {
+          form.append("mask", mask as Blob);
         }
       }
 
       response = await fetch(FLUX_KLEIN_WORKER_URL!, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${CLOUDFLARE_API_KEY}`,
         },
@@ -144,8 +150,12 @@ export const generateImage = async (
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[GENERATE_IMAGE] API Error: ${response.status} - ${errorText}`);
-      throw new Error(`Image generation failed (${response.status}): ${errorText}`);
+      console.error(
+        `[GENERATE_IMAGE] API Error: ${response.status} - ${errorText}`
+      );
+      throw new Error(
+        `Image generation failed (${response.status}): ${errorText}`
+      );
     }
 
     // The worker returns the raw image binary (image/png)
@@ -165,13 +175,13 @@ export const generateImage = async (
       model: MODEL_NAME,
     };
   } catch (error) {
-    console.error('[GENERATE_IMAGE_EXCEPTION]', error);
+    console.error("[GENERATE_IMAGE_EXCEPTION]", error);
     return {
       success: false,
       error:
         error instanceof Error
           ? error.message
-          : 'An unexpected error occurred during image generation',
+          : "An unexpected error occurred during image generation",
       prompt,
       model: MODEL_NAME,
     };

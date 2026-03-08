@@ -5,7 +5,6 @@ import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 import {
   IconBell,
-  IconCheck,
   IconClock,
   IconAlertCircle,
   IconCircleCheck,
@@ -15,7 +14,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -42,7 +40,7 @@ export default function NotificationsPage() {
     try {
       const res = await axios.get("/api/notifications");
       setNotifications(res.data);
-      
+
       // Auto-mark notifications as read when fetched in the background if they weren't read already.
       // E.g., a "markedAllAsRead" API call goes here.
     } catch (err) {
@@ -55,7 +53,7 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     fetchNotifications();
-    
+
     // Mark all as read as soon as they visit the page
     const markAllAsRead = async () => {
       try {
@@ -126,14 +124,16 @@ export default function NotificationsPage() {
       ) : (
         <div className="grid gap-4">
           {notifications.map((notification) => (
-            <Link 
-              key={notification.id} 
-              href={notification.videoId ? `/videos/${notification.videoId}` : "#"}
+            <Link
+              key={notification.id}
+              href={
+                notification.videoId ? `/videos/${notification.videoId}` : "#"
+              }
               className="block"
             >
               <Card
                 className={cn(
-                  "hover:bg-muted/50 transition-colors cursor-pointer",
+                  "hover:bg-muted/50 cursor-pointer transition-colors"
                 )}
               >
                 <CardHeader className="flex flex-row items-start space-y-0 pb-4">

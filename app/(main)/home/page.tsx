@@ -5,7 +5,6 @@ import prisma from "@/lib/prisma";
 import { VideosGrid } from "@/components/videos-grid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 
 /**
  * Fetches the current authenticated user session.
@@ -51,7 +50,7 @@ export default async function Home() {
         <h1 className="text-lg font-bold tracking-tight">Dashboard</h1>
 
         <Link href="/create-video">
-          <Button size="sm" className="rounded-full font-semibold px-5">
+          <Button size="sm" className="rounded-full px-5 font-semibold">
             New Video
           </Button>
         </Link>
@@ -60,9 +59,7 @@ export default async function Home() {
       {/* Videos Section without header */}
       <div className="space-y-6">
         {videos.length > 0 ? (
-          <VideosGrid
-            initialVideos={JSON.parse(JSON.stringify(videos))}
-          />
+          <VideosGrid initialVideos={JSON.parse(JSON.stringify(videos))} />
         ) : (
           <div className="bg-muted/10 hover:bg-muted/20 flex h-64 flex-col items-center justify-center rounded-xl border-2 border-dashed transition-colors">
             <p className="text-muted-foreground text-sm font-medium">

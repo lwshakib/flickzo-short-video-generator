@@ -26,7 +26,7 @@ export interface CloudinaryUploadResult {
 
 /**
  * Uploads an audio buffer to Cloudinary using a stream.
- * 
+ *
  * @param buffer - The audio data buffer.
  * @param folder - The target folder in Cloudinary.
  * @returns Object containing the secure URL and public ID.
@@ -66,7 +66,7 @@ export const saveAudioToCloudinary = async (
 
 /**
  * Uploads an image buffer to Cloudinary using a stream.
- * 
+ *
  * @param buffer - The image data buffer.
  * @param folder - The target folder in Cloudinary.
  * @returns Object containing the secure URL and public ID.

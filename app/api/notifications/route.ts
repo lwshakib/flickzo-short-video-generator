@@ -74,7 +74,7 @@ export async function PATCH(request: Request) {
   return NextResponse.json({ success: true });
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });

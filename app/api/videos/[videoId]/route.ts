@@ -93,15 +93,15 @@ export async function DELETE(
     }
 
     // 3. Cleanup assets from Cloudinary
-    const audio = video.audio as any;
+    const audio = video.audio as { publicId?: string } | null;
     if (audio?.publicId) {
       await deleteFromCloudinary(audio.publicId, "video");
     }
 
-    const images = video.images as any[];
+    const images = video.images as { publicId?: string }[] | null;
     if (images && images.length > 0) {
       await Promise.all(
-        images.map((img: any) => {
+        images.map((img) => {
           if (img.publicId) {
             return deleteFromCloudinary(img.publicId, "image");
           }

@@ -82,7 +82,6 @@ export function NavRecentVideos({
                   >
                     {video.title}
                   </span>
-
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

@@ -31,7 +31,7 @@ export function VideoDetailsView({
   voiceData,
 }: {
   initialVideo: Video;
-  voiceData: { Name: string } | null | undefined;
+  voiceData: { name: string } | null | undefined;
 }) {
   const [video, setVideo] = useState<Video>(initialVideo);
 
@@ -141,7 +141,7 @@ export function VideoDetailsView({
 
             <div className="space-y-6">
               <DetailItem label="Style" value={video.videoStyle} />
-              <DetailItem label="Voice" value={voiceData?.Name || "AI Voice"} />
+              <DetailItem label="Voice" value={voiceData?.name || "AI Voice"} />
               <DetailItem label="Topic" value={video.topic || "—"} />
             </div>
 

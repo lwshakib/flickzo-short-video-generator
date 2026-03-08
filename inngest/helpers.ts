@@ -1,12 +1,12 @@
-import {
-  generateAudio as llmGenerateAudio,
-} from "@/llm/generateAudio";
+import { generateAudio as llmGenerateAudio } from "@/llm/generateAudio";
 import { inngest } from "./client";
 import { GetStepTools } from "inngest";
-import { saveAudioToCloudinary } from "@/lib/cloudinary";
 import { generateImage } from "@/llm/generateImage";
 import { generateObjectFromAI } from "@/llm/generateObject";
-import { generateCaptions as llmGenerateCaptions, CaptionWord } from "@/llm/generateCaptions";
+import {
+  generateCaptions as llmGenerateCaptions,
+  CaptionWord,
+} from "@/llm/generateCaptions";
 import { IMAGE_PROMPT_SCRIPT } from "@/llm/prompts";
 import { z } from "zod";
 

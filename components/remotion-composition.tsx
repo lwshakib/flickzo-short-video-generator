@@ -95,7 +95,7 @@ function RemotionComposition({ videoData }: Props) {
       >
         <div
           className={cn(
-            "text-white text-center drop-shadow-2xl px-10 text-[60px]", // Essential Base Styles
+            "px-10 text-center text-[60px] text-white drop-shadow-2xl", // Essential Base Styles
             videoData?.captionStyle?.className
           )}
           style={{

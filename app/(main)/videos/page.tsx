@@ -49,7 +49,7 @@ export default async function VideosPage() {
         </div>
 
         <Link href="/create-video">
-          <Button size="sm" className="rounded-full font-semibold px-5">
+          <Button size="sm" className="rounded-full px-5 font-semibold">
             New Video
           </Button>
         </Link>

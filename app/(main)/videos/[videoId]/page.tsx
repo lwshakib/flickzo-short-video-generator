@@ -31,7 +31,7 @@ export default async function VideoDetailsPage({
     return notFound();
   }
 
-  const voiceData = videoVoices.find((v) => v.Model === video.voice);
+  const voiceData = videoVoices.find((v) => v.id === video.voice);
 
   return (
     <VideoDetailsView

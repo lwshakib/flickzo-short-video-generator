@@ -7,7 +7,6 @@ import {
   IconHelp,
   IconSearch,
   IconVideo,
-  IconCoin,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";

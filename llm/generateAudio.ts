@@ -1,5 +1,5 @@
-import * as env from '@/lib/env';
-import { saveAudioToCloudinary } from '@/lib/cloudinary';
+import * as env from "@/lib/env";
+import { saveAudioToCloudinary } from "@/lib/cloudinary";
 
 /**
  * Options for the generateAudio function.
@@ -26,15 +26,15 @@ export interface GenerateAudioResult {
 async function getAudioBuffer(text: string, voice: string): Promise<Buffer> {
   const workerURL = env.AURA_2_EN_WORKER_URL!;
   const response = await fetch(workerURL, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${env.CLOUDFLARE_API_KEY}`,
     },
     body: JSON.stringify({
       text,
       speaker: voice,
-      encoding: 'mp3',
+      encoding: "mp3",
     }),
   });
 
@@ -56,11 +56,11 @@ async function getAudioBuffer(text: string, voice: string): Promise<Buffer> {
  */
 export const generateAudio = async ({
   text,
-  voice = 'zeus',
+  voice = "zeus",
 }: GenerateAudioOptions): Promise<GenerateAudioResult> => {
   try {
     const buffer = await getAudioBuffer(text, voice);
-    
+
     // Upload the generated audio buffer to Cloudinary
     const cloudinaryResult = await saveAudioToCloudinary(buffer);
 
@@ -71,10 +71,10 @@ export const generateAudio = async ({
       text,
     };
   } catch (error) {
-    console.error('[GENERATE_AUDIO_ERROR]', error);
+    console.error("[GENERATE_AUDIO_ERROR]", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
       text,
     };
   }
@@ -85,17 +85,19 @@ export const generateAudio = async ({
  * 1. Converts each script segment to speech in parallel.
  * 2. Merges all generated audio buffers.
  * 3. Uploads the final combined audio to Cloudinary.
- * 
+ *
  * @param segments - Array of text segments with their respective voices.
  * @returns The Cloudinary URL and public ID of the generated audio file.
  */
-export const generateAudioFile = async (segments: { content: string; voice: string }[]) => {
+export const generateAudioFile = async (
+  segments: { content: string; voice: string }[]
+) => {
   const audioBuffers = await Promise.all(
     segments.map(async (segment) => {
       try {
         return await getAudioBuffer(segment.content, segment.voice);
       } catch (error) {
-        console.error('Failed to generate audio segment', error);
+        console.error("Failed to generate audio segment", error);
         return null;
       }
     })
@@ -104,7 +106,7 @@ export const generateAudioFile = async (segments: { content: string; voice: stri
   const validBuffers = audioBuffers.filter((b): b is Buffer => b !== null);
 
   if (validBuffers.length === 0) {
-    throw new Error('Failed to generate any audio segments');
+    throw new Error("Failed to generate any audio segments");
   }
 
   const mergedBuffer = Buffer.concat(validBuffers);

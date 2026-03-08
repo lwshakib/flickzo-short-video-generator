@@ -3,7 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Play, Clock, AlertCircle, Video as VideoIcon, X, Loader2 } from "lucide-react";
+import {
+  Play,
+  AlertCircle,
+  Video as VideoIcon,
+  X,
+  Loader2,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { videoStyles } from "@/lib/data";
@@ -125,7 +131,7 @@ export function VideoCard({
       } else {
         setIsDeleting(false);
       }
-    } catch (error) {
+    } catch {
       setIsDeleting(false);
     }
   };
@@ -144,7 +150,7 @@ export function VideoCard({
             alt={video.title}
             className={cn(
               "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105",
-              isPending && "grayscale opacity-80"
+              isPending && "opacity-80 grayscale"
             )}
           />
         ) : (
@@ -154,7 +160,7 @@ export function VideoCard({
             alt={video.title}
             className={cn(
               "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105",
-              isPending ? "grayscale opacity-80" : "opacity-60 grayscale"
+              isPending ? "opacity-80 grayscale" : "opacity-60 grayscale"
             )}
           />
         )}
@@ -169,14 +175,15 @@ export function VideoCard({
               onClick={handleCancel}
               disabled={isDeleting}
               className={cn(
-                "bg-background/20 hover:bg-background/40 active:scale-95 relative z-20 flex size-12 items-center justify-center rounded-full border border-white/20 shadow-2xl backdrop-blur-md transition-all duration-200 disabled:opacity-50",
-                !isDeleting && "opacity-0 group-hover:opacity-100 transition-opacity"
+                "bg-background/20 hover:bg-background/40 relative z-20 flex size-12 items-center justify-center rounded-full border border-white/20 shadow-2xl backdrop-blur-md transition-all duration-200 active:scale-95 disabled:opacity-50",
+                !isDeleting &&
+                  "opacity-0 transition-opacity group-hover:opacity-100"
               )}
             >
               {isDeleting ? (
-                <Loader2 className="text-white size-6 animate-spin" />
+                <Loader2 className="size-6 animate-spin text-white" />
               ) : (
-                <X className="text-white size-6" />
+                <X className="size-6 text-white" />
               )}
             </button>
           </div>

@@ -44,16 +44,16 @@ export async function deleteVideo(videoId: string) {
     // Helper to delete recursively from JSON asset objects
     const deleteAssets = async () => {
       // Audio
-      const audio = video.audio as any;
+      const audio = video.audio as { publicId?: string } | null;
       if (audio?.publicId) {
         await deleteFromCloudinary(audio.publicId, "video");
       }
 
       // Images
-      const images = video.images as any[];
+      const images = video.images as { publicId?: string }[] | null;
       if (images && images.length > 0) {
         await Promise.all(
-          images.map((img: any) => {
+          images.map((img) => {
             if (img.publicId) {
               return deleteFromCloudinary(img.publicId, "image");
             }

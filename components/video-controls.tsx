@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { useFlickzoStore } from "@/context";
 
 import {
@@ -64,7 +63,7 @@ export function VideoControls({ videoId, status }: Props) {
           <Button
             variant="outline"
             disabled={isDeleting}
-            className="h-12 rounded-xl font-bold transition-all border-border"
+            className="border-border h-12 rounded-xl font-bold transition-all"
           >
             {isDeleting ? (
               <Loader2 className="mr-2 size-4 animate-spin" />
@@ -93,7 +92,7 @@ export function VideoControls({ videoId, status }: Props) {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="h-10 rounded-lg bg-primary text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 rounded-lg text-xs font-semibold"
             >
               {status === "PENDING" ? "Cancel Production" : "Delete Forever"}
             </AlertDialogAction>
