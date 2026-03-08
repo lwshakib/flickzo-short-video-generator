@@ -68,7 +68,7 @@ export function NavRecentVideos({
               >
                 <Link href={url}>
                   {isPending ? (
-                    <IconSparkles className="text-primary size-4 shrink-0 animate-spin" />
+                    <IconSparkles className="text-primary size-4 shrink-0" />
                   ) : isFailed ? (
                     <IconAlertCircle className="text-destructive size-4 shrink-0" />
                   ) : (

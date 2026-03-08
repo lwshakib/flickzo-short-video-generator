@@ -246,7 +246,7 @@ export default function CreateVideoPage() {
               <div className="relative group w-fit mt-6">
                 {scriptLoading && (
                   <div className="absolute -inset-[2px] overflow-hidden rounded-xl">
-                    <div className="animate-border-spin absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0deg,var(--sidebar-primary)_90deg,transparent_180deg,var(--sidebar-primary)_270deg,transparent_360deg)] opacity-40 blur-[1px]" />
+                    <div className="animate-border-spin absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0deg,var(--primary)_90deg,transparent_180deg,var(--primary)_270deg,transparent_360deg)] opacity-40 blur-[1px]" />
                   </div>
                 )}
                 <Button
