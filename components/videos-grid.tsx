@@ -3,13 +3,16 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Play, Clock, AlertCircle, Video as VideoIcon } from "lucide-react";
+import { Play, Clock, AlertCircle, Video as VideoIcon, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { videoStyles } from "@/lib/data";
 import { useInngestSubscription } from "@inngest/realtime/hooks";
 import { fetchRealtimeSubscriptionToken } from "@/actions/get-subscribe-token";
 import axios from "axios";
+import { cn } from "@/lib/utils";
+import { deleteVideo } from "@/actions/delete-video";
+import { toast } from "sonner";
 
 interface VideoItem {
   id: string;
@@ -75,9 +78,26 @@ export function VideosGrid({ initialVideos }: { initialVideos: VideoItem[] }) {
 
 export function VideoCard({ video }: { video: VideoItem }) {
   const styleData = videoStyles.find((s) => s.label === video.videoStyle);
+  const isPending = video.status === "PENDING";
+
+  const handleCancel = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const promise = deleteVideo(video.id);
+    toast.promise(promise, {
+      loading: "Canceling production...",
+      success: "Production canceled successfully",
+      error: "Failed to cancel production",
+    });
+  };
 
   return (
-    <Link href={`/videos/${video.id}`} className="group block">
+    <Link
+      href={isPending ? "#" : `/videos/${video.id}`}
+      className={cn("group block", isPending && "cursor-default")}
+      onClick={(e) => isPending && e.preventDefault()}
+    >
       <div className="bg-muted relative aspect-[9/16] overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
         {video.images && video.images.length > 0 ? (
           /* eslint-disable-next-line @next/next/no-img-element */
@@ -91,8 +111,26 @@ export function VideoCard({ video }: { video: VideoItem }) {
           <img
             src={styleData?.src}
             alt={video.title}
-            className="h-full w-full object-cover opacity-60 grayscale transition-transform duration-500 group-hover:scale-105"
+            className={cn(
+              "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105",
+              isPending ? "opacity-80 saturate-[1.25]" : "opacity-60 grayscale"
+            )}
           />
+        )}
+
+        {isPending && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
+            {/* Shimmer Effect Overlay */}
+            <div className="animate-shine absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+            {/* Cancel Icon */}
+            <button
+              onClick={handleCancel}
+              className="bg-background/20 hover:bg-background/40 active:scale-95 relative z-20 flex size-12 items-center justify-center rounded-full border border-white/20 shadow-2xl backdrop-blur-md transition-all duration-200"
+            >
+              <X className="text-white size-6" />
+            </button>
+          </div>
         )}
 
         <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/5" />
@@ -101,11 +139,13 @@ export function VideoCard({ video }: { video: VideoItem }) {
           <StatusBadge status={video.status} />
         </div>
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <div className="bg-background/90 flex size-9 items-center justify-center rounded-full border shadow-xl backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-            <Play className="size-4 translate-x-0.5 fill-current" />
+        {!isPending && (
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <div className="bg-background/90 flex size-9 items-center justify-center rounded-full border shadow-xl backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+              <Play className="size-4 translate-x-0.5 fill-current" />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="mt-2.5 space-y-0.5 px-0.5">
@@ -125,13 +165,8 @@ export function VideoCard({ video }: { video: VideoItem }) {
 function StatusBadge({ status }: { status: string }) {
   switch (status) {
     case "COMPLETED":
-      return null;
     case "PENDING":
-      return (
-        <Badge className="border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black tracking-widest text-amber-500 uppercase backdrop-blur-md">
-          <Clock className="mr-1 size-2.5 animate-pulse" /> Processing
-        </Badge>
-      );
+      return null;
     case "FAILED":
       return (
         <Badge className="border-red-500/20 bg-red-500/10 px-2 py-0.5 text-[10px] font-black tracking-widest text-red-500 uppercase backdrop-blur-md">

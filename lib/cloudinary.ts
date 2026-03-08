@@ -103,3 +103,11 @@ export const saveImageToCloudinary = async (
     publicId: uploadResult.public_id,
   };
 };
+export const deleteFromCloudinary = async (
+  publicId: string,
+  resourceType: "image" | "video"
+) => {
+  return await cloudinary.uploader.destroy(publicId, {
+    resource_type: resourceType,
+  });
+};
