@@ -27,6 +27,8 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { VoicePicker } from "@/components/ui/voice-picker";
 
+import { Logo } from "@/components/logo";
+
 /**
  * CreateVideoPage component.
  * The primary interface for users to configure and trigger cinematic video generation.
@@ -48,6 +50,7 @@ export default function CreateVideoPage() {
   const [selectedScriptIdx, setSelectedScriptIdx] = useState<number | null>(
     null
   );
+  const [abortController, setAbortController] = useState<AbortController | null>(null);
 
   // 2. VISUAL & AUDIO CUSTOMIZATION STATE
   const [selectedStyle, setSelectedStyle] = useState<string>("Anime");
@@ -61,32 +64,49 @@ export default function CreateVideoPage() {
 
 
 
-  /**
-   * Generates AI scripts based on the chosen topic.
-   */
   const handleGenerateScript = async () => {
+    if (scriptLoading && abortController) {
+      abortController.abort();
+      setAbortController(null);
+      setScriptLoading(false);
+      toast.info("Script generation canceled");
+      return;
+    }
+
     if (!selectedTopic) {
       toast.error("Please select or enter a topic");
       return;
     }
 
+    const controller = new AbortController();
+    setAbortController(controller);
     setScriptLoading(true);
+
     try {
-      const promise = axios.post("/api/scripts", { topic: selectedTopic });
+      const promise = axios.post("/api/scripts", 
+        { topic: selectedTopic }, 
+        { signal: controller.signal }
+      );
 
       toast.promise(promise, {
         loading: "Architecting your narratives...",
         success: "Scripts generated successfully!",
-        error: "Failed to generate scripts. Please try again.",
+        error: (err) => {
+          if (axios.isCancel(err)) return "Generation canceled";
+          return "Failed to generate scripts. Please try again.";
+        },
       });
 
       const response = await promise;
       setGeneratedScripts(response.data.data.scripts);
       setSelectedScriptIdx(0); // Select first script by default
     } catch (error) {
-      console.error("Error generating scripts:", error);
+      if (!axios.isCancel(error)) {
+        console.error("Error generating scripts:", error);
+      }
     } finally {
       setScriptLoading(false);
+      setAbortController(null);
     }
   };
 
@@ -228,17 +248,18 @@ export default function CreateVideoPage() {
 
               <Button
                 size="sm"
+                variant={scriptLoading ? "outline" : "default"}
                 className="mt-6 font-bold"
                 onClick={handleGenerateScript}
-                disabled={!selectedTopic || scriptLoading}
+                disabled={!selectedTopic && !scriptLoading}
               >
-                {scriptLoading ? "Generating..." : "Generate Scripts"}
+                {scriptLoading ? "Cancel Generation" : "Generate Scripts"}
                 {!scriptLoading && <ChevronRight className="ml-1 size-3.5" />}
               </Button>
 
               {(scriptLoading || generatedScripts.length > 0) && (
                 <div className="animate-in fade-in slide-in-from-top-4 mt-8 space-y-3 duration-700">
-                  <h4 className="text-muted-foreground text-[10px] font-bold tracking-wider uppercase">
+                  <h4 className="text-muted-foreground text-[10px] font-bold tracking-wider">
                     Select a script
                   </h4>
                   {scriptLoading ? (
@@ -267,7 +288,7 @@ export default function CreateVideoPage() {
                           )}
                           onClick={() => setSelectedScriptIdx(idx)}
                         >
-                          <h5 className="mb-1 text-xs font-bold tracking-tight uppercase">
+                          <h5 className="mb-1 text-xs font-bold tracking-tight">
                             {script.title}
                           </h5>
                           <p className="text-[11px] leading-relaxed font-medium italic opacity-70">
@@ -309,7 +330,7 @@ export default function CreateVideoPage() {
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-2.5">
-                        <span className="text-[10px] font-bold text-white uppercase">
+                        <span className="text-[10px] font-bold text-white">
                           {style.label}
                         </span>
                       </div>
@@ -353,7 +374,7 @@ export default function CreateVideoPage() {
                   >
                     <div
                       className={cn(
-                        "text-center text-sm font-bold uppercase transition-transform group-hover:scale-105",
+                        "text-center text-sm font-bold transition-transform group-hover:scale-105",
                         style.className
                       )}
                     >
@@ -386,11 +407,8 @@ export default function CreateVideoPage() {
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
-            <div className="absolute top-6 left-6 flex items-center gap-1.5 opacity-40">
-              <Video className="size-3 text-white" />
-              <span className="text-[8px] font-bold tracking-widest text-white uppercase">
-                Flickzo
-              </span>
+            <div className="absolute top-6 left-6 scale-50 origin-top-left opacity-40">
+              <Logo />
             </div>
 
             <div className="pointer-events-none absolute inset-0 flex items-end justify-center p-6 pb-20 text-center">
@@ -402,14 +420,14 @@ export default function CreateVideoPage() {
               >
                 {(selectedScriptIdx !== null && generatedScripts[selectedScriptIdx]
                     ? generatedScripts[selectedScriptIdx].title
-                    : customTopic) || "PREVIEW"}
+                    : customTopic) || "Preview"}
               </div>
             </div>
           </div>
 
           {/* Configuration Summary */}
           <div className="bg-background rounded-xl border p-4 shadow-sm">
-            <h4 className="mb-3 text-[10px] font-bold tracking-wider uppercase opacity-40">
+            <h4 className="mb-3 text-[10px] font-bold tracking-wider opacity-40">
               Settings
             </h4>
             <div className="grid grid-cols-2 gap-4">
@@ -433,7 +451,7 @@ export default function CreateVideoPage() {
             </div>
           </Button>
 
-          <p className="text-muted-foreground text-center text-[10px] font-medium uppercase opacity-40">
+          <p className="text-muted-foreground text-center text-[10px] font-medium opacity-40">
             ~60s generation time
           </p>
         </div>
@@ -442,7 +460,7 @@ export default function CreateVideoPage() {
   );
 }
 
-function StepWrapper({
+ function StepWrapper({
   title,
   description,
   children,
@@ -454,7 +472,7 @@ function StepWrapper({
   return (
     <div className="space-y-4">
       <div className="space-y-0.5">
-        <h2 className="text-foreground text-sm font-bold tracking-wider uppercase">
+        <h2 className="text-foreground text-sm font-bold tracking-wider">
           {title}
         </h2>
         <p className="text-muted-foreground text-xs font-medium">
@@ -469,7 +487,7 @@ function StepWrapper({
 function SummaryItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-muted-foreground text-[9px] font-bold uppercase opacity-60">
+      <span className="text-muted-foreground text-[9px] font-bold opacity-60">
         {label}
       </span>
       <span className="truncate text-[11px] font-bold">{value || "---"}</span>
