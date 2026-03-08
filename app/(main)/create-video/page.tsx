@@ -400,7 +400,9 @@ export default function CreateVideoPage() {
                   selectedCaptionStyle?.className
                 )}
               >
-                {selectedTopic || "PREVIEW"}
+                {(selectedScriptIdx !== null && generatedScripts[selectedScriptIdx]
+                    ? generatedScripts[selectedScriptIdx].title
+                    : customTopic) || "PREVIEW"}
               </div>
             </div>
           </div>

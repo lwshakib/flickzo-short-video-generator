@@ -76,12 +76,6 @@ export async function generateImages(
   style: string,
   step: GetStepTools<typeof inngest>
 ): Promise<ImageResult[]> {
-  // Prepare the prompt for generating image descriptions based on the script and style
-  const imagePromptsPrompt = IMAGE_PROMPT_SCRIPT.replace(
-    "{{STYLE}}",
-    style
-  ).replace("{{SCRIPT}}", script);
-
   // Define the schema for the image prompts we expect from the AI
   const imagePromptsSchema = z.array(
     z.object({
@@ -92,10 +86,13 @@ export async function generateImages(
 
   // Step A: Generate image prompts using the AI model
   const imagePrompts = (await step.run("generate-image-prompts", async () => {
-    return await generateObjectFromAI(
-      [{ role: "user", content: imagePromptsPrompt }],
-      imagePromptsSchema
-    );
+    return await generateObjectFromAI({
+      messages: [
+        { role: "system", content: IMAGE_PROMPT_SCRIPT },
+        { role: "user", content: `Script: ${script}\nStyle: ${style}` },
+      ],
+      outputSchema: imagePromptsSchema,
+    });
   })) as { imagePrompt: string; sceneContent: string }[];
 
   const images: ImageResult[] = [];

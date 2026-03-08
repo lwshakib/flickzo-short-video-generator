@@ -16,9 +16,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Topic is required" }, { status: 400 });
     }
 
-    // 1. Prepare the prompt with the user's topic
-    const prompt = SCRIPT_GENERATE_PROMPT.replace("{{TOPIC}}", topic);
-
     // 2. Define the expected JSON structure using Zod
     const schema = z.object({
       scripts: z.array(
@@ -30,7 +27,13 @@ export async function POST(req: Request) {
     });
 
     // 3. Request structured data from the LLM
-    const object = await generateObjectFromAI(prompt, schema);
+    const object = await generateObjectFromAI({
+      messages: [
+        { role: "system", content: SCRIPT_GENERATE_PROMPT },
+        { role: "user", content: `Topic: ${topic}` },
+      ],
+      outputSchema: schema,
+    });
 
     return NextResponse.json({ data: object });
   } catch (error: unknown) {

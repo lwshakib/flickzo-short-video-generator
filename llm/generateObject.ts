@@ -11,10 +11,10 @@ export interface Message {
  * Generates a structured JSON object using GLM-4.7-Flash in strict schema mode.
  *
  * @param messages - An array of chat messages.
- * @param objectSchema - A Zod schema defining the required output structure.
+ * @param outputSchema - A Zod schema defining the required output structure.
  * @returns The parsed JSON object matching the provided schema.
  */
-export const generateObjectFromAI = async (messages: Message[], objectSchema: z.ZodSchema) => {
+export const generateObjectFromAI = async ({messages, outputSchema}: {messages: Message[], outputSchema: z.ZodSchema}) => {
   if (!GLM_WORKER_URL) {
     throw new Error('GLM_WORKER_URL is not set in environment variables');
   }
@@ -31,7 +31,7 @@ export const generateObjectFromAI = async (messages: Message[], objectSchema: z.
   };
 
   // Convert Zod schema to JSON Schema for the worker's strict mode
-  const jsonSchema = zodToJsonSchema(objectSchema as any);
+  const jsonSchema = zodToJsonSchema(outputSchema as any);
 
   const response = await fetch(url, {
     method: 'POST',

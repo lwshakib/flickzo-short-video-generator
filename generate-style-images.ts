@@ -10,13 +10,12 @@ const FLUX_KLEIN_WORKER_URL = process.env.FLUX_KLEIN_WORKER_URL;
 const STYLES_DIR = path.join(process.cwd(), 'public', 'styles');
 
 const stylePrompts = [
-  { name: 'gta', prompt: 'Digital art, comic book style loading screen, luxury car parked near a palm tree, high contrast, vibrant saturated colors, cinematic lighting, cell-shaded masterpiece.' },
-  { name: 'oil-painting', prompt: 'Oil painting on canvas, thick impasto brushstrokes, rich texture, a serene sunset over a rolling mountain range, warm golden lighting.' },
-  { name: 'sketch', prompt: 'Detailed charcoal sketch, realistic pencil shading, a close-up profile of a lion, fine lines, artistic cross-hatching, high contrast.' }
+  { name: 'gta', prompt: 'Digital art masterpiece, action game loading screen style, luxury sports car on a palm-fringed coast road at sunset, vibrant purple and orange sky, sharp cel-shaded outlines, high contrast pop art.' },
+  { name: 'sketch', prompt: 'Exquisite and highly detailed charcoal sketch of a majestic lion head, intricate fur texture, deep expressive eyes, fine art drawing on textured paper, high contrast black and white.' }
 ];
 
 async function generateStyleImages() {
-  console.log('--- Style Image Generation (RETRY) Started ---');
+  console.log('--- Detailed 512px (6 steps) Regeneration ---');
 
   if (!CLOUDFLARE_API_KEY || !FLUX_KLEIN_WORKER_URL) {
     console.error('❌ Missing CLOUDFLARE_API_KEY or FLUX_KLEIN_WORKER_URL in .env');
@@ -35,7 +34,8 @@ async function generateStyleImages() {
     console.log(`Generating image for style: ${style.name}...`);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+      await new Promise(resolve => setTimeout(resolve, 5000)); 
+      
       const response = await fetch(FLUX_KLEIN_WORKER_URL, {
         method: 'POST',
         headers: {
@@ -44,9 +44,9 @@ async function generateStyleImages() {
         },
         body: JSON.stringify({
           prompt: style.prompt,
-          width: 1024,
-          height: 1024,
-          steps: 28,
+          width: 512,
+          height: 512,
+          steps: 6,
         }),
       });
 
