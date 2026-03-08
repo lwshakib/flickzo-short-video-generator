@@ -12,15 +12,26 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const notifications = await prisma.notification.findMany({
-    where: {
-      userId: session.user.id,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 50,
-  });
+  const [notifications] = await Promise.all([
+    prisma.notification.findMany({
+      where: {
+        userId: session.user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 50,
+    }),
+    prisma.notification.updateMany({
+      where: {
+        userId: session.user.id,
+        isRead: false,
+      },
+      data: {
+        isRead: true,
+      },
+    }),
+  ]);
 
   return NextResponse.json(notifications);
 }

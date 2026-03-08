@@ -83,12 +83,6 @@ export function NavRecentVideos({
                     {video.title}
                   </span>
 
-                  {/* AI Shimmer Loader for Pending Videos */}
-                  {isPending && (
-                    <div className="pointer-events-none absolute inset-0">
-                      <div className="via-primary/5 animate-shine absolute inset-0 h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-transparent" />
-                    </div>
-                  )}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
