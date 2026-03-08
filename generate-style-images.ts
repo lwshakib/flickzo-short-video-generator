@@ -10,12 +10,14 @@ const FLUX_KLEIN_WORKER_URL = process.env.FLUX_KLEIN_WORKER_URL;
 const STYLES_DIR = path.join(process.cwd(), 'public', 'styles');
 
 const stylePrompts = [
-  { name: 'gta', prompt: 'Digital art masterpiece, action game loading screen style, luxury sports car on a palm-fringed coast road at sunset, vibrant purple and orange sky, sharp cel-shaded outlines, high contrast pop art.' },
-  { name: 'sketch', prompt: 'Exquisite and highly detailed charcoal sketch of a majestic lion head, intricate fur texture, deep expressive eyes, fine art drawing on textured paper, high contrast black and white.' }
+  // { name: 'gta', prompt: 'Grand Theft Auto loading screen style, hyper-detailed, cel-shaded digital art masterpiece. A close-up of a badass protagonist with dark sunglasses and a leather jacket, standing next to a sleek luxury sports car on a palm tree-lined coastal road at sunset. Vibrant purple, pink, and orange sky, sharp outlines, intense high contrast pop art, cinematic lighting, 8k resolution, masterpiece.' },
+  // { name: 'sketch', prompt: 'Detailed architectural sketch, pencil and ink, a futuristic steampunk city floating among the clouds, complex gears and intricate mechanical elements, highly detailed line work, shading, sepia tone, da vinci notebook style, exquisite rough textured drawing paper.' },
+  // { name: 'cinematic', prompt: 'Epic cinematic shot, low angle. An ancient, colossal, rusted robot overgrown with thick moss and luminous vines fully awaking in a dense, mystical fantasy forest. God rays shining through the thick green canopy, glowing dust motes floating in the humid air, 35mm film, anamorphic lens flare, award-winning cinematography, hyper-realistic, 8k resolution.' },
+  { name: 'realistic', prompt: 'Incredibly detailed, photorealistic photograph of an astronaut exploring a majestic alien landscape. Bioluminescent flora and glowing crystalline rivers illuminating the scene. Ultra-high resolution, 8k, natural and dramatic lighting, shot on 35mm lens, hyper-realistic textures, National Geographic style award-winning photography.' }
 ];
 
 async function generateStyleImages() {
-  console.log('--- Detailed 512px (6 steps) Regeneration ---');
+  console.log('--- Detailed 1024px Generation ---');
 
   if (!CLOUDFLARE_API_KEY || !FLUX_KLEIN_WORKER_URL) {
     console.error('❌ Missing CLOUDFLARE_API_KEY or FLUX_KLEIN_WORKER_URL in .env');
@@ -44,8 +46,8 @@ async function generateStyleImages() {
         },
         body: JSON.stringify({
           prompt: style.prompt,
-          width: 512,
-          height: 512,
+          width: 1024,
+          height: 1024,
           steps: 6,
         }),
       });
