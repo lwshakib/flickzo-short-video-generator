@@ -14,48 +14,60 @@ export interface GenerateAudioOptions {
  */
 export interface GenerateAudioResult {
   success: boolean;
-  buffer?: Buffer; // The raw MP3 audio data
+  audioUrl?: string; // The Cloudinary URL
+  publicId?: string; // The Cloudinary public ID
   text: string; // The original text that was processed
   error?: string; // Error message if generation fails
 }
 
 /**
- * Communicates with the Aura-2 Cloudflare Worker to generate realistic speech.
+ * Internal helper to fetch audio buffer from Aura-2.
+ */
+async function getAudioBuffer(text: string, voice: string): Promise<Buffer> {
+  const workerURL = env.AURA_2_EN_WORKER_URL!;
+  const response = await fetch(workerURL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${env.CLOUDFLARE_API_KEY}`,
+    },
+    body: JSON.stringify({
+      text,
+      speaker: voice,
+      encoding: 'mp3',
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Aura-2 API Error: ${errorText}`);
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+}
+
+/**
+ * Communicates with the Aura-2 Cloudflare Worker to generate realistic speech
+ * and saves it to Cloudinary.
  *
  * @param options - Text to speak and voice persona.
- * @returns Result object with success flag and audio Buffer.
+ * @returns Result object with success flag and Cloudinary details.
  */
 export const generateAudio = async ({
   text,
   voice = 'zeus',
 }: GenerateAudioOptions): Promise<GenerateAudioResult> => {
   try {
-    const workerURL = env.AURA_2_EN_WORKER_URL!;
-
-    const response = await fetch(workerURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${env.CLOUDFLARE_API_KEY}`,
-      },
-      body: JSON.stringify({
-        text,
-        speaker: voice,
-        encoding: 'mp3',
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Aura-2 API Error: ${errorText}`);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const buffer = await getAudioBuffer(text, voice);
+    
+    // Upload the generated audio buffer to Cloudinary
+    const cloudinaryResult = await saveAudioToCloudinary(buffer);
 
     return {
       success: true,
-      buffer,
+      audioUrl: cloudinaryResult.url,
+      publicId: cloudinaryResult.publicId,
       text,
     };
   } catch (error) {
@@ -80,11 +92,12 @@ export const generateAudio = async ({
 export const generateAudioFile = async (segments: { content: string; voice: string }[]) => {
   const audioBuffers = await Promise.all(
     segments.map(async (segment) => {
-      const { success, buffer } = await generateAudio({
-        text: segment.content,
-        voice: segment.voice,
-      });
-      return success && buffer ? buffer : null;
+      try {
+        return await getAudioBuffer(segment.content, segment.voice);
+      } catch (error) {
+        console.error('Failed to generate audio segment', error);
+        return null;
+      }
     })
   );
 

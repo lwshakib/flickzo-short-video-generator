@@ -1,5 +1,5 @@
 import { inngest } from "./client";
-import { generateAudio, generateCaptions, generateImages } from "./helpers";
+import { generateVideoAudio, transcribeAudio, generateImages } from "./helpers";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { resend } from "@/lib/resend";
@@ -104,11 +104,11 @@ export const createVideo = inngest.createFunction(
 
     // Step 1: Generate Audio and upload to Cloudinary.
     const audioData = await step.run("generate-audio", async () => {
-      return await generateAudio(script, voice);
+      return await generateVideoAudio(script, voice);
     });
 
     // Step 2: Generate Captions using Deepgram.
-    const captionsData = await generateCaptions(audioData.audioUrl, step);
+    const captionsData = await transcribeAudio(audioData.audioUrl, step);
 
     // Step 3: Generate Images using Flux (AI model).
     const imagesData = await generateImages(script, videoStyle, step);

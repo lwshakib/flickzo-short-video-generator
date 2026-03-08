@@ -27,19 +27,16 @@ interface ImageResult {
  * @param voice The voice ID or name to use for generation.
  * @returns An object containing the Cloudinary URL, public ID, and the original text.
  */
-export async function generateAudio(text: string, voice: string) {
-  // Call the LLM service to generate the audio buffer
+export async function generateVideoAudio(text: string, voice: string) {
+  // Call the LLM service to generate and upload the audio
   const audioResult = await llmGenerateAudio({ text, voice });
-  if (!audioResult.success || !audioResult.buffer) {
+  if (!audioResult.success || !audioResult.audioUrl) {
     throw new Error(audioResult.error || "Failed to generate audio");
   }
 
-  // Upload the generated audio buffer to Cloudinary for persistent storage
-  const cloudinaryResult = await saveAudioToCloudinary(audioResult.buffer);
-
   return {
-    audioUrl: cloudinaryResult.url,
-    publicId: cloudinaryResult.publicId,
+    audioUrl: audioResult.audioUrl,
+    publicId: audioResult.publicId!,
     text: text,
   };
 }
@@ -51,7 +48,7 @@ export async function generateAudio(text: string, voice: string) {
  * @param step The Inngest step tool for reliable execution.
  * @returns A promise that resolves to an array of CaptionWord objects.
  */
-export async function generateCaptions(
+export async function transcribeAudio(
   audioUrl: string,
   step: GetStepTools<typeof inngest>
 ): Promise<CaptionWord[]> {
