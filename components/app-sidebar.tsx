@@ -10,6 +10,7 @@ import {
   IconCoin,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { NavRecentVideos } from "@/components/nav-recent-videos";
 import { NavMain } from "@/components/nav-main";
@@ -73,11 +74,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Credits",
       url: "#",
       unclickable: true,
-      content: (
-        <span className="text-muted-foreground text-xs font-semibold">
-          {credits !== null ? credits : "..."} credits remaining
-        </span>
-      ),
+      content:
+        credits !== null ? (
+          <span className="text-muted-foreground text-xs font-semibold">
+            {credits} credits remaining
+          </span>
+        ) : (
+          <Skeleton className="h-4 w-28 rounded-md" />
+        ),
     },
     {
       title: "Search",
