@@ -1,25 +1,14 @@
 import {
-  deepgramClient,
   generateAudio as llmGenerateAudio,
 } from "@/llm/generateAudio";
 import { inngest } from "./client";
 import { GetStepTools } from "inngest";
-import { saveAudioToCloudinary } from "@/lib/save-audio-to-cloudinary";
+import { saveAudioToCloudinary } from "@/lib/cloudinary";
 import { generateImage } from "@/llm/generateImage";
 import { generateObjectFromAI } from "@/llm/generateObject";
+import { generateCaptions as llmGenerateCaptions, CaptionWord } from "@/llm/generateCaptions";
 import { IMAGE_PROMPT_SCRIPT } from "@/llm/prompts";
 import { z } from "zod";
-
-/**
- * Interface representing a single word in the generated captions.
- */
-interface CaptionWord {
-  word: string;
-  start: number;
-  end: number;
-  confidence: number;
-  punctuated_word?: string;
-}
 
 /**
  * Interface representing the result of an image generation.
@@ -49,7 +38,7 @@ export async function generateAudio(text: string, voice: string) {
   const cloudinaryResult = await saveAudioToCloudinary(audioResult.buffer);
 
   return {
-    audioUrl: cloudinaryResult.audioUrl,
+    audioUrl: cloudinaryResult.url,
     publicId: cloudinaryResult.publicId,
     text: text,
   };
@@ -67,20 +56,7 @@ export async function generateCaptions(
   step: GetStepTools<typeof inngest>
 ): Promise<CaptionWord[]> {
   const captions = await step.run("transcribe-audio", async () => {
-    // Call Deepgram API for transcription
-    const { result, error } =
-      await deepgramClient.listen.prerecorded.transcribeUrl(
-        {
-          url: audioUrl,
-        },
-        {
-          model: "nova-3",
-          smart_format: true,
-        }
-      );
-    if (error) throw error;
-    // Map and return the word-level timestamps from the transcription result
-    return result.results.channels[0]?.alternatives[0].words as CaptionWord[];
+    return await llmGenerateCaptions(audioUrl);
   });
   return captions;
 }
@@ -116,10 +92,13 @@ export async function generateImages(
 
   // Step A: Generate image prompts using the AI model
   const imagePrompts = (await step.run("generate-image-prompts", async () => {
-    return await generateObjectFromAI(imagePromptsPrompt, imagePromptsSchema);
+    return await generateObjectFromAI(
+      [{ role: "user", content: imagePromptsPrompt }],
+      imagePromptsSchema
+    );
   })) as { imagePrompt: string; sceneContent: string }[];
 
-  const images = [];
+  const images: ImageResult[] = [];
   // Step B: Loop through each prompt and generate the actual image
   for (let i = 0; i < imagePrompts.length; i++) {
     const promptData = imagePrompts[i];
@@ -136,7 +115,7 @@ export async function generateImages(
           throw new Error(result.error || "Failed to generate image");
         }
         return {
-          url: result.url!,
+          url: result.image!,
           publicId: result.publicId!,
           prompt: result.prompt,
           content: promptData.sceneContent,

@@ -24,8 +24,17 @@ export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 // Database connection string for Prisma
 export const DATABASE_URL = process.env.DATABASE_URL;
 
-// Deepgram API key for TTS and Speech-to-Text
-export const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
+// Aura-2 worker for audio generation
+export const AURA_2_EN_WORKER_URL = process.env.AURA_2_EN_WORKER_URL;
 
-// A4F API key (potentially for specialized compute or AI models)
-export const A4F_API_KEY = process.env.A4F_API_KEY;
+// Nova-3 worker for audio transcription (captions)
+export const NOVA_3_WORKER_URL = process.env.NOVA_3_WORKER_URL;
+
+// GLM worker for structured objects
+export const GLM_WORKER_URL = process.env.GLM_WORKER_URL;
+
+// Cloudflare API key for authentication with workers
+export const CLOUDFLARE_API_KEY = process.env.CLOUDFLARE_API_KEY;
+
+// Flux Klein worker for image generation
+export const FLUX_KLEIN_WORKER_URL = process.env.FLUX_KLEIN_WORKER_URL;

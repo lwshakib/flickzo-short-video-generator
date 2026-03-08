@@ -25,6 +25,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { VoicePicker } from "@/components/ui/voice-picker";
 
 /**
  * CreateVideoPage component.
@@ -50,33 +51,15 @@ export default function CreateVideoPage() {
 
   // 2. VISUAL & AUDIO CUSTOMIZATION STATE
   const [selectedStyle, setSelectedStyle] = useState<string>("Anime");
-  const [selectedVoice, setSelectedVoice] = useState<string>("Thalia");
+  const [selectedVoice, setSelectedVoice] = useState<string>(videoVoices[0].id);
+
   const [selectedCaptionStyle, setSelectedCaptionStyle] = useState<
     (typeof captionStyles)[number]
   >(captionStyles[0]);
 
-  // Audio preview instance for voice selection
-  const playerRef = useState(() =>
-    typeof Audio !== "undefined" ? new Audio() : null
-  )[0];
-
   const selectedTopic = selectedSuggestion || customTopic;
 
-  /**
-   * Plays a voice sample when a narrator is selected.
-   */
-  const handleVoicePlay = (voiceId: string, model: string) => {
-    setSelectedVoice(voiceId);
 
-    if (playerRef) {
-      if (playerRef.src.includes(`${model}.wav`)) {
-        playerRef.currentTime = 0;
-      } else {
-        playerRef.src = `/audio/${model}.wav`;
-      }
-      playerRef.play().catch((e) => console.error("Audio playback failed:", e));
-    }
-  };
 
   /**
    * Generates AI scripts based on the chosen topic.
@@ -113,7 +96,7 @@ export default function CreateVideoPage() {
   }, [selectedStyle]);
 
   const currentVoiceData = useMemo(() => {
-    return videoVoices.find((v) => v.Id === selectedVoice);
+    return videoVoices.find((v) => v.id === selectedVoice);
   }, [selectedVoice]);
 
   /**
@@ -143,7 +126,7 @@ export default function CreateVideoPage() {
         title: selectedScript.title,
         script: selectedScript.content,
         topic: selectedTopic,
-        voice: videoVoices.find((v) => v.Id === selectedVoice)?.Model,
+        voice: videoVoices.find((v) => v.id === selectedVoice)?.id,
         videoStyle: selectedStyle,
         captionStyle: selectedCaptionStyle,
       });
@@ -341,38 +324,13 @@ export default function CreateVideoPage() {
               title="Narration"
               description="Professional AI voice for your story."
             >
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {videoVoices.map((voice) => (
-                  <button
-                    key={voice.Id}
-                    className={cn(
-                      "group flex items-center gap-3 rounded-xl border p-3.5 text-left transition-all",
-                      selectedVoice === voice.Id
-                        ? "border-primary bg-primary/5"
-                        : "border-border bg-background hover:bg-muted/50"
-                    )}
-                    onClick={() => handleVoicePlay(voice.Id, voice.Model)}
-                  >
-                    <div
-                      className={cn(
-                        "flex size-9 items-center justify-center rounded-lg shadow-sm transition-colors",
-                        selectedVoice === voice.Id
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      <Mic2 className="size-4" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold tracking-tight">
-                        {voice.Name}
-                      </h4>
-                      <p className="text-muted-foreground text-[10px] font-medium uppercase">
-                        {voice.Gender} • {voice.LanguageName}
-                      </p>
-                    </div>
-                  </button>
-                ))}
+              <div className="w-full">
+                <VoicePicker
+                  voices={videoVoices}
+                  value={selectedVoice}
+                  onValueChange={setSelectedVoice}
+                  placeholder="Search and select a voice..."
+                />
               </div>
             </StepWrapper>
 
@@ -456,7 +414,7 @@ export default function CreateVideoPage() {
               <SummaryItem label="Style" value={selectedStyle} />
               <SummaryItem
                 label="Voice"
-                value={currentVoiceData?.Name || "---"}
+                value={currentVoiceData?.name || "---"}
               />
             </div>
           </div>
