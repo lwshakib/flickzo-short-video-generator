@@ -18,8 +18,10 @@ export function NavSecondary({
   items: {
     title: string;
     url: string;
-    icon: Icon;
+    icon?: Icon;
     onClick?: () => void;
+    unclickable?: boolean;
+    content?: React.ReactNode;
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (
@@ -28,20 +30,26 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <button
-                  onClick={(e) => {
-                    if (item.onClick) {
-                      e.preventDefault();
-                      item.onClick();
-                    }
-                  }}
-                  className="w-full text-left"
-                >
-                  <item.icon />
-                  <span>{item.title}</span>
-                </button>
-              </SidebarMenuButton>
+              {item.unclickable ? (
+                <div className="px-2 py-1.5 flex items-center">
+                  {item.content}
+                </div>
+              ) : (
+                <SidebarMenuButton asChild>
+                  <button
+                    onClick={(e) => {
+                      if (item.onClick) {
+                        e.preventDefault();
+                        item.onClick();
+                      }
+                    }}
+                    className="w-full text-left"
+                  >
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                  </button>
+                </SidebarMenuButton>
+              )}
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

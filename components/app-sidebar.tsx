@@ -7,6 +7,7 @@ import {
   IconHelp,
   IconSearch,
   IconVideo,
+  IconCoin,
 } from "@tabler/icons-react";
 import Link from "next/link";
 
@@ -54,8 +55,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [helpOpen, setHelpOpen] = React.useState(false);
+  const [credits, setCredits] = React.useState<number | null>(null);
+
+  const fetchCredits = React.useCallback(async () => {
+    if (session?.user) {
+      try {
+        const res = await axios.get("/api/user/credits");
+        setCredits(res.data.credits);
+      } catch (err) {
+        console.error("Failed to fetch credits", err);
+      }
+    }
+  }, [session]);
 
   const navSecondary = [
+    {
+      title: "Credits",
+      url: "#",
+      unclickable: true,
+      content: (
+        <span className="text-muted-foreground text-xs font-semibold">
+          {credits !== null ? credits : "..."} credits remaining
+        </span>
+      ),
+    },
     {
       title: "Search",
       url: "#",
@@ -91,7 +114,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   React.useEffect(() => {
     fetchRecentVideos();
-  }, [fetchRecentVideos]);
+    fetchCredits();
+  }, [fetchRecentVideos, fetchCredits]);
 
   // Subscribe to realtime updates
   const { latestData } = useInngestSubscription({
@@ -101,8 +125,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   React.useEffect(() => {
     if (latestData) {
       fetchRecentVideos();
+      fetchCredits();
     }
-  }, [latestData, fetchRecentVideos]);
+  }, [latestData, fetchRecentVideos, fetchCredits]);
 
   return (
     <>

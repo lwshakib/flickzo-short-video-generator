@@ -64,12 +64,7 @@ export function VideoControls({ videoId, status }: Props) {
           <Button
             variant="outline"
             disabled={isDeleting}
-            className={cn(
-              "h-12 rounded-xl font-bold transition-all",
-              status === "PENDING"
-                ? "border-amber-500/20 text-amber-500 hover:bg-amber-500/10"
-                : "border-red-500/20 text-red-500 hover:bg-red-500/10"
-            )}
+            className="h-12 rounded-xl font-bold transition-all border-border"
           >
             {isDeleting ? (
               <Loader2 className="mr-2 size-4 animate-spin" />
@@ -98,7 +93,7 @@ export function VideoControls({ videoId, status }: Props) {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="h-10 rounded-lg bg-red-600 text-xs font-semibold text-white hover:bg-red-700"
+              className="h-10 rounded-lg bg-primary text-xs font-semibold text-primary-foreground hover:bg-primary/90"
             >
               {status === "PENDING" ? "Cancel Production" : "Delete Forever"}
             </AlertDialogAction>
@@ -107,7 +102,7 @@ export function VideoControls({ videoId, status }: Props) {
       </AlertDialog>
 
       {status === "PENDING" && (
-        <p className="text-muted-foreground text-center text-[10px] font-medium tracking-tighter uppercase opacity-50">
+        <p className="text-muted-foreground text-center text-[10px] font-medium tracking-tighter opacity-50">
           Canceling will stop all ongoing AI processing for this video. All
           generated assets will be purged from our servers.
         </p>

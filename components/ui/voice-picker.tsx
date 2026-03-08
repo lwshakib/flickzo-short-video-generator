@@ -168,7 +168,7 @@ function VoicePickerItem({
 
       <div className="flex flex-1 flex-col gap-0.5">
         <span className="text-sm font-bold tracking-tight">{voice.name}</span>
-        <div className="text-muted-foreground flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider">
+        <div className="text-muted-foreground flex items-center gap-1.5 text-[10px] font-medium tracking-wider">
           <span>{voice.gender}</span>
           <span>•</span>
           <span className="truncate max-w-[150px]">{voice.description}</span>

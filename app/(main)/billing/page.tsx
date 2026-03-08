@@ -11,7 +11,7 @@ const plans = [
     price: "$0",
     description: "Perfect for exploring the power of AI video.",
     features: [
-      "1 AI-generated video per day",
+      "5 AI-generated videos per day",
       "Standard 720p resolution",
       "Access to basic AI voices",
       "Standard typography styles",

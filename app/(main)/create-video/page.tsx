@@ -8,11 +8,13 @@ import {
   Type,
   ChevronRight,
   CheckCircle2,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import {
   captionStyles,
@@ -115,10 +117,6 @@ export default function CreateVideoPage() {
     return videoStyles.find((s) => s.label === selectedStyle);
   }, [selectedStyle]);
 
-  const currentVoiceData = useMemo(() => {
-    return videoVoices.find((v) => v.id === selectedVoice);
-  }, [selectedVoice]);
-
   /**
    * Final step: Triggers the Inngest workflow to create the video.
    */
@@ -170,10 +168,9 @@ export default function CreateVideoPage() {
   };
 
   return (
-    <div className="bg-background flex flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
-      {/* Left Column (Inputs) */}
-      <div className="border-border/50 custom-scrollbar flex-1 border-b lg:overflow-y-auto lg:border-r lg:border-b-0">
-        <div className="mx-auto max-w-2xl space-y-10 p-4 py-8 sm:p-8 lg:p-10 lg:pb-32">
+ 
+      <div className="custom-scrollbar flex-1 overflow-y-auto w-full">
+        <div className="mx-auto max-w-3xl space-y-10 p-4 py-8 sm:p-8 lg:p-10 lg:pb-8">
           {/* Header */}
           <div className="space-y-1">
             <h1 className="text-2xl font-bold tracking-tight">
@@ -399,74 +396,75 @@ export default function CreateVideoPage() {
             </StepWrapper>
           </div>
         </div>
-      </div>
 
-      {/* Right Column (Preview) */}
-      <div className="bg-muted/5 border-border/50 custom-scrollbar flex w-full flex-col items-center border-t lg:h-full lg:w-96 lg:overflow-y-auto lg:border-t-0 lg:border-l">
-        <div className="w-full max-w-[320px] space-y-8 px-4 py-12 pb-24 lg:pb-12">
-          {/* Compact Phone Mockup */}
-          <div className="border-foreground/10 relative aspect-[9/16] w-full overflow-hidden rounded-[32px] border-8 bg-black shadow-xl">
-            <div className="animate-in fade-in absolute inset-0 duration-1000">
-              <Image
-                src={currentStyleData?.src || "/placeholder.png"}
-                fill
-                className="object-cover opacity-70 brightness-75 transition-all duration-[10s]"
-                alt="Style Preview"
-              />
-            </div>
+        {/* Bottom Action Bar - Now inline */}
+        <div className="mx-auto max-w-3xl px-4 pb-8 sm:px-8 lg:px-10 lg:pb-12">
+          <div className="flex flex-col gap-2 border-t border-border/50 pt-8 mt-2">
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="h-12 w-full font-bold shadow-sm sm:w-auto flex-1 text-xs sm:text-sm">
+                    <Eye className="mr-2 size-4" />
+                    Show Preview
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[85vw] sm:max-w-[400px] flex flex-col items-center justify-center border-l p-0 bg-background">
+                  <SheetHeader className="sr-only">
+                    <SheetTitle>Video Preview</SheetTitle>
+                  </SheetHeader>
+                  <div className="w-full max-w-[300px] p-4 flex flex-col items-center justify-center h-full">
+                    {/* Compact Phone Mockup */}
+                    <div className="border-foreground/10 relative aspect-[9/16] w-full overflow-hidden rounded-[32px] border-8 bg-black shadow-xl">
+                      <div className="animate-in fade-in absolute inset-0 duration-1000">
+                        <Image
+                          src={currentStyleData?.src || "/placeholder.png"}
+                          fill
+                          className="object-cover opacity-70 brightness-75 transition-all duration-[10s]"
+                          alt="Style Preview"
+                        />
+                      </div>
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
-            <div className="absolute top-6 left-6 scale-50 origin-top-left opacity-40">
-              <Logo />
-            </div>
+                      <div className="absolute top-6 left-6 scale-50 origin-top-left opacity-40">
+                        <Logo />
+                      </div>
 
-            <div className="pointer-events-none absolute inset-0 flex items-end justify-center p-6 pb-20 text-center">
-              <div
-                className={cn(
-                  "animate-in zoom-in-50 text-xl duration-500",
-                  selectedCaptionStyle?.className
-                )}
+                      <div className="pointer-events-none absolute inset-0 flex items-end justify-center p-6 pb-20 text-center">
+                        <div
+                          className={cn(
+                            "animate-in zoom-in-50 text-xl duration-500",
+                            selectedCaptionStyle?.className
+                          )}
+                        >
+                          {(selectedScriptIdx !== null && generatedScripts[selectedScriptIdx]
+                              ? generatedScripts[selectedScriptIdx].title
+                              : customTopic) || "Preview"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              <Button
+                className="group bg-primary relative h-12 w-full font-bold shadow-sm sm:w-auto flex-[2] text-xs sm:text-sm"
+                disabled={selectedScriptIdx === null}
+                onClick={handleCreateVideo}
               >
-                {(selectedScriptIdx !== null && generatedScripts[selectedScriptIdx]
-                    ? generatedScripts[selectedScriptIdx].title
-                    : customTopic) || "Preview"}
-              </div>
+                <div className="flex items-center gap-2">
+                  <Video className="size-4" />
+                  <span>Generate Video</span>
+                </div>
+              </Button>
             </div>
+            <p className="text-muted-foreground text-center text-[10px] font-bold mt-2">
+              It will consume 1 credit.
+            </p>
           </div>
-
-          {/* Configuration Summary */}
-          <div className="bg-background rounded-xl border p-4 shadow-sm">
-            <h4 className="mb-3 text-[10px] font-bold tracking-wider opacity-40">
-              Settings
-            </h4>
-            <div className="grid grid-cols-2 gap-4">
-              <SummaryItem label="Style" value={selectedStyle} />
-              <SummaryItem
-                label="Voice"
-                value={currentVoiceData?.name || "---"}
-              />
-            </div>
-          </div>
-
-          {/* Action Button */}
-          <Button
-            className="group bg-primary relative h-12 w-full overflow-hidden rounded-xl font-bold shadow-lg"
-            disabled={selectedScriptIdx === null}
-            onClick={handleCreateVideo}
-          >
-            <div className="flex items-center gap-2">
-              <Video className="size-4" />
-              <span>Generate Video</span>
-            </div>
-          </Button>
-
-          <p className="text-muted-foreground text-center text-[10px] font-medium opacity-40">
-            ~60s generation time
-          </p>
         </div>
       </div>
-    </div>
+   
   );
 }
 
@@ -490,17 +488,6 @@ export default function CreateVideoPage() {
         </p>
       </div>
       <div>{children}</div>
-    </div>
-  );
-}
-
-function SummaryItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-muted-foreground text-[9px] font-bold opacity-60">
-        {label}
-      </span>
-      <span className="truncate text-[11px] font-bold">{value || "---"}</span>
     </div>
   );
 }

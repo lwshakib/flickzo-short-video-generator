@@ -22,11 +22,10 @@ async function getUser() {
  */
 async function getDashboardData(userId: string) {
   const [videos] = await Promise.all([
-    // Get the 4 most recent videos
+    // Get all recent videos
     prisma.video.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
-      take: 4,
     }),
   ]);
 
@@ -52,9 +51,8 @@ export default async function Home() {
         <h1 className="text-lg font-bold tracking-tight">Dashboard</h1>
 
         <Link href="/create-video">
-          <Button size="sm" className="font-semibold">
-            <Plus className="mr-1.5 size-4" />
-            Create
+          <Button size="sm" className="rounded-full font-semibold px-5">
+            New Video
           </Button>
         </Link>
       </div>
@@ -63,7 +61,6 @@ export default async function Home() {
       <div className="space-y-6">
         {videos.length > 0 ? (
           <VideosGrid
-            limit={4}
             initialVideos={JSON.parse(JSON.stringify(videos))}
           />
         ) : (

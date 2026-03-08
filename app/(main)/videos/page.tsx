@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import { Video as VideoIcon } from "lucide-react";
 import { VideosGrid } from "@/components/videos-grid";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 /**
  * VideosPage component.
@@ -36,13 +38,21 @@ export default async function VideosPage() {
   return (
     <div className="mt-10 flex flex-1 flex-col gap-6 p-4 !pt-2 md:p-6">
       {/* Page Header */}
-      <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-black tracking-tighter">
-          Your <span className="text-primary">Videos</span>
-        </h1>
-        <p className="text-muted-foreground text-sm font-medium">
-          Manage and view all your AI-generated cinematic shorts.
-        </p>
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-3xl font-black tracking-tighter">
+            Your <span className="text-primary">Videos</span>
+          </h1>
+          <p className="text-muted-foreground text-sm font-medium">
+            Manage and view all your AI-generated cinematic shorts.
+          </p>
+        </div>
+
+        <Link href="/create-video">
+          <Button size="sm" className="rounded-full font-semibold px-5">
+            New Video
+          </Button>
+        </Link>
       </div>
 
       {/* VideosGrid: Interactive grid for viewing and managing video assets */}

@@ -8,6 +8,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { cn } from "@/lib/utils";
 
 interface Caption {
   start: number;
@@ -85,25 +86,24 @@ function RemotionComposition({ videoData }: Props) {
       </AbsoluteFill>
       <AbsoluteFill
         style={{
-          color: "white",
           justifyContent: "center",
+          alignItems: "center",
           bottom: 100,
           height: 250,
-          textAlign: "center",
-          position: "absolute",
-          left: 0,
-          right: 0,
-          top: undefined,
-          fontSize: 60,
           zIndex: 10,
-          textShadow: "0px 0px 20px rgba(0,0,0,0.8)",
-          padding: "0 40px",
         }}
-        className={videoData?.captionStyle?.className}
       >
-        <h2 className="font-extrabold tracking-tighter uppercase drop-shadow-2xl">
+        <div
+          className={cn(
+            "text-white text-center drop-shadow-2xl px-10 text-[60px]", // Essential Base Styles
+            videoData?.captionStyle?.className
+          )}
+          style={{
+            lineHeight: 1.1,
+          }}
+        >
           {getCurrentCaption()}
-        </h2>
+        </div>
       </AbsoluteFill>
       {videoData.audio?.audioUrl && <Audio src={videoData.audio.audioUrl} />}
     </div>

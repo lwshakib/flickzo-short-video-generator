@@ -142,7 +142,10 @@ export function VideoCard({
           <img
             src={video.images[0].url}
             alt={video.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className={cn(
+              "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105",
+              isPending && "grayscale opacity-80"
+            )}
           />
         ) : (
           /* eslint-disable-next-line @next/next/no-img-element */
@@ -151,7 +154,7 @@ export function VideoCard({
             alt={video.title}
             className={cn(
               "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105",
-              isPending ? "opacity-80 saturate-[1.25]" : "opacity-60 grayscale"
+              isPending ? "grayscale opacity-80" : "opacity-60 grayscale"
             )}
           />
         )}
