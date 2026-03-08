@@ -13,6 +13,7 @@ import axios from "axios";
 import { cn } from "@/lib/utils";
 import { deleteVideo } from "@/actions/delete-video";
 import { toast } from "sonner";
+import { useFlickzoStore } from "@/context";
 
 interface VideoItem {
   id: string;
@@ -99,6 +100,8 @@ export function VideoCard({
   const isPending = video.status === "PENDING";
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const { removeVideo } = useFlickzoStore();
+
   const handleCancel = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -118,6 +121,7 @@ export function VideoCard({
       const result = await promise;
       if (result.success) {
         onDelete?.(video.id);
+        removeVideo(video.id);
       } else {
         setIsDeleting(false);
       }
@@ -161,7 +165,10 @@ export function VideoCard({
             <button
               onClick={handleCancel}
               disabled={isDeleting}
-              className="bg-background/20 hover:bg-background/40 active:scale-95 relative z-20 flex size-12 items-center justify-center rounded-full border border-white/20 shadow-2xl backdrop-blur-md transition-all duration-200 disabled:opacity-50"
+              className={cn(
+                "bg-background/20 hover:bg-background/40 active:scale-95 relative z-20 flex size-12 items-center justify-center rounded-full border border-white/20 shadow-2xl backdrop-blur-md transition-all duration-200 disabled:opacity-50",
+                !isDeleting && "opacity-0 group-hover:opacity-100 transition-opacity"
+              )}
             >
               {isDeleting ? (
                 <Loader2 className="text-white size-6 animate-spin" />

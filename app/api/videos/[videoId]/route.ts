@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { inngest } from "@/inngest/client";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 /**
  * Single Video Detail API.
@@ -91,7 +92,24 @@ export async function DELETE(
       });
     }
 
-    // 3. Purge the record from the database
+    // 3. Cleanup assets from Cloudinary
+    const audio = video.audio as any;
+    if (audio?.publicId) {
+      await deleteFromCloudinary(audio.publicId, "video");
+    }
+
+    const images = video.images as any[];
+    if (images && images.length > 0) {
+      await Promise.all(
+        images.map((img: any) => {
+          if (img.publicId) {
+            return deleteFromCloudinary(img.publicId, "image");
+          }
+        })
+      );
+    }
+
+    // 4. Purge the record from the database
     await prisma.video.delete({
       where: {
         id: videoId,

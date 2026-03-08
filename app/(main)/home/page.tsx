@@ -52,11 +52,8 @@ export default async function Home() {
         <h1 className="text-lg font-bold tracking-tight">Dashboard</h1>
 
         <Link href="/create-video">
-          <Button
-            size="sm"
-            className="h-9 rounded-xl px-4 text-xs font-bold shadow-sm"
-          >
-            <Plus className="mr-2 size-3.5" />
+          <Button size="sm" className="font-semibold">
+            <Plus className="mr-1.5 size-4" />
             Create
           </Button>
         </Link>
