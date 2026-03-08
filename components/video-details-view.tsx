@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { Video as VideoIcon, ChevronLeft } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import RemotionPlayer from "@/components/remotion-player";
 import { VideoControls } from "@/components/video-controls";
 import { useInngestSubscription } from "@inngest/realtime/hooks";
@@ -71,9 +70,6 @@ export function VideoDetailsView({
               <ChevronLeft className="size-4" />
               Back
             </Link>
-            <Badge variant="secondary" className="text-[10px] font-medium">
-              {video.status === "COMPLETED" ? "GENERATED" : video.status}
-            </Badge>
           </div>
 
           <div className="ring-border relative mx-auto aspect-[9/16] max-h-[80vh] overflow-hidden rounded-xl bg-black shadow-sm ring-1">

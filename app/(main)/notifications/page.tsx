@@ -12,6 +12,7 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -66,6 +67,20 @@ export default function NotificationsPage() {
     markAllAsRead();
   }, []);
 
+  const clearAllNotifications = async () => {
+    try {
+      setIsLoading(true);
+      await axios.delete("/api/notifications");
+      setNotifications([]);
+      toast.success("All notifications cleared");
+    } catch (err) {
+      console.error("Failed to clear notifications", err);
+      toast.error("Failed to clear notifications");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between space-y-2">
@@ -75,6 +90,18 @@ export default function NotificationsPage() {
             Manage your alerts and stay updated with your video generations.
           </p>
         </div>
+        {notifications.length > 0 && (
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearAllNotifications}
+              disabled={isLoading}
+            >
+              Clear all notifications
+            </Button>
+          </div>
+        )}
       </div>
       <Separator />
 
