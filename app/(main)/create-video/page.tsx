@@ -73,9 +73,6 @@ export default function CreateVideoPage() {
   const handleGenerateScript = async () => {
     if (scriptLoading && abortController) {
       abortController.abort();
-      setAbortController(null);
-      setScriptLoading(false);
-      toast.info("Script generation canceled");
       return;
     }
 
@@ -99,7 +96,7 @@ export default function CreateVideoPage() {
         loading: "Architecting your narratives...",
         success: "Scripts generated successfully!",
         error: (err) => {
-          if (axios.isCancel(err)) return "Generation canceled";
+          if (axios.isCancel(err)) return "Script generation canceled";
           return "Failed to generate scripts. Please try again.";
         },
       });
@@ -247,26 +244,25 @@ export default function CreateVideoPage() {
               </TabsContent>
             </Tabs>
 
-            <div className="group relative mt-6 w-fit">
-              {scriptLoading && (
-                <div className="absolute -inset-[2px] overflow-hidden rounded-xl">
-                  <div className="animate-border-spin absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0deg,var(--primary)_90deg,transparent_180deg,var(--primary)_270deg,transparent_360deg)] opacity-40 blur-[1px]" />
-                </div>
+            <Button
+              size="sm"
+              variant={scriptLoading ? "outline" : "default"}
+              className={cn("mt-6 font-bold transition-all")}
+              onClick={handleGenerateScript}
+              disabled={!selectedTopic && !scriptLoading}
+            >
+              {scriptLoading ? (
+                <span className="flex items-center gap-2">
+                  <div className="size-3 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                  Cancel Generation
+                </span>
+              ) : (
+                <>
+                  Generate Scripts
+                  <ChevronRight className="ml-1 size-3.5" />
+                </>
               )}
-              <Button
-                size="sm"
-                variant={scriptLoading ? "outline" : "default"}
-                className={cn(
-                  "relative font-bold transition-all",
-                  scriptLoading ? "bg-background border-transparent" : "mt-0"
-                )}
-                onClick={handleGenerateScript}
-                disabled={!selectedTopic && !scriptLoading}
-              >
-                {scriptLoading ? "Cancel Generation" : "Generate Scripts"}
-                {!scriptLoading && <ChevronRight className="ml-1 size-3.5" />}
-              </Button>
-            </div>
+            </Button>
 
             {(scriptLoading || generatedScripts.length > 0) && (
               <div className="animate-in fade-in slide-in-from-top-4 mt-8 space-y-3 duration-700">

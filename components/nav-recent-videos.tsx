@@ -68,7 +68,7 @@ export function NavRecentVideos({
               >
                 <Link href={url}>
                   {isPending ? (
-                    <IconSparkles className="text-primary size-4 shrink-0" />
+                    <IconSparkles className="text-primary size-4 shrink-0 animate-pulse" />
                   ) : isFailed ? (
                     <IconAlertCircle className="text-destructive size-4 shrink-0" />
                   ) : (
@@ -82,6 +82,9 @@ export function NavRecentVideos({
                   >
                     {video.title}
                   </span>
+                  {isPending && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent animate-shine pointer-events-none" />
+                  )}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
