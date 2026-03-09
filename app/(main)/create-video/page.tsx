@@ -253,7 +253,7 @@ export default function CreateVideoPage() {
             >
               {scriptLoading ? (
                 <span className="flex items-center gap-2">
-                  <div className="size-3 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                  <div className="border-primary size-3 animate-spin rounded-full border-2 border-t-transparent" />
                   Cancel Generation
                 </span>
               ) : (

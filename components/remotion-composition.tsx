@@ -86,10 +86,9 @@ function RemotionComposition({ videoData }: Props) {
       </AbsoluteFill>
       <AbsoluteFill
         style={{
-          justifyContent: "center",
+          justifyContent: "flex-end",
           alignItems: "center",
-          bottom: 100,
-          height: 250,
+          paddingBottom: 160,
           zIndex: 10,
         }}
       >

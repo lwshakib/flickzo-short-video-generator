@@ -83,7 +83,7 @@ export function NavRecentVideos({
                     {video.title}
                   </span>
                   {isPending && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent animate-shine pointer-events-none" />
+                    <div className="via-primary/20 animate-shine pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-transparent" />
                   )}
                 </Link>
               </SidebarMenuButton>

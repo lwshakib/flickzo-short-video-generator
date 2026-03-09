@@ -41,13 +41,17 @@ jobs:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
           CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
-          NEBIUS_API_KEY: ${{ secrets.NEBIUS_API_KEY }}
+          NOVA_3_WORKER_URL: ${{ secrets.NOVA_3_WORKER_URL }}
+          AURA_2_EN_WORKER_URL: ${{ secrets.AURA_2_EN_WORKER_URL }}
+          GLM_WORKER_URL: ${{ secrets.GLM_WORKER_URL }}
+          FLUX_KLEIN_WORKER_URL: ${{ secrets.FLUX_KLEIN_WORKER_URL }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          INNGEST_EVENT_KEY: ${{ secrets.INNGEST_EVENT_KEY }}
+          INNGEST_SIGNING_KEY: ${{ secrets.INNGEST_SIGNING_KEY }}
 
       - name: Run Unit Tests
         run: bun run test:unit
@@ -64,10 +68,14 @@ jobs:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
           CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
-          NEBIUS_API_KEY: ${{ secrets.NEBIUS_API_KEY }}
+          NOVA_3_WORKER_URL: ${{ secrets.NOVA_3_WORKER_URL }}
+          AURA_2_EN_WORKER_URL: ${{ secrets.AURA_2_EN_WORKER_URL }}
+          GLM_WORKER_URL: ${{ secrets.GLM_WORKER_URL }}
+          FLUX_KLEIN_WORKER_URL: ${{ secrets.FLUX_KLEIN_WORKER_URL }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          INNGEST_EVENT_KEY: ${{ secrets.INNGEST_EVENT_KEY }}
+          INNGEST_SIGNING_KEY: ${{ secrets.INNGEST_SIGNING_KEY }}
