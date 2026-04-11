@@ -1,138 +1,140 @@
 # <img src="public/logo.svg" width="32" height="32" align="center" /> Flickzo - AI Cinematic Video Explorer
 
-Flickzo is a powerful platform that leverages advanced AI to transform text and ideas into professional cinematic videos. Built with modern web technologies, it automates the entire video creation process—from scriptwriting and voice generation to visual synthesis and video editing.
+Flickzo is a platform that uses AI to turn text and ideas into short cinematic videos. It automates scripting, voice synthesis, imagery, captions, and final render (Remotion), with heavy work done in the background (Inngest).
 
-## � App Demo
+![Flickzo dark mode](public/dark-demo.png)
 
-<p align="center">
-  <img src="public/dark-demo.png" alt="Flickzo Dark Mode" width="100%">
-</p>
-<p align="center">
-  <em>Dark Mode Interface</em>
-</p>
+![Flickzo light mode](public/light-demo.png)
 
-<p align="center">
-  <img src="public/light-demo.png" alt="Flickzo Light Mode" width="100%">
-</p>
-<p align="center">
-  <em>Light Mode Interface</em>
-</p>
+## Features
 
-## �🚀 Features
+- **AI script generation**: Scripts from a topic or brief via an LLM (Cloudflare AI Gateway).
+- **Voice & captions**: Text-to-speech and transcription (e.g. Deepgram) wired through the pipeline.
+- **Visual synthesis**: Image generation aligned to the script, stored on S3-compatible object storage.
+- **Automated editing**: Remotion composes audio, images, and captions into a finished video.
+- **Background jobs**: Inngest runs long workflows reliably outside the request/response cycle.
+- **Auth & accounts**: Better Auth with Google OAuth; daily free-tier limits for video starts.
+- **UI**: Next.js App Router, React, Tailwind CSS.
 
-- **AI Script Generation**: Automatically generates engaging video scripts based on user topics using LLMs.
-- **Lifelike Voiceovers**: Converts text to speech using high-quality AI audio generation (Deepgram).
-- **Visual Synthesis**: Generates relevant imagery to match the script content.
-- **Automated Video Editing**: Stitches together audio, images, and captions into a polished video using Remotion.
-- **Background Processing**: Handles complex generation tasks asynchronously using Inngest.
-- **Responsive Design**: A beautiful, modern interface built with Tailwind CSS and Next.js.
+## Tech stack
 
-## 🛠️ Tech Stack
-
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Database**: [PostgreSQL](https://www.postgresql.org/) (via [Prisma ORM](https://www.prisma.io/))
-- **Video Engine**: [Remotion](https://www.remotion.dev/)
-- **Background Jobs**: [Inngest](https://www.inngest.com/)
-- **AI Services**:
-  - **LLM (Script)**: [GLM-4t](https://chatglm.cn/chatglm4)
-  - **Image Generation**: [Flux Klein](https://blackforestlabs.ai/#get-flux)
-  - **Captions Generation**: [Nova-3](https://deepgram.com/)
-  - **Audio**: [Aura-2 by Deepgram](https://deepgram.com/)
-  - **Storage/Media**: [Cloudinary](https://cloudinary.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Prisma](https://www.prisma.io/)
+- **Video**: [Remotion](https://www.remotion.dev/)
+- **Jobs**: [Inngest](https://www.inngest.com/)
+- **Storage**: AWS S3–compatible APIs (e.g. **Cloudflare R2**)
+- **AI**: [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/) (script, images, audio/transcription as configured in code)
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 graph TD
-    User([User]) -->|1. Enter Topic| Client[Next.js Client]
-    Client -->|2. Request Video Generation| API[Next.js API Routes]
-    API -->|3. Trigger Event| Inngest[Inngest Event Bus]
+    User([User]) -->|1. Enter topic| Client[Next.js client]
+    Client -->|2. Start video| API[Next.js API routes]
+    API -->|3. Emit event| Inngest[Inngest]
 
-    subgraph "Background Workers"
-        Inngest -->|4. Generate Script| Workflow[Video Creation Workflow]
-        Workflow -->|5a. Call LLM| LLM[GLM-4t]
-        Workflow -->|5b. Generate Audio| Audio[Aura-2]
-        Workflow -->|5c. Generate Captions| Text[Nova-3]
-        Workflow -->|5d. Generate Images| ImgGen[Flux Klein]
-        Workflow -->|6. Render Video| Remotion[Remotion Engine]
+    subgraph "Background workers"
+        Inngest -->|4. Workflow| Workflow[Video creation workflow]
+        Workflow -->|LLM / TTS / STT / images| AIServices[AI services]
+        Workflow -->|5. Store assets| S3[(S3-compatible storage)]
+        Workflow -->|6. Render| Remotion[Remotion]
     end
 
-    Remotion -->|7. Upload Video| Cloudinary[Cloudinary]
-    Workflow -->|8. Update Status| DB[(Postgres DB)]
+    Remotion -->|7. Final asset| S3
+    Workflow -->|8. Status + metadata| DB[(PostgreSQL)]
 
-    Client -.->|9. Poll Status| DB
+    Client -.->|9. Poll / realtime updates| DB
 ```
 
-## ⚡ Getting Started
+## Prerequisites
 
-### Prerequisites
+- **Node.js** 20+ (LTS recommended; Next 16 expects a current runtime)
+- **[Bun](https://bun.sh/)** (used in scripts and docs here; npm/pnpm can run equivalent commands)
+- **PostgreSQL** reachable from your machine (local install, Docker, or hosted)
+- **Accounts / keys** for: Google OAuth (sign-in), S3-compatible bucket, Cloudflare AI Gateway, [Resend](https://resend.com/) (email), and [Inngest](https://www.inngest.com/) (background jobs; local dev uses the Inngest dev server)
 
-- Node.js (v18+)
-- Bun (recommended) or npm/pnpm
-- Database running locally using Docker or PostgreSQL
-- Valid Cloudflare AI configurations
+## Installation
 
-### Installation
+1. **Clone the repository**
 
-1.  **Clone the repository**
+   ```bash
+   git clone https://github.com/lwshakib/flickzo-short-video-generator.git
+   cd flickzo-short-video-generator
+   ```
 
-    ```bash
-    git clone https://github.com/lwshakib/flickzo-short-video-generator.git
-    cd flickzo-short-video-generator
-    ```
+2. **Install dependencies**
 
-2.  **Install dependencies**
+   ```bash
+   bun install
+   ```
 
-    ```bash
-    bun install
-    ```
+   This runs `prisma generate` via the `postinstall` script.
 
-3.  **Environment Setup**
+3. **Configure environment variables**
 
-    Create a `.env` file based on `.env.example` and populate it with your keys:
+   Copy the example file and fill in real values:
 
-    ```bash
-    DATABASE_URL="postgresql://..."
-    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="..."
-    CLOUDFLARE_API_KEY="..."
-    # Add other necessary keys
-    ```
+   ```bash
+   cp .env.example .env
+   ```
 
-4.  **Database Setup**
+   See [.env.example](.env.example) for all variable names. At minimum you need a valid `DATABASE_URL`, auth-related values (`BETTER_AUTH_SECRET`, `NEXT_PUBLIC_BASE_URL`, `BETTER_AUTH_URL`, Google OAuth client ID/secret), AWS/S3 fields for your bucket, `CLOUDFLARE_AI_GATEWAY_*`, and `RESEND_API_KEY`.
 
-    ```bash
-    bun prisma generate
-    bun prisma db push
-    ```
+4. **Create the database schema**
 
-5.  **Run the Development Server**
+   From a clean database, apply migrations:
 
-    ```bash
-    bun dev
-    ```
+   ```bash
+   bun x prisma migrate dev
+   ```
 
-    Open [http://localhost:3000](http://localhost:3000) to view the app.
+   If you only need a quick local schema without migration history management, you can use `bun x prisma db push` instead (not recommended for production).
 
-6.  **Run Inngest Dev Server** (for background jobs)
+5. **(Optional) Create the S3 bucket and CORS**
 
-    ```bash
-    bun x inngest-cli@latest dev
-    ```
+   If your project uses the provided scripts and env vars are set:
 
-## 🤝 Contributing
+   ```bash
+   bun run bucket:setup
+   ```
 
-We welcome contributions! Please check out our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
+## Running locally
 
-Please adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) in all interactions.
+1. **Start the Next.js dev server**
 
-## 📄 License
+   ```bash
+   bun dev
+   ```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+   Open [http://localhost:3000](http://localhost:3000).
 
-## 👤 Author
+2. **Start the Inngest dev server** (separate terminal)
 
-**lwshakib**
+   Video generation depends on Inngest functions being available:
 
-- GitHub: [@lwshakib](https://github.com/lwshakib)
+   ```bash
+   bun x inngest-cli@latest dev
+   ```
+
+   Point it at your app URL if prompted (typically `http://localhost:3000`).
+
+3. **Production build** (sanity check)
+
+   ```bash
+   bun run build
+   bun start
+   ```
+
+## Contributing
+
+We welcome contributions. Read [CONTRIBUTING.md](CONTRIBUTING.md) for fork/clone/branch/PR workflow and expectations. Please follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+## License
+
+This project is licensed under the MIT License — see [LICENSE](LICENSE).
+
+## Author
+
+**lwshakib** — GitHub: [@lwshakib](https://github.com/lwshakib)

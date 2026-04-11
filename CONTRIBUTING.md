@@ -1,76 +1,195 @@
 # <img src="public/logo.svg" width="32" height="32" align="center" /> Contributing to Flickzo
 
-First off, thanks for taking the time to contribute! 🎉
+Thank you for considering a contribution. This document is a practical path from zero to an opened pull request (PR). If anything here is unclear, open an issue and we can improve this guide.
 
-The following is a set of guidelines for contributing to Flickzo. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+## Table of contents
 
-## 📚 Table of Contents
-
-- [Code of Conduct](#code-of-conduct)
-- [How Can I Contribute?](#how-can-i-contribute)
-  - [Reporting Bugs](#reporting-bugs)
-  - [Suggesting Enhancements](#suggesting-enhancements)
-  - [Pull Requests](#pull-requests)
+- [Code of conduct](#code-of-conduct)
+- [Fork, clone, and remotes](#fork-clone-and-remotes)
+- [Install and local setup](#install-and-local-setup)
+- [Day-to-day development](#day-to-day-development)
+- [Branches](#branches)
+- [Commits](#commits)
+- [Open a pull request](#open-a-pull-request)
+- [PR checklist](#pr-checklist)
+- [Reporting bugs](#reporting-bugs)
+- [Suggesting enhancements](#suggesting-enhancements)
 - [Styleguides](#styleguides)
-  - [Git Commit Messages](#git-commit-messages)
-  - [JavaScript/TypeScript Style](#javascripttypescript-style)
 
-## Code of Conduct
+## Code of conduct
 
-This project and everyone participating in it is governed by the [Flickzo Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to the project maintainers.
+Everyone participating is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report problems to the maintainers as described there.
 
-## How Can I Contribute?
+## Fork, clone, and remotes
 
-### Reporting Bugs
+1. **Fork** the repository on GitHub (button “Fork” on the upstream repo page). This creates a copy under your account.
 
-This section guides you through submitting a bug report for Flickzo. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
+2. **Clone your fork** (replace `YOUR_GITHUB_USERNAME`):
 
-- **Use a clear and descriptive title** for the issue to identify the problem.
-- **Describe the exact steps to reproduce the problem** in as many details as possible.
-- **Provide specific examples** to demonstrate the steps.
-- **Describe the behavior you observed** after following the steps and point out what constitutes the problem.
-- **Explain which behavior you expected to see instead** and why.
-- **Include screenshots** which show you following the described steps and clearly demonstrate the problem.
+   ```bash
+   git clone https://github.com/YOUR_GITHUB_USERNAME/flickzo-short-video-generator.git
+   cd flickzo-short-video-generator
+   ```
 
-### Suggesting Enhancements
+3. **Add the upstream remote** so you can sync `main` from the original project:
 
-This section guides you through submitting an enhancement suggestion for Flickzo, including completely new features and minor improvements to existing functionality.
+   ```bash
+   git remote add upstream https://github.com/lwshakib/flickzo-short-video-generator.git
+   git fetch upstream
+   ```
 
-- **Use a clear and descriptive title** for the issue to identify the suggestion.
-- **Provide a step-by-step description of the suggested enhancement** in as many details as possible.
-- **Explain why this enhancement would be useful** to most Flickzo users.
+4. **Keep `main` updated** before starting new work:
 
-### Pull Requests
+   ```bash
+   git checkout main
+   git pull upstream main
+   git push origin main
+   ```
 
-The process described here has several goals:
+## Install and local setup
 
-- Maintain Flickzo's quality.
-- Fix problems that are important to users.
-- Engage the community in working toward the best possible Flickzo.
+Detailed environment and run instructions live in [README.md](README.md). Short version:
 
-1.  Fork the repo and create your branch from `main`.
-2.  if you've changed APIs, update the documentation.
-3.  Make sure your code lints.
-4.  Issue that pull request!
+1. Install [Bun](https://bun.sh/) and PostgreSQL (or use a hosted database).
+
+2. Install dependencies:
+
+   ```bash
+   bun install
+   ```
+
+3. Copy environment template and fill in secrets:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   You need working values for database, Better Auth + Google OAuth, S3-compatible storage, Cloudflare AI Gateway, Resend, and Inngest as described in the README and `.env.example`.
+
+4. Apply database migrations:
+
+   ```bash
+   bun x prisma migrate dev
+   ```
+
+5. Run the app and Inngest (two terminals):
+
+   ```bash
+   bun dev
+   ```
+
+   ```bash
+   bun x inngest-cli@latest dev
+   ```
+
+6. Optionally run lint/format before pushing:
+
+   ```bash
+   bun run lint
+   bun run format
+   ```
+
+## Day-to-day development
+
+- Prefer small, focused changes that match existing patterns (imports, naming, file layout).
+- If you change behavior visible to users or operators, update [README.md](README.md) or this file when appropriate.
+- Do not commit real secrets; only use your local `.env` (gitignored).
+
+## Branches
+
+Never commit directly to `main` on your fork for work you intend to contribute. Create a **topic branch** off updated `main`:
+
+```bash
+git checkout main
+git pull upstream main
+git checkout -b <type>/<short-description>
+```
+
+Examples:
+
+- `fix/credits-api-off-by-one`
+- `feat/sidebar-credits-label`
+- `chore/readme-inngest-note`
+
+Use lowercase, hyphens, and a prefix that hints at the change type (`fix`, `feat`, `chore`, `docs`, etc.).
+
+## Commits
+
+- Use the **imperative mood** in the subject line: “Add validation” not “Added validation”.
+- Keep the **first line around 72 characters** or less.
+- **Explain why** in the body when the change is not obvious.
+- Reference issues/PRs when relevant: `Fixes #12`.
+
+We use Prettier and ESLint; run `bun run lint` and format before opening a PR.
+
+## Open a pull request
+
+A **pull request** is how you propose merging your branch into the upstream repository.
+
+1. **Push your branch** to your fork:
+
+   ```bash
+   git push -u origin <type>/<short-description>
+   ```
+
+2. On GitHub, open your fork. You should see a banner to **“Compare & pull request”** against the upstream repo. Choose **base**: `lwshakib/flickzo-short-video-generator` → `main`, and **compare**: your branch.
+
+3. **Write a clear title** and description:
+
+   - What changed and **why** (not only how).
+   - How to **test** it locally.
+   - Screenshots for UI changes.
+
+4. **Link related issues** (“Closes #10”, “Related to #8”).
+
+5. **Respond to review feedback** with additional commits on the same branch (or amend if the project asks for a clean history—default is small follow-up commits).
+
+6. After merge, you can delete the branch on your fork and sync `main` again.
+
+If the upstream `main` moved while you were working, **rebase or merge** upstream into your branch and resolve conflicts before the final review:
+
+```bash
+git fetch upstream
+git checkout <type>/<short-description>
+git merge upstream/main
+# or: git rebase upstream/main
+git push origin <type>/<short-description>
+```
+
+## PR checklist
+
+- [ ] Builds locally (`bun run build`) when your change touches build-critical code.
+- [ ] `bun run lint` passes.
+- [ ] Prettier-applied formatting for touched files (`bun run format` or editor on save).
+- [ ] No secrets or machine-specific paths committed.
+- [ ] User-facing or setup changes reflected in README / CONTRIBUTING if needed.
+
+## Reporting bugs
+
+- Use a **clear title** and **numbered steps** to reproduce.
+- State **expected vs actual** behavior.
+- Include **environment** (OS, Node/Bun version, browser if relevant).
+- Add **screenshots or logs** when they help.
+
+## Suggesting enhancements
+
+- Describe the **problem** and proposed **solution**.
+- Explain **who benefits** and any **tradeoffs** you see.
 
 ## Styleguides
 
-### Git Commit Messages
+### Git commit messages
 
-- Use the present tense ("Add feature" not "Added feature")
-- Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-- Limit the first line to 72 characters or less
-- Reference issues and pull requests liberally after the first line
+- Present tense, imperative mood.
+- First line ~72 characters; more detail after a blank line.
 
-### JavaScript/TypeScript Style
+### TypeScript / React
 
-- We use **Prettier** for code formatting. Please ensure your code is formatted before submitting.
-- We use **ESLint** for linting. Fix any linting errors before pushing.
-- Prioritize functional components and Hooks for React.
-- Use **TypeScript** for all new files. Strong typing is encouraged.
+- **TypeScript** for new code; prefer explicit types at boundaries.
+- **Functional components** and hooks for React.
+- Match existing **import and file** conventions.
+- Run **ESLint** and **Prettier** before submitting.
 
-## 🤝 Community
+## Community
 
-Join the conversation and help us build the best short video generator!
-
-- GitHub: [lwshakib](https://github.com/lwshakib)
+Maintainer GitHub: [@lwshakib](https://github.com/lwshakib)
