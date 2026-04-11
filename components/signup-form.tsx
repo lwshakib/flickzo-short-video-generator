@@ -38,7 +38,7 @@ export function SignUpForm({
         email,
         password,
         name,
-        callbackURL: "/verify-email?state=verified",
+        callbackURL: "/sign-in",
       });
 
       if (error) {

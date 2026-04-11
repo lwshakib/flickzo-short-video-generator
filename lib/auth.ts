@@ -6,6 +6,8 @@ import { AuthEmailTemplate } from "@/components/emails/auth-email-template";
 
 // Create and export the configured authentication service instance.
 export const auth = betterAuth({
+  appName: "Flickzo", // Add global App Name for accurate defaults and emails
+
   // Use Prisma as the database adapter to persist user accounts, sessions, and social connections directly into our PostgreSQL database.
   database: prismaAdapter(prisma, {
     provider: "postgresql", // Matches the Prisma provider type defined in schema.prisma.
@@ -48,8 +50,7 @@ export const auth = betterAuth({
   // Settings pertaining to the email verification lifecycle.
   emailVerification: {
     sendOnSignUp: true, // Automatically trigger the verification email immediately after a successful signup registration.
-    redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || ""}/verify-email?state=verified`, // The URL to redirect to after successful verification.
-
+    
     // Custom asynchronous callback triggered to deliver the verification link to the newly registered user.
     sendVerificationEmail: async ({ user, url }) => {
       try {
