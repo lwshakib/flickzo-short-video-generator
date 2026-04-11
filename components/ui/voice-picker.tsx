@@ -17,7 +17,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Orb } from "@/components/ui/orb";
 import {
   Popover,
   PopoverContent,
@@ -66,9 +65,6 @@ function VoicePicker({
           >
             {selectedVoice ? (
               <div className="flex items-center gap-2 overflow-hidden">
-                <div className="relative size-6 shrink-0 overflow-visible">
-                  <Orb agentState="thinking" className="absolute inset-0" />
-                </div>
                 <span className="truncate font-bold">{selectedVoice.name}</span>
               </div>
             ) : (
@@ -119,7 +115,6 @@ function VoicePickerItem({
   isSelected,
   onSelect,
 }: VoicePickerItemProps) {
-  const [isHovered, setIsHovered] = React.useState(false);
   const player = useAudioPlayer();
 
   const preview = voice.sampleUrl;
@@ -154,23 +149,13 @@ function VoicePickerItem({
       className="flex cursor-pointer items-center gap-3 p-3"
     >
       <div
-        className="relative z-10 size-9 shrink-0 cursor-pointer overflow-visible"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 cursor-pointer transition-colors hover:bg-primary/20 text-primary"
         onClick={handlePreview}
       >
-        <Orb
-          agentState={isPlaying ? "talking" : undefined}
-          className="pointer-events-none absolute inset-0"
-        />
-        {(isHovered || isPlaying) && (
-          <div className="pointer-events-none absolute inset-0 flex size-9 shrink-0 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm transition-opacity">
-            {isPlaying ? (
-              <Pause className="size-3.5 text-white" />
-            ) : (
-              <Play className="ml-0.5 size-3.5 text-white" />
-            )}
-          </div>
+        {isPlaying ? (
+          <Pause className="size-4" />
+        ) : (
+          <Play className="size-4 ml-0.5" />
         )}
       </div>
 

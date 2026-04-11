@@ -100,8 +100,8 @@ export async function generateImages(
         // Call the image generation service
         const result = await aiService.generateImage({
           prompt: promptData.imagePrompt,
-          width: 1024,
-          height: 1792, // 9:16 aspect ratio optimized for vertical short-form video
+          width: 576,
+          height: 1024, // Optimized 9:16 aspect ratio fitting within Cloudflare (max 1024) limits
         });
         if (!result.success) {
           throw new Error(result.error || "Failed to generate image");

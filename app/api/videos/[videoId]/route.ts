@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { inngest } from "@/inngest/client";
 import { s3Service } from "@/services/s3.services";
+import { resolveVideoMedia } from "@/lib/video-utils";
 
 /**
  * Single Video Detail API.
@@ -35,7 +36,10 @@ export async function GET(
       return NextResponse.json({ error: "Video not found" }, { status: 404 });
     }
 
-    return NextResponse.json(video);
+    // Resolve S3 media using centralized server utility
+    const resolvedVideo = await resolveVideoMedia(video);
+
+    return NextResponse.json(resolvedVideo);
   } catch (error: unknown) {
     console.error("Error fetching video:", error);
     return NextResponse.json(

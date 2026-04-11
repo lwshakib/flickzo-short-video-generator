@@ -299,7 +299,7 @@ export default function CreateVideoPage() {
                           {script.title}
                         </h5>
                         <p className="text-[11px] leading-relaxed font-medium italic opacity-70">
-                          &ldquo;{script.content}&rdquo;
+                          {script.content}
                         </p>
                         {selectedScriptIdx === idx && (
                           <CheckCircle2 className="text-primary absolute top-2 right-2 size-4" />

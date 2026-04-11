@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { resolveVideoThumbnail } from "@/lib/video-utils";
 
 /**
  * Recent Activity API.
@@ -28,7 +29,12 @@ export async function GET(req: Request) {
       take: 5, // Return a small subset for efficiency
     });
 
-    return NextResponse.json(videos);
+    // 3. Resolve thumbnails using server utility
+    const resolvedVideos = await Promise.all(
+      videos.map((video) => resolveVideoThumbnail(video))
+    );
+
+    return NextResponse.json(resolvedVideos);
   } catch (error: unknown) {
     console.error("Error fetching recent videos:", error);
     return NextResponse.json(

@@ -313,8 +313,24 @@ class AIServiceClass {
         );
       }
 
-      const arrayBuffer = await response.arrayBuffer();
-      const imageBuffer = Buffer.from(arrayBuffer);
+      const contentType = response.headers.get("content-type") || "";
+      let imageBuffer: Buffer;
+
+      if (contentType.includes("application/json")) {
+        const data = await response.json();
+        const base64Str = data?.result?.image || data?.image;
+
+        if (!base64Str) {
+          throw new Error(
+            "API returned JSON but no image base64 data was found in response payload."
+          );
+        }
+
+        imageBuffer = Buffer.from(base64Str, "base64");
+      } else {
+        const arrayBuffer = await response.arrayBuffer();
+        imageBuffer = Buffer.from(arrayBuffer);
+      }
 
       // Save to S3
       const fileName = `generated-image.png`;

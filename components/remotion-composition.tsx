@@ -72,6 +72,7 @@ function RemotionComposition({ videoData }: Props) {
               <AbsoluteFill>
                 <Img
                   src={url}
+                  crossOrigin="anonymous"
                   style={{
                     width: "100%",
                     height: "100%",
@@ -104,7 +105,9 @@ function RemotionComposition({ videoData }: Props) {
           {getCurrentCaption()}
         </div>
       </AbsoluteFill>
-      {videoData.audio?.audioUrl && <Audio src={videoData.audio.audioUrl} />}
+      {videoData.audio?.audioUrl && (
+        <Audio src={videoData.audio.audioUrl} crossOrigin="anonymous" />
+      )}
     </div>
   );
 }

@@ -31,11 +31,14 @@ export default async function VideoDetailsPage({
     return notFound();
   }
 
+  const { resolveVideoMedia } = await import("@/lib/video-utils");
+  const resolvedVideo = await resolveVideoMedia(video);
+
   const voiceData = videoVoices.find((v) => v.id === video.voice);
 
   return (
     <VideoDetailsView
-      initialVideo={JSON.parse(JSON.stringify(video))}
+      initialVideo={JSON.parse(JSON.stringify(resolvedVideo))}
       voiceData={voiceData}
     />
   );

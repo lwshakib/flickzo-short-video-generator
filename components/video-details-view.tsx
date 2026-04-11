@@ -71,7 +71,7 @@ export function VideoDetailsView({
               Back
             </Link>
           </div>
-
+ 
           <div className="ring-border relative mx-auto aspect-[9/16] max-h-[80vh] overflow-hidden rounded-xl bg-black shadow-sm ring-1">
             <AnimatePresence mode="wait">
               {video.status === "COMPLETED" ? (

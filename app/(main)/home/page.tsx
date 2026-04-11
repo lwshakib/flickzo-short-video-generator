@@ -67,7 +67,7 @@ export default async function Home() {
             </p>
             <Link href="/create-video" className="mt-4">
               <Button variant="outline" size="sm">
-                Start your first project
+                Generate your first video
               </Button>
             </Link>
           </div>

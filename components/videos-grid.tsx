@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { deleteVideo } from "@/actions/delete-video";
 import { toast } from "sonner";
 import { useFlickzoStore } from "@/context";
+import Image from "next/image";
 
 interface VideoItem {
   id: string;
@@ -136,6 +137,8 @@ export function VideoCard({
     }
   };
 
+// Removing getImageUrl function so it does not conflict
+
   return (
     <Link
       href={isPending ? "#" : `/videos/${video.id}`}
@@ -144,24 +147,26 @@ export function VideoCard({
     >
       <div className="bg-muted relative aspect-[9/16] overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
         {video.images && video.images.length > 0 ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
+          <Image
             src={video.images[0].url}
             alt={video.title}
+            fill
             className={cn(
-              "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105",
+              "object-cover transition-transform duration-500 group-hover:scale-105",
               isPending && "opacity-80 grayscale"
             )}
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
           />
         ) : (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={styleData?.src}
+          <Image
+            src={styleData?.src || "/placeholder-video.png"}
             alt={video.title}
+            fill
             className={cn(
-              "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105",
+              "object-cover transition-transform duration-500 group-hover:scale-105",
               isPending ? "opacity-80 grayscale" : "opacity-60 grayscale"
             )}
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
           />
         )}
 

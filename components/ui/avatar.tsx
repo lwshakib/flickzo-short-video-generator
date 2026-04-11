@@ -21,29 +21,53 @@ function Avatar({
   );
 }
 
+import Image from "next/image";
+
 function AvatarImage({
   className,
   src,
+  alt,
   ...props
 }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
-  // Gracefully handle raw S3 paths (like avatars/... or uploads/...)
-  const [resolvedSrc, setResolvedSrc] = React.useState(src);
+  const [resolvedSrc, setResolvedSrc] = React.useState<string | undefined>(undefined);
 
   React.useEffect(() => {
-    if (typeof src === "string" && !src.startsWith("http") && !src.startsWith("data:")) {
-      setResolvedSrc(`/api/s3/view?path=${encodeURIComponent(src)}`);
+    if (typeof src === "string") {
+      if (src.startsWith("http") || src.startsWith("data:")) {
+        setResolvedSrc(src);
+      } else {
+        // Resolve raw S3 path via API
+        fetch("/api/s3/signed-url", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path: src }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.url) setResolvedSrc(data.url);
+            else setResolvedSrc(src);
+          })
+          .catch(() => setResolvedSrc(src));
+      }
     } else {
-      setResolvedSrc(src);
+      setResolvedSrc(undefined);
     }
   }, [src]);
 
   return (
-    <AvatarPrimitive.Image
-      data-slot="avatar-image"
-      src={resolvedSrc}
-      className={cn("aspect-square size-full", className)}
-      {...props}
-    />
+    <div className={cn("relative aspect-square h-full w-full", className)}>
+      {resolvedSrc ? (
+        <Image
+          src={resolvedSrc}
+          alt={alt || "Avatar"}
+          fill
+          className="object-cover"
+          sizes="32px"
+        />
+      ) : (
+        <div className="bg-muted h-full w-full" />
+      )}
+    </div>
   );
 }
 

@@ -5,6 +5,7 @@ import { Video as VideoIcon } from "lucide-react";
 import { VideosGrid } from "@/components/videos-grid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { resolveVideoThumbnail } from "@/lib/video-utils";
 
 /**
  * VideosPage component.
@@ -35,6 +36,10 @@ export default async function VideosPage() {
     },
   });
 
+  const resolvedVideos = await Promise.all(
+    videos.map((video) => resolveVideoThumbnail(video))
+  );
+
   return (
     <div className="mt-10 flex flex-1 flex-col gap-6 p-4 !pt-2 md:p-6">
       {/* Page Header */}
@@ -47,16 +52,16 @@ export default async function VideosPage() {
             Manage and view all your AI-generated cinematic shorts.
           </p>
         </div>
-
+ 
         <Link href="/create-video">
           <Button size="sm" className="rounded-full px-5 font-semibold">
             New Video
           </Button>
         </Link>
       </div>
-
+ 
       {/* VideosGrid: Interactive grid for viewing and managing video assets */}
-      <VideosGrid initialVideos={JSON.parse(JSON.stringify(videos))} />
+      <VideosGrid initialVideos={JSON.parse(JSON.stringify(resolvedVideos))} />
     </div>
   );
 }
