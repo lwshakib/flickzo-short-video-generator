@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import { Video as VideoIcon } from "lucide-react";
-import { VideosGrid } from "@/components/videos-grid";
+import { VideosGrid } from "@/components/video/videos-grid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { resolveVideoThumbnail } from "@/lib/video-utils";

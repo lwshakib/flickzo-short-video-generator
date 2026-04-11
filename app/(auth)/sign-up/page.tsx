@@ -1,5 +1,5 @@
-import { Logo } from "@/components/logo";
-import { SignUpForm } from "@/components/signup-form";
+import { Logo } from "@/components/layout/logo";
+import { SignUpForm } from "@/components/auth/signup-form";
 import Link from "next/link";
 import Image from "next/image";
 

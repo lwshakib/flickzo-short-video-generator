@@ -13,7 +13,7 @@ import {
   ArrowDownLeft,
   MessageCircle,
 } from "lucide-react";
-import { Logo } from "./logo";
+import { Logo } from "@/components/layout/logo";
 
 const data = () => ({
   navigation: {

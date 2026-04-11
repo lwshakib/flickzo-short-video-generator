@@ -11,10 +11,10 @@ import {
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { NavRecentVideos } from "@/components/nav-recent-videos";
-import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
-import { NavUser } from "@/components/nav-user";
+import { NavRecentVideos } from "./nav-recent-videos";
+import { NavMain } from "./nav-main";
+import { NavSecondary } from "./nav-secondary";
+import { NavUser } from "./nav-user";
 import {
   Sidebar,
   SidebarContent,

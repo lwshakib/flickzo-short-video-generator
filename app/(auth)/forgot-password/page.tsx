@@ -1,6 +1,6 @@
 "use client";
 
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/layout/logo";
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Mail, ArrowLeft, ExternalLink, Loader2 } from "lucide-react";

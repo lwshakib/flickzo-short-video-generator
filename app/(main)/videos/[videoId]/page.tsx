@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { videoVoices } from "@/lib/data";
-import { VideoDetailsView } from "@/components/video-details-view";
+import { VideoDetailsView } from "@/components/video/video-details-view";
 
 export default async function VideoDetailsPage({
   params,

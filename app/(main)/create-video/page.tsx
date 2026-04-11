@@ -34,7 +34,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { VoicePicker } from "@/components/ui/voice-picker";
 
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/layout/logo";
 
 /**
  * CreateVideoPage component.

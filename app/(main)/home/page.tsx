@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
-import { VideosGrid } from "@/components/videos-grid";
+import { VideosGrid } from "@/components/video/videos-grid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
