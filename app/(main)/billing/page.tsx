@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Check, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DAILY_FREE_VIDEO_LIMIT } from "@/lib/constants";
 
 const plans = [
   {
@@ -11,7 +12,7 @@ const plans = [
     price: "$0",
     description: "Perfect for exploring the power of AI video.",
     features: [
-      "5 AI-generated videos per day",
+      `${DAILY_FREE_VIDEO_LIMIT} AI-generated videos per day`,
       "Standard 720p resolution",
       "Access to basic AI voices",
       "Standard typography styles",

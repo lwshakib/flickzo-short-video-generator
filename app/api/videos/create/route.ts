@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { inngest } from "@/inngest/client";
+import { DAILY_FREE_VIDEO_LIMIT } from "@/lib/constants";
 
 /**
  * Video Production Initialization API.
@@ -60,7 +61,7 @@ export async function POST(req: Request) {
       });
     }
 
-    if (currentDailyCount >= 5) {
+    if (currentDailyCount >= DAILY_FREE_VIDEO_LIMIT) {
       return NextResponse.json(
         {
           error:

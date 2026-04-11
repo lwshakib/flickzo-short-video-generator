@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { DAILY_FREE_VIDEO_LIMIT } from "@/lib/constants";
 import { Sparkles, ArrowRight, Check, Star, Zap, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -28,7 +29,7 @@ const plans = [
     description:
       "Perfect for creators exploring the world of AI cinematic synthesis.",
     features: [
-      "5 AI Videos / day",
+      `${DAILY_FREE_VIDEO_LIMIT} AI Videos / day`,
       "720p Resolution Synthesis",
       "Standard AI Voices",
       "Community Synthesis Pool",

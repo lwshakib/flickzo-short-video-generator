@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { DAILY_FREE_VIDEO_LIMIT } from "@/lib/constants";
 
 export async function GET(req: Request) {
   try {
@@ -28,10 +29,10 @@ export async function GET(req: Request) {
       now.getUTCMonth() !== lastReset.getUTCMonth() ||
       now.getUTCFullYear() !== lastReset.getUTCFullYear();
 
-    let credits = 5 - user.dailyVideosGenerated;
+    let credits = DAILY_FREE_VIDEO_LIMIT - user.dailyVideosGenerated;
 
     if (isNewDay) {
-      credits = 5;
+      credits = DAILY_FREE_VIDEO_LIMIT;
     }
 
     // Ensure credits don't go below 0
