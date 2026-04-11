@@ -52,14 +52,14 @@ export default async function VideosPage() {
             Manage and view all your AI-generated cinematic shorts.
           </p>
         </div>
- 
+
         <Link href="/create-video">
           <Button size="sm" className="rounded-full px-5 font-semibold">
             New Video
           </Button>
         </Link>
       </div>
- 
+
       {/* VideosGrid: Interactive grid for viewing and managing video assets */}
       <VideosGrid initialVideos={JSON.parse(JSON.stringify(resolvedVideos))} />
     </div>

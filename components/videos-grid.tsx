@@ -137,7 +137,7 @@ export function VideoCard({
     }
   };
 
-// Removing getImageUrl function so it does not conflict
+  // Removing getImageUrl function so it does not conflict
 
   return (
     <Link

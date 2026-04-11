@@ -1,9 +1,8 @@
 import { inngest } from "./client";
 import { generateVideoAudio, transcribeAudio, generateImages } from "./helpers";
 import prisma from "@/lib/prisma";
-import { Prisma } from "@/generated/prisma/client";
+import type { InputJsonValue } from "@prisma/client/runtime/client";
 import { emailService } from "@/services/email.services";
-
 
 /**
  * Inngest function to handle the entire video creation workflow.
@@ -99,15 +98,15 @@ export const createVideo = inngest.createFunction(
     // Step 1: Generate Audio and upload to S3.
     const audioData = await step.run("generate-audio", async () => {
       const result = await generateVideoAudio(script, voice);
-      
+
       // Persist audio path immediately so it can be cleaned up if canceled
       await prisma.video.update({
         where: { id: videoId },
         data: {
-          audio: result as any,
+          audio: result as unknown as InputJsonValue,
         },
       });
-      
+
       return result;
     });
 
@@ -122,8 +121,8 @@ export const createVideo = inngest.createFunction(
       return await prisma.video.update({
         where: { id: videoId },
         data: {
-          captions: captionsData as any,
-          images: imagesData as any,
+          captions: captionsData as unknown as InputJsonValue[],
+          images: imagesData as unknown as InputJsonValue[],
           status: "COMPLETED",
         },
         include: {

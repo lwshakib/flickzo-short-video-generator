@@ -6,10 +6,7 @@ export async function POST(req: Request) {
     const { path } = await req.json();
 
     if (!path) {
-      return NextResponse.json(
-        { error: "path is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "path is required" }, { status: 400 });
     }
 
     const signedUrl = await s3Service.getSignedUrl(path);

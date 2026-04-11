@@ -27,9 +27,10 @@ function AvatarImage({
   className,
   src,
   alt,
-  ...props
 }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
-  const [resolvedSrc, setResolvedSrc] = React.useState<string | undefined>(undefined);
+  const [resolvedSrc, setResolvedSrc] = React.useState<string | undefined>(
+    undefined
+  );
 
   React.useEffect(() => {
     if (typeof src === "string") {

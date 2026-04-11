@@ -43,7 +43,9 @@ class EmailServiceClass {
   }
 
   // Generic method if needed for other templates missing defined static methods
-  public async sendEmail(options: any): Promise<void> {
+  public async sendEmail(
+    options: Parameters<typeof this.resend.emails.send>[0]
+  ): Promise<void> {
     await this.resend.emails.send(options);
   }
 }

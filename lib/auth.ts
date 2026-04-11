@@ -28,7 +28,6 @@ export const auth = betterAuth({
           subject: "Reset your password",
           react: AuthEmailTemplate({ type: "forgot-password", url }),
         });
-
       } catch (err) {
         // Catch network errors or unexpected exceptions during the email sending process
         console.error("Resend error:", err);
@@ -50,7 +49,7 @@ export const auth = betterAuth({
   // Settings pertaining to the email verification lifecycle.
   emailVerification: {
     sendOnSignUp: true, // Automatically trigger the verification email immediately after a successful signup registration.
-    
+
     // Custom asynchronous callback triggered to deliver the verification link to the newly registered user.
     sendVerificationEmail: async ({ user, url }) => {
       try {

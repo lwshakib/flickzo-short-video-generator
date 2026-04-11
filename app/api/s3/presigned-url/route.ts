@@ -12,7 +12,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const presignedUrl = await s3Service.getPresignedUploadUrl(path, contentType);
+    const presignedUrl = await s3Service.getPresignedUploadUrl(
+      path,
+      contentType
+    );
 
     return NextResponse.json({ url: presignedUrl, path });
   } catch (error) {

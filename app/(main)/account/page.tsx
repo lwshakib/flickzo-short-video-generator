@@ -272,14 +272,14 @@ export default function AccountPage() {
           {/* Sidebar / Profile Info */}
           <div className="space-y-8 lg:col-span-4">
             <div className="lg:sticky lg:top-20">
-              <div className="group relative mx-auto h-32 w-32 lg:mx-0 overflow-hidden rounded-full">
+              <div className="group relative mx-auto h-32 w-32 overflow-hidden rounded-full lg:mx-0">
                 <Avatar className="h-32 w-32 border shadow-sm transition-transform duration-500 group-hover:scale-105">
                   <AvatarImage src={user.image || ""} alt={user.name || ""} />
                   <AvatarFallback className="bg-muted text-3xl font-bold">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
-                <label className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity group-hover:opacity-100 z-10 hover:bg-black/80">
+                <label className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/80">
                   <Camera className="h-8 w-8 text-white" />
                   <input
                     type="file"
@@ -393,7 +393,9 @@ export default function AccountPage() {
                             Google
                           </p>
                           <p className="text-muted-foreground text-xs">
-                            {isProviderLinked("google") ? "Connected" : "Not connected"}
+                            {isProviderLinked("google")
+                              ? "Connected"
+                              : "Not connected"}
                           </p>
                         </div>
                       </div>
@@ -443,7 +445,7 @@ export default function AccountPage() {
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            className="h-4 w-4 text-foreground"
+                            className="text-foreground h-4 w-4"
                           >
                             <rect width="20" height="16" x="2" y="4" rx="2" />
                             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
@@ -459,7 +461,7 @@ export default function AccountPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-wider bg-secondary px-2 py-1 rounded">
+                        <span className="text-muted-foreground bg-secondary rounded px-2 py-1 text-[10px] font-bold tracking-wider uppercase">
                           Primary
                         </span>
                       </div>

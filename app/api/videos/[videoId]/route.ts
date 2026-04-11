@@ -117,7 +117,7 @@ export async function DELETE(
           })
         );
       }
-    } catch(cleanupError) {
+    } catch (cleanupError) {
       console.error("Non-fatal error cleaning S3:", cleanupError);
     }
 

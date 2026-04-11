@@ -63,7 +63,10 @@ export async function deleteVideo(videoId: string) {
           );
         }
       } catch (cleanupError) {
-        console.error("Failed to cleanup S3 assets (continuing to delete from DB):", cleanupError);
+        console.error(
+          "Failed to cleanup S3 assets (continuing to delete from DB):",
+          cleanupError
+        );
       }
     };
 

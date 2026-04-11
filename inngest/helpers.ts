@@ -26,7 +26,6 @@ export async function generateVideoAudio(text: string, voice: string) {
     throw new Error(audioResult.error || "Failed to generate audio");
   }
 
-
   return {
     audioPath: audioResult.audioPath,
     text: text,

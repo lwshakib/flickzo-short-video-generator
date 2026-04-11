@@ -64,10 +64,7 @@ export interface Message {
 }
 
 class AIServiceClass {
-  private async getAudioBuffer(
-    text: string,
-    voice: string
-  ): Promise<Buffer> {
+  private async getAudioBuffer(text: string, voice: string): Promise<Buffer> {
     if (!CLOUDFLARE_AI_GATEWAY_ENDPOINT || !CLOUDFLARE_AI_GATEWAY_API_KEY) {
       throw new Error("Missing Cloudflare AI Gateway configuration");
     }
@@ -106,7 +103,7 @@ class AIServiceClass {
   }: GenerateAudioOptions): Promise<GenerateAudioResult> {
     try {
       const buffer = await this.getAudioBuffer(text, voice);
-      
+
       // We pass the UUID or timestamp as part of the filename for uniqueness
       const fileName = `${voice}.mp3`;
       const path = await s3Service.uploadAudio(buffer, fileName);
@@ -363,7 +360,7 @@ class AIServiceClass {
     outputSchema,
   }: {
     messages: Message[];
-    outputSchema: Record<string, any>;
+    outputSchema: Record<string, unknown>;
   }) {
     if (!CLOUDFLARE_AI_GATEWAY_API_KEY || !CLOUDFLARE_AI_GATEWAY_ENDPOINT) {
       throw new Error("Cloudflare AI Gateway configuration is missing");

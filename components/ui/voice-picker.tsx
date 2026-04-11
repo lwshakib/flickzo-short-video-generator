@@ -149,13 +149,13 @@ function VoicePickerItem({
       className="flex cursor-pointer items-center gap-3 p-3"
     >
       <div
-        className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 cursor-pointer transition-colors hover:bg-primary/20 text-primary"
+        className="bg-primary/10 hover:bg-primary/20 text-primary relative z-10 flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors"
         onClick={handlePreview}
       >
         {isPlaying ? (
           <Pause className="size-4" />
         ) : (
-          <Play className="size-4 ml-0.5" />
+          <Play className="ml-0.5 size-4" />
         )}
       </div>
 

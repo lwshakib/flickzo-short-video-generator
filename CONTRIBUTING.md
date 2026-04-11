@@ -135,7 +135,6 @@ A **pull request** is how you propose merging your branch into the upstream repo
 2. On GitHub, open your fork. You should see a banner to **“Compare & pull request”** against the upstream repo. Choose **base**: `lwshakib/flickzo-short-video-generator` → `main`, and **compare**: your branch.
 
 3. **Write a clear title** and description:
-
    - What changed and **why** (not only how).
    - How to **test** it locally.
    - Screenshots for UI changes.
