@@ -23,11 +23,24 @@ function Avatar({
 
 function AvatarImage({
   className,
+  src,
   ...props
 }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+  // Gracefully handle raw S3 paths (like avatars/... or uploads/...)
+  const [resolvedSrc, setResolvedSrc] = React.useState(src);
+
+  React.useEffect(() => {
+    if (typeof src === "string" && !src.startsWith("http") && !src.startsWith("data:")) {
+      setResolvedSrc(`/api/s3/view?path=${encodeURIComponent(src)}`);
+    } else {
+      setResolvedSrc(src);
+    }
+  }, [src]);
+
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
+      src={resolvedSrc}
       className={cn("aspect-square size-full", className)}
       {...props}
     />

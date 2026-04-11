@@ -13,7 +13,7 @@ import {
   Smartphone,
   LogOut,
   Loader2,
-  Github,
+  Camera,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -140,6 +140,50 @@ export default function AccountPage() {
     }
   };
 
+  const handleUploadAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      toast.loading("Uploading image...", { id: "upload-avatar" });
+
+      // 1. Get presigned url
+      const res = await fetch("/api/s3/presigned-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          path: `avatars/${session.session.userId}/${Date.now()}-${file.name}`,
+          contentType: file.type,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to get upload URL");
+      const { url, path } = await res.json();
+
+      // 2. Upload to S3
+      const uploadRes = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      });
+
+      if (!uploadRes.ok) throw new Error("Failed to upload image");
+
+      // 3. Update User profile via authClient
+      await authClient.updateUser({
+        image: path,
+      });
+
+      toast.success("Profile image updated!", { id: "upload-avatar" });
+      refetchSession();
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred while uploading", { id: "upload-avatar" });
+    }
+  };
+
   const handleUpdatePassword = async () => {
     if (!currentPassword || !newPassword || newPassword !== confirmPassword) {
       toast.error("Please fill all fields and ensure passwords match");
@@ -228,13 +272,22 @@ export default function AccountPage() {
           {/* Sidebar / Profile Info */}
           <div className="space-y-8 lg:col-span-4">
             <div className="lg:sticky lg:top-20">
-              <div className="group relative mx-auto h-32 w-32 lg:mx-0">
+              <div className="group relative mx-auto h-32 w-32 lg:mx-0 overflow-hidden rounded-full">
                 <Avatar className="h-32 w-32 border shadow-sm transition-transform duration-500 group-hover:scale-105">
                   <AvatarImage src={user.image || ""} alt={user.name || ""} />
                   <AvatarFallback className="bg-muted text-3xl font-bold">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
+                <label className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity group-hover:opacity-100 z-10 hover:bg-black/80">
+                  <Camera className="h-8 w-8 text-white" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleUploadAvatar}
+                  />
+                </label>
               </div>
               <div className="mt-8 text-center lg:text-left">
                 <h1 className="text-2xl font-bold tracking-tight">
@@ -323,74 +376,94 @@ export default function AccountPage() {
                   </div>
 
                   <div className="grid gap-1">
-                    {["google", "github"].map((provider) => {
-                      const isLinked = isProviderLinked(provider);
-                      return (
-                        <div
-                          key={provider}
-                          className="border-border/50 flex items-center justify-between border-b py-4 last:border-0"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="bg-background flex h-10 w-10 items-center justify-center rounded-lg border">
-                              {provider === "google" ? (
-                                <Image
-                                  src="https://www.svgrepo.com/show/475656/google-color.svg"
-                                  alt="google"
-                                  width={20}
-                                  height={20}
-                                  className="h-4 w-4"
-                                />
-                              ) : (
-                                <Github className="h-4 w-4" />
-                              )}
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium capitalize">
-                                {provider}
-                              </p>
-                              <p className="text-muted-foreground text-xs">
-                                {isLinked ? "Connected" : "Not connected"}
-                              </p>
-                            </div>
-                          </div>
-                          {isLinked ? (
-                            <div className="flex items-center gap-2">
-                              {accounts?.some(
-                                (a: AccountData) => a.providerId === provider
-                              ) && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => {
-                                    const acc = accounts?.find(
-                                      (a: AccountData) =>
-                                        a.providerId === provider
-                                    );
-                                    if (acc) void handleUnlinkAccount(acc.id);
-                                  }}
-                                  className="text-destructive hover:bg-destructive/10 h-8 rounded-lg px-3 text-[10px] font-bold"
-                                >
-                                  Unlink
-                                </Button>
-                              )}
-                            </div>
-                          ) : (
+                    {/* Google Provider */}
+                    <div className="border-border/50 flex items-center justify-between border-b py-4 last:border-0">
+                      <div className="flex items-center gap-4">
+                        <div className="bg-background flex h-10 w-10 items-center justify-center rounded-lg border">
+                          <Image
+                            src="https://www.svgrepo.com/show/475656/google-color.svg"
+                            alt="google"
+                            width={20}
+                            height={20}
+                            className="h-4 w-4"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium capitalize">
+                            Google
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            {isProviderLinked("google") ? "Connected" : "Not connected"}
+                          </p>
+                        </div>
+                      </div>
+                      {isProviderLinked("google") ? (
+                        <div className="flex items-center gap-2">
+                          {accounts?.some(
+                            (a: AccountData) => a.providerId === "google"
+                          ) && (
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               size="sm"
-                              onClick={() =>
-                                void handleLinkAccount(
-                                  provider as "google" | "github"
-                                )
-                              }
-                              className="h-8 rounded-lg px-4 text-[10px] font-bold"
+                              onClick={() => {
+                                const acc = accounts?.find(
+                                  (a: AccountData) => a.providerId === "google"
+                                );
+                                if (acc) void handleUnlinkAccount(acc.id);
+                              }}
+                              className="text-destructive hover:bg-destructive/10 h-8 rounded-lg px-3 text-[10px] font-bold"
                             >
-                              Connect
+                              Unlink
                             </Button>
                           )}
                         </div>
-                      );
-                    })}
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => void handleLinkAccount("google")}
+                          className="h-8 rounded-lg px-4 text-[10px] font-bold"
+                        >
+                          Connect
+                        </Button>
+                      )}
+                    </div>
+
+                    {/* Email Provider */}
+                    <div className="border-border/50 flex items-center justify-between border-b py-4 last:border-0">
+                      <div className="flex items-center gap-4 opacity-80">
+                        <div className="bg-background flex h-10 w-10 items-center justify-center rounded-lg border">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-4 w-4 text-foreground"
+                          >
+                            <rect width="20" height="16" x="2" y="4" rx="2" />
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium capitalize">
+                            Email & Password
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            Standard Credentials
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-wider bg-secondary px-2 py-1 rounded">
+                          Primary
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
