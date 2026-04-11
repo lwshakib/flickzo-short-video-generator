@@ -3,6 +3,12 @@ import {
   CLOUDFLARE_AI_GATEWAY_ENDPOINT,
 } from "@/lib/env";
 import { s3Service } from "./s3.services";
+import {
+  CHAT_MODEL_ID,
+  IMAGE_GENERATION_MODEL_ID,
+  TTS_MODEL_ID,
+  STT_MODEL_ID,
+} from "@/lib/constants";
 
 export interface GenerateAudioOptions {
   text: string;
@@ -78,6 +84,7 @@ class AIServiceClass {
         Authorization: `Bearer ${CLOUDFLARE_AI_GATEWAY_API_KEY}`,
       },
       body: JSON.stringify({
+        model: TTS_MODEL_ID,
         text,
         speaker: voice,
         encoding: "mp3",
@@ -181,8 +188,11 @@ class AIServiceClass {
           Authorization: `Bearer ${CLOUDFLARE_AI_GATEWAY_API_KEY}`,
         },
         body: JSON.stringify({
-          audio: audioBase64,
-          contentType: contentType,
+          model: STT_MODEL_ID,
+          audio: {
+            body: audioBase64,
+            contentType: contentType,
+          },
           detect_language: true,
           smart_format: true,
           diarize: true,
@@ -225,11 +235,11 @@ class AIServiceClass {
       strength = 1.0,
       width = 1024,
       height = 1024,
-      steps = 28,
+      steps = 4,
       seed,
     } = options;
 
-    const MODEL_NAME = "FLUX.2 [klein] 9B";
+    const MODEL_NAME = IMAGE_GENERATION_MODEL_ID;
 
     if (!CLOUDFLARE_AI_GATEWAY_API_KEY) {
       return {
@@ -254,6 +264,7 @@ class AIServiceClass {
             Authorization: `Bearer ${CLOUDFLARE_AI_GATEWAY_API_KEY}`,
           },
           body: JSON.stringify({
+            model: MODEL_NAME,
             prompt,
             width,
             height,
@@ -263,6 +274,7 @@ class AIServiceClass {
         });
       } else {
         const form = new FormData();
+        form.append("model", MODEL_NAME);
         form.append("prompt", prompt);
         if (width) form.append("width", width.toString());
         if (height) form.append("height", height.toString());
@@ -348,6 +360,7 @@ class AIServiceClass {
         Authorization: `Bearer ${CLOUDFLARE_AI_GATEWAY_API_KEY}`,
       },
       body: JSON.stringify({
+        model: CHAT_MODEL_ID,
         messages: messages,
         response_format: {
           type: "json_schema",
