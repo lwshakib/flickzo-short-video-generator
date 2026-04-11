@@ -8,7 +8,7 @@ import { s3Service } from "@/services/s3.services";
 
 /**
  * Server action to cancel and delete a video.
- * Removes related assets from Cloudinary and handles Inngest cancellation.
+ * Removes related assets from S3 storage and handles Inngest cancellation.
  */
 export async function deleteVideo(videoId: string) {
   try {
@@ -43,19 +43,21 @@ export async function deleteVideo(videoId: string) {
     // 4. Cleanup assets from S3
     const deleteAssets = async () => {
       try {
-        // Audio
+        // Audio Cleanup
         const audio = video.audio as { audioPath?: string } | null;
         if (audio?.audioPath) {
           await s3Service.deleteObject(audio.audioPath);
+          console.info(`[S3_CLEANUP] Deleted audio: ${audio.audioPath}`);
         }
 
-        // Images
+        // Images Cleanup
         const images = video.images as { path?: string }[] | null;
         if (images && images.length > 0) {
           await Promise.all(
             images.map(async (img) => {
               if (img.path) {
                 await s3Service.deleteObject(img.path);
+                console.info(`[S3_CLEANUP] Deleted image: ${img.path}`);
               }
             })
           );

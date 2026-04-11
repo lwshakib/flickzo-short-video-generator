@@ -98,17 +98,21 @@ export async function DELETE(
 
     // 3. Cleanup assets from S3
     try {
+      // Audio Cleanup
       const audio = video.audio as { audioPath?: string } | null;
       if (audio?.audioPath) {
         await s3Service.deleteObject(audio.audioPath);
+        console.info(`[S3_CLEANUP] Deleted audio: ${audio.audioPath}`);
       }
 
+      // Images Cleanup
       const images = video.images as { path?: string }[] | null;
       if (images && images.length > 0) {
         await Promise.all(
           images.map(async (img) => {
             if (img.path) {
               await s3Service.deleteObject(img.path);
+              console.info(`[S3_CLEANUP] Deleted image: ${img.path}`);
             }
           })
         );

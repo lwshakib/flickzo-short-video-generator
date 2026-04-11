@@ -96,9 +96,19 @@ export const createVideo = inngest.createFunction(
       },
     });
 
-    // Step 1: Generate Audio and upload to Cloudinary.
+    // Step 1: Generate Audio and upload to S3.
     const audioData = await step.run("generate-audio", async () => {
-      return await generateVideoAudio(script, voice);
+      const result = await generateVideoAudio(script, voice);
+      
+      // Persist audio path immediately so it can be cleaned up if canceled
+      await prisma.video.update({
+        where: { id: videoId },
+        data: {
+          audio: result as any,
+        },
+      });
+      
+      return result;
     });
 
     // Step 2: Generate Captions using Deepgram.
@@ -107,14 +117,13 @@ export const createVideo = inngest.createFunction(
     // Step 3: Generate Images using Flux (AI model).
     const imagesData = await generateImages(script, videoStyle, step);
 
-    // Step 4: Update the Database with all generated assets.
-    const video = await step.run("update-db-completed", async () => {
+    // Step 4: Finalize the Record in the Database.
+    const video = await step.run("finalize-db-record", async () => {
       return await prisma.video.update({
         where: { id: videoId },
         data: {
-          audio: audioData as unknown as Prisma.InputJsonValue,
-          captions: captionsData as unknown as Prisma.InputJsonValue[],
-          images: imagesData as unknown as Prisma.InputJsonValue[],
+          captions: captionsData as any,
+          images: imagesData as any,
           status: "COMPLETED",
         },
         include: {
