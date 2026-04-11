@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import { inngest } from "@/inngest/client";
-import { deleteFromCloudinary } from "@/lib/cloudinary";
+import { s3Service } from "@/services/s3.services";
 
 /**
  * Server action to cancel and delete a video.
@@ -40,25 +40,28 @@ export async function deleteVideo(videoId: string) {
       data: { videoId },
     });
 
-    // 4. Cleanup assets from Cloudinary
-    // Helper to delete recursively from JSON asset objects
+    // 4. Cleanup assets from S3
     const deleteAssets = async () => {
-      // Audio
-      const audio = video.audio as { publicId?: string } | null;
-      if (audio?.publicId) {
-        await deleteFromCloudinary(audio.publicId, "video");
-      }
+      try {
+        // Audio
+        const audio = video.audio as { audioPath?: string } | null;
+        if (audio?.audioPath) {
+          await s3Service.deleteObject(audio.audioPath);
+        }
 
-      // Images
-      const images = video.images as { publicId?: string }[] | null;
-      if (images && images.length > 0) {
-        await Promise.all(
-          images.map((img) => {
-            if (img.publicId) {
-              return deleteFromCloudinary(img.publicId, "image");
-            }
-          })
-        );
+        // Images
+        const images = video.images as { path?: string }[] | null;
+        if (images && images.length > 0) {
+          await Promise.all(
+            images.map(async (img) => {
+              if (img.path) {
+                await s3Service.deleteObject(img.path);
+              }
+            })
+          );
+        }
+      } catch (cleanupError) {
+        console.error("Failed to cleanup S3 assets (continuing to delete from DB):", cleanupError);
       }
     };
 

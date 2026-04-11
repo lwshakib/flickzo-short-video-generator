@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { inngest } from "@/inngest/client";
-import { deleteFromCloudinary } from "@/lib/cloudinary";
+import { s3Service } from "@/services/s3.services";
 
 /**
  * Single Video Detail API.
@@ -92,21 +92,25 @@ export async function DELETE(
       });
     }
 
-    // 3. Cleanup assets from Cloudinary
-    const audio = video.audio as { publicId?: string } | null;
-    if (audio?.publicId) {
-      await deleteFromCloudinary(audio.publicId, "video");
-    }
+    // 3. Cleanup assets from S3
+    try {
+      const audio = video.audio as { audioPath?: string } | null;
+      if (audio?.audioPath) {
+        await s3Service.deleteObject(audio.audioPath);
+      }
 
-    const images = video.images as { publicId?: string }[] | null;
-    if (images && images.length > 0) {
-      await Promise.all(
-        images.map((img) => {
-          if (img.publicId) {
-            return deleteFromCloudinary(img.publicId, "image");
-          }
-        })
-      );
+      const images = video.images as { path?: string }[] | null;
+      if (images && images.length > 0) {
+        await Promise.all(
+          images.map(async (img) => {
+            if (img.path) {
+              await s3Service.deleteObject(img.path);
+            }
+          })
+        );
+      }
+    } catch(cleanupError) {
+      console.error("Non-fatal error cleaning S3:", cleanupError);
     }
 
     // 4. Purge the record from the database

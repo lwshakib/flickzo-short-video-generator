@@ -2,8 +2,8 @@ import { inngest } from "./client";
 import { generateVideoAudio, transcribeAudio, generateImages } from "./helpers";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
-import { resend } from "@/lib/resend";
-import { NotificationEmail } from "@/components/emails/notification-email-template";
+import { emailService } from "@/services/email.services";
+
 
 /**
  * Inngest function to handle the entire video creation workflow.
@@ -68,17 +68,11 @@ export const createVideo = inngest.createFunction(
       // Step 3: Send Failure Email
       await step.run("send-failure-email", async () => {
         if (videoData?.user?.email) {
-          await resend.emails.send({
-            from: "Flickzo <noreply@lwshakib.site>",
-            to: videoData.user.email,
-            subject: "Video generation failed",
-            react: NotificationEmail({
-              userName: videoData.user.name,
-              type: "FAILURE",
-              videoTitle: videoData.title,
-              url: `${process.env.NEXT_PUBLIC_BASE_URL}/home`,
-            }),
-          });
+          await emailService.sendFailureEmail(
+            videoData.user.email,
+            videoData.user.name || "User",
+            videoData.title
+          );
         }
       });
 
@@ -108,7 +102,7 @@ export const createVideo = inngest.createFunction(
     });
 
     // Step 2: Generate Captions using Deepgram.
-    const captionsData = await transcribeAudio(audioData.audioUrl, step);
+    const captionsData = await transcribeAudio(audioData.audioPath, step);
 
     // Step 3: Generate Images using Flux (AI model).
     const imagesData = await generateImages(script, videoStyle, step);
@@ -145,17 +139,12 @@ export const createVideo = inngest.createFunction(
     // Step 6: Send Success Email
     await step.run("send-success-email", async () => {
       if (video.user?.email) {
-        await resend.emails.send({
-          from: "Flickzo <noreply@lwshakib.site>",
-          to: video.user.email,
-          subject: "Your video is ready!",
-          react: NotificationEmail({
-            userName: video.user.name,
-            type: "SUCCESS",
-            videoTitle: video.title,
-            url: `${process.env.NEXT_PUBLIC_BASE_URL}/videos/${videoId}`,
-          }),
-        });
+        await emailService.sendSuccessEmail(
+          video.user.email,
+          video.user.name || "User",
+          video.title,
+          videoId
+        );
       }
     });
 

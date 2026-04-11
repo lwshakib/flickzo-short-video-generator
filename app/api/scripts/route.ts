@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { generateObjectFromAI } from "@/llm/generateObject";
-import { SCRIPT_GENERATE_PROMPT } from "@/llm/prompts";
-import { z } from "zod";
+import { aiService } from "@/services/ai.services";
+import { SCRIPT_GENERATE_PROMPT } from "@/lib/prompts";
 
 /**
  * AI Script Generation API.
@@ -16,18 +15,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Topic is required" }, { status: 400 });
     }
 
-    // 2. Define the expected JSON structure using Zod
-    const schema = z.object({
-      scripts: z.array(
-        z.object({
-          title: z.string(),
-          content: z.string(),
-        })
-      ),
-    });
+    // 2. Define the expected JSON structure using a raw JSON Schema
+    const schema = {
+      type: "object",
+      properties: {
+        scripts: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              content: { type: "string" },
+            },
+            required: ["title", "content"],
+            additionalProperties: false,
+          },
+        },
+      },
+      required: ["scripts"],
+      additionalProperties: false,
+    };
 
-    // 3. Request structured data from the LLM
-    const object = await generateObjectFromAI({
+    // 3. Request structured data from the LLM via AIService
+    const object = await aiService.generateObject({
       messages: [
         { role: "system", content: SCRIPT_GENERATE_PROMPT },
         { role: "user", content: `Topic: ${topic}` },

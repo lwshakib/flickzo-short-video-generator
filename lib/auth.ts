@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
-import { resend } from "./resend";
+import { emailService } from "@/services/email.services";
 import { AuthEmailTemplate } from "@/components/emails/auth-email-template";
 
 // Create and export the configured authentication service instance.
@@ -19,19 +19,14 @@ export const auth = betterAuth({
     // Custom asynchronous callback triggered when a user requests a password reset.
     sendResetPassword: async ({ user, url }) => {
       try {
-        // Attempt to dispatch the password reset email via Resend's API.
-        const { error } = await resend.emails.send({
-          from: "Flickzo <noreply@lwshakib.site>", // The verified sender identity
-          to: user.email, // Recipient's email address passed by Better-Auth
-          subject: "Reset your password", // Description for the email subject line
-          react: AuthEmailTemplate({ type: "forgot-password", url }), // Renders the specialized React Email template into HTML
+        // Attempt to dispatch the password reset email via EmailService
+        await emailService.sendEmail({
+          from: "Flickzo <noreply@lwshakib.site>",
+          to: user.email,
+          subject: "Reset your password",
+          react: AuthEmailTemplate({ type: "forgot-password", url }),
         });
 
-        // Log and handle explicit errors returned by the Resend API (e.g., rate-limits, unverified domains)
-        if (error) {
-          console.error("Failed to send email via Resend:", error);
-          throw new Error("Failed to send authentication email.");
-        }
       } catch (err) {
         // Catch network errors or unexpected exceptions during the email sending process
         console.error("Resend error:", err);
@@ -58,12 +53,12 @@ export const auth = betterAuth({
     // Custom asynchronous callback triggered to deliver the verification link to the newly registered user.
     sendVerificationEmail: async ({ user, url }) => {
       try {
-        // Dispatch the account verification email via Resend's API.
-        await resend.emails.send({
+        // Dispatch the account verification email via EmailService.
+        await emailService.sendEmail({
           from: "Flickzo <noreply@lwshakib.site>",
           to: user.email,
           subject: "Verify your email address",
-          react: AuthEmailTemplate({ type: "email-verification", url }), // Renders the specialized React Email verification template
+          react: AuthEmailTemplate({ type: "email-verification", url }),
         });
       } catch (err) {
         // Log errors to the server console if the verification email fails to send (fails silently for the end user)
