@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import { inngest } from "@/inngest/client";
-import { s3Service } from "@/services/s3.services";
+import { deleteObject } from "@/lib/s3";
 
 /**
  * Server action to cancel and delete a video.
@@ -46,7 +46,7 @@ export async function deleteVideo(videoId: string) {
         // Audio Cleanup
         const audio = video.audio as { audioPath?: string } | null;
         if (audio?.audioPath) {
-          await s3Service.deleteObject(audio.audioPath);
+          await deleteObject(audio.audioPath);
           console.info(`[S3_CLEANUP] Deleted audio: ${audio.audioPath}`);
         }
 
@@ -56,7 +56,7 @@ export async function deleteVideo(videoId: string) {
           await Promise.all(
             images.map(async (img) => {
               if (img.path) {
-                await s3Service.deleteObject(img.path);
+                await deleteObject(img.path);
                 console.info(`[S3_CLEANUP] Deleted image: ${img.path}`);
               }
             })

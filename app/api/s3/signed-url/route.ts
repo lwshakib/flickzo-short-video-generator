@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { s3Service } from "@/services/s3.services";
+import { getSignedUrl } from "@/lib/s3";
 
 export async function POST(req: Request) {
   try {
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "path is required" }, { status: 400 });
     }
 
-    const signedUrl = await s3Service.getSignedUrl(path);
+    const signedUrl = await getSignedUrl(path);
 
     return NextResponse.json({ url: signedUrl });
   } catch (error) {

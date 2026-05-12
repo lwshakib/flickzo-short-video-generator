@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
-import { emailService } from "@/services/email.services";
+import { sendEmail } from "@/lib/resend";
 import { AuthEmailTemplate } from "@/components/emails/auth-email-template";
 
 // Create and export the configured authentication service instance.
@@ -22,7 +22,7 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url }) => {
       try {
         // Attempt to dispatch the password reset email via EmailService
-        await emailService.sendEmail({
+        await sendEmail({
           from: "Flickzo <noreply@lwshakib.site>",
           to: user.email,
           subject: "Reset your password",
@@ -54,7 +54,7 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url }) => {
       try {
         // Dispatch the account verification email via EmailService.
-        await emailService.sendEmail({
+        await sendEmail({
           from: "Flickzo <noreply@lwshakib.site>",
           to: user.email,
           subject: "Verify your email address",

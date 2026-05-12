@@ -2,7 +2,7 @@ import {
   CLOUDFLARE_AI_GATEWAY_API_KEY,
   CLOUDFLARE_AI_GATEWAY_ENDPOINT,
 } from "@/lib/env";
-import { s3Service } from "./s3.services";
+import { getSignedUrl, uploadAudio, uploadImage } from "@/lib/s3";
 import {
   CHAT_MODEL_ID,
   IMAGE_GENERATION_MODEL_ID,
@@ -106,7 +106,7 @@ class AIServiceClass {
 
       // We pass the UUID or timestamp as part of the filename for uniqueness
       const fileName = `${voice}.mp3`;
-      const path = await s3Service.uploadAudio(buffer, fileName);
+      const path = await uploadAudio(buffer, fileName);
 
       return {
         success: true,
@@ -146,7 +146,7 @@ class AIServiceClass {
     const mergedBuffer = Buffer.concat(validBuffers);
 
     const fileName = `merged-audio.mp3`;
-    const path = await s3Service.uploadAudio(mergedBuffer, fileName);
+    const path = await uploadAudio(mergedBuffer, fileName);
 
     return {
       audioPath: path,
@@ -163,7 +163,7 @@ class AIServiceClass {
       // it's likely a path now. So we must get the signed URL to fetch the file contents.
       let signedUrl = audioUrlOrPath;
       if (!audioUrlOrPath.startsWith("http")) {
-        signedUrl = await s3Service.getSignedUrl(audioUrlOrPath);
+        signedUrl = await getSignedUrl(audioUrlOrPath);
       }
 
       const audioRes = await fetch(signedUrl);
@@ -331,7 +331,7 @@ class AIServiceClass {
 
       // Save to S3
       const fileName = `generated-image.png`;
-      const path = await s3Service.uploadImage(imageBuffer, fileName);
+      const path = await uploadImage(imageBuffer, fileName);
 
       return {
         success: true,

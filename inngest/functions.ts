@@ -2,7 +2,7 @@ import { inngest } from "./client";
 import { generateVideoAudio, transcribeAudio, generateImages } from "./helpers";
 import prisma from "@/lib/prisma";
 import type { InputJsonValue } from "@prisma/client/runtime/client";
-import { emailService } from "@/services/email.services";
+import { sendFailureEmail, sendSuccessEmail } from "@/lib/resend";
 
 /**
  * Inngest function to handle the entire video creation workflow.
@@ -67,7 +67,7 @@ export const createVideo = inngest.createFunction(
       // Step 3: Send Failure Email
       await step.run("send-failure-email", async () => {
         if (videoData?.user?.email) {
-          await emailService.sendFailureEmail(
+          await sendFailureEmail(
             videoData.user.email,
             videoData.user.name || "User",
             videoData.title
@@ -147,7 +147,7 @@ export const createVideo = inngest.createFunction(
     // Step 6: Send Success Email
     await step.run("send-success-email", async () => {
       if (video.user?.email) {
-        await emailService.sendSuccessEmail(
+        await sendSuccessEmail(
           video.user.email,
           video.user.name || "User",
           video.title,

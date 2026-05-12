@@ -1,5 +1,5 @@
 import "server-only";
-import { s3Service } from "@/services/s3.services";
+import { getSignedUrl } from "@/lib/s3";
 
 /**
  * Resolves all S3 paths in a video object to signed URLs.
@@ -24,7 +24,7 @@ export async function resolveVideoMedia<T extends Record<string, unknown>>(
           !path.startsWith("data:")
         ) {
           try {
-            const signedUrl = await s3Service.getSignedUrl(path);
+            const signedUrl = await getSignedUrl(path);
             return { ...image, url: signedUrl };
           } catch (err) {
             console.error(`Failed to sign image URL (${path}):`, err);
@@ -47,7 +47,7 @@ export async function resolveVideoMedia<T extends Record<string, unknown>>(
       !audio.audioPath.startsWith("data:")
     ) {
       try {
-        const signedUrl = await s3Service.getSignedUrl(audio.audioPath);
+        const signedUrl = await getSignedUrl(audio.audioPath);
         resolved.audio = { ...audio, audioUrl: signedUrl };
       } catch (err) {
         console.error(`Failed to sign audio URL (${audio.audioPath}):`, err);
@@ -80,7 +80,7 @@ export async function resolveVideoThumbnail<T extends Record<string, unknown>>(
       !path.startsWith("data:")
     ) {
       try {
-        const signedUrl = await s3Service.getSignedUrl(path);
+        const signedUrl = await getSignedUrl(path);
         images[0] = { ...firstImage, url: signedUrl };
         resolved.images = images;
       } catch (err) {

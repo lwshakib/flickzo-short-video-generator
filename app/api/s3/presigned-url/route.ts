@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { s3Service } from "@/services/s3.services";
+import { getPresignedUploadUrl } from "@/lib/s3";
 
 export async function POST(req: Request) {
   try {
@@ -12,10 +12,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const presignedUrl = await s3Service.getPresignedUploadUrl(
-      path,
-      contentType
-    );
+    const presignedUrl = await getPresignedUploadUrl(path, contentType);
 
     return NextResponse.json({ url: presignedUrl, path });
   } catch (error) {
