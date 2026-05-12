@@ -51,9 +51,9 @@ graph TD
 ## Prerequisites
 
 - **Node.js** 20+ (LTS recommended; Next 16 expects a current runtime)
-- **[Bun](https://bun.sh/)** (used in scripts and docs here; npm/pnpm can run equivalent commands)
+- **[pnpm](https://pnpm.io/)** (package manager used in scripts and docs here)
 - **PostgreSQL** reachable from your machine (local install, Docker, or hosted)
-- **Accounts / keys** for: Google OAuth (sign-in), Google API key (`GOOGLE_API_KEY` for AI features), S3-compatible bucket, [Resend](https://resend.com/) (email), and [Inngest](https://www.inngest.com/) (background jobs; local dev uses the Inngest dev server)
+- **Accounts / keys** for: Google OAuth (sign-in), Google API key (`GOOGLE_API_KEY` for Gemini / Gen AI SDK), Deepgram (`DEEPGRAM_API_KEY` for TTS + captions — see [`tmp/code_examples.md`](tmp/code_examples.md)), S3-compatible bucket, [Resend](https://resend.com/) (email), and [Inngest](https://www.inngest.com/) (background jobs; local dev uses the Inngest dev server)
 
 ## Installation
 
@@ -67,7 +67,7 @@ graph TD
 2. **Install dependencies**
 
    ```bash
-   bun install
+   pnpm install
    ```
 
    This runs `prisma generate` via the `postinstall` script.
@@ -82,24 +82,24 @@ graph TD
 
    For local overrides (optional), you can mirror the same variables in `.env.local` using [.env.local.example](.env.local.example) as a template.
 
-   See [.env.example](.env.example) for all variable names. At minimum you need a valid `DATABASE_URL`, auth-related values (`BETTER_AUTH_SECRET`, `NEXT_PUBLIC_BASE_URL`, `BETTER_AUTH_URL`, Google OAuth client ID/secret), AWS/S3 fields for your bucket, `GOOGLE_API_KEY`, and `RESEND_API_KEY`.
+   See [.env.example](.env.example) for all variable names. At minimum you need a valid `DATABASE_URL`, auth-related values (`BETTER_AUTH_SECRET`, `NEXT_PUBLIC_BASE_URL`, `BETTER_AUTH_URL`, Google OAuth client ID/secret), AWS/S3 fields for your bucket, `GOOGLE_API_KEY`, `DEEPGRAM_API_KEY` (speech pipeline), and `RESEND_API_KEY`.
 
 4. **Create the database schema**
 
    From a clean database, apply migrations:
 
    ```bash
-   bun x prisma migrate dev
+   pnpm exec prisma migrate dev
    ```
 
-   If you only need a quick local schema without migration history management, you can use `bun x prisma db push` instead (not recommended for production).
+   If you only need a quick local schema without migration history management, you can use `pnpm exec prisma db push` instead (not recommended for production).
 
 5. **(Optional) Create the S3 bucket and CORS**
 
    If your project uses the provided scripts and env vars are set:
 
    ```bash
-   bun run bucket:setup
+   pnpm run bucket:setup
    ```
 
 ## Running locally
@@ -107,7 +107,7 @@ graph TD
 1. **Start the Next.js dev server**
 
    ```bash
-   bun dev
+   pnpm dev
    ```
 
    Open [http://localhost:3000](http://localhost:3000).
@@ -117,7 +117,7 @@ graph TD
    Video generation depends on Inngest functions being available:
 
    ```bash
-   bun x inngest-cli@latest dev
+   pnpm dlx inngest-cli@latest dev
    ```
 
    Point it at your app URL if prompted (typically `http://localhost:3000`).
@@ -125,8 +125,8 @@ graph TD
 3. **Production build** (sanity check)
 
    ```bash
-   bun run build
-   bun start
+   pnpm run build
+   pnpm start
    ```
 
 ## Contributing

@@ -50,12 +50,12 @@ Everyone participating is expected to follow the [Code of Conduct](CODE_OF_CONDU
 
 Detailed environment and run instructions live in [README.md](README.md). Short version:
 
-1. Install [Bun](https://bun.sh/) and PostgreSQL (or use a hosted database).
+1. Install [pnpm](https://pnpm.io/installation) and PostgreSQL (or use a hosted database).
 
 2. Install dependencies:
 
    ```bash
-   bun install
+   pnpm install
    ```
 
 3. Copy environment template and fill in secrets:
@@ -64,29 +64,29 @@ Detailed environment and run instructions live in [README.md](README.md). Short 
    cp .env.example .env
    ```
 
-   You need working values for database, Better Auth + Google OAuth, Google API key (`GOOGLE_API_KEY`), S3-compatible storage, Resend, and Inngest as described in the README and `.env.example`.
+   You need working values for database, Better Auth + Google OAuth, Google API key (`GOOGLE_API_KEY`), Deepgram API key (`DEEPGRAM_API_KEY`), S3-compatible storage, Resend, and Inngest as described in the README and `.env.example`.
 
 4. Apply database migrations:
 
    ```bash
-   bun x prisma migrate dev
+   pnpm exec prisma migrate dev
    ```
 
 5. Run the app and Inngest (two terminals):
 
    ```bash
-   bun dev
+   pnpm dev
    ```
 
    ```bash
-   bun x inngest-cli@latest dev
+   pnpm dlx inngest-cli@latest dev
    ```
 
 6. Optionally run lint/format before pushing:
 
    ```bash
-   bun run lint
-   bun run format
+   pnpm run lint
+   pnpm run format
    ```
 
 ## Day-to-day development
@@ -120,7 +120,7 @@ Use lowercase, hyphens, and a prefix that hints at the change type (`fix`, `feat
 - **Explain why** in the body when the change is not obvious.
 - Reference issues/PRs when relevant: `Fixes #12`.
 
-We use Prettier and ESLint; run `bun run lint` and format before opening a PR.
+We use Prettier and ESLint; run `pnpm run lint` and format before opening a PR.
 
 ## Open a pull request
 
@@ -157,9 +157,9 @@ git push origin <type>/<short-description>
 
 ## PR checklist
 
-- [ ] Builds locally (`bun run build`) when your change touches build-critical code.
-- [ ] `bun run lint` passes.
-- [ ] Prettier-applied formatting for touched files (`bun run format` or editor on save).
+- [ ] Builds locally (`pnpm run build`) when your change touches build-critical code.
+- [ ] `pnpm run lint` passes.
+- [ ] Prettier-applied formatting for touched files (`pnpm run format` or editor on save).
 - [ ] No secrets or machine-specific paths committed.
 - [ ] User-facing or setup changes reflected in README / CONTRIBUTING if needed.
 
@@ -167,7 +167,7 @@ git push origin <type>/<short-description>
 
 - Use a **clear title** and **numbered steps** to reproduce.
 - State **expected vs actual** behavior.
-- Include **environment** (OS, Node/Bun version, browser if relevant).
+- Include **environment** (OS, Node/pnpm version, browser if relevant).
 - Add **screenshots or logs** when they help.
 
 ## Suggesting enhancements

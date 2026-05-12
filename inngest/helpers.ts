@@ -1,4 +1,10 @@
-import { aiService, CaptionWord } from "@/services/ai.services";
+import {
+  generateAudio,
+  generateCaptions,
+  generateImageToS3,
+  generateObject,
+} from "@/llm";
+import type { CaptionWord } from "@/llm/types";
 import { inngest } from "./client";
 import { GetStepTools } from "inngest";
 import { IMAGE_PROMPT_SCRIPT } from "@/lib/prompts";
@@ -21,7 +27,7 @@ interface ImageResult {
  */
 export async function generateVideoAudio(text: string, voice: string) {
   // Call the LLM service to generate and upload the audio
-  const audioResult = await aiService.generateAudio({ text, voice });
+  const audioResult = await generateAudio({ text, voice });
   if (!audioResult.success || !audioResult.audioPath) {
     throw new Error(audioResult.error || "Failed to generate audio");
   }
@@ -44,7 +50,7 @@ export async function transcribeAudio(
   step: GetStepTools<typeof inngest>
 ): Promise<CaptionWord[]> {
   const captions = await step.run("transcribe-audio", async () => {
-    return await aiService.generateCaptions(audioPath);
+    return await generateCaptions(audioPath);
   });
   return captions;
 }
@@ -80,7 +86,7 @@ export async function generateImages(
 
   // Step A: Generate image prompts using the AI model
   const imagePrompts = (await step.run("generate-image-prompts", async () => {
-    return await aiService.generateObject({
+    return await generateObject({
       messages: [
         { role: "system", content: IMAGE_PROMPT_SCRIPT },
         { role: "user", content: `Script: ${script}\nStyle: ${style}` },
@@ -97,7 +103,7 @@ export async function generateImages(
       `generate-image-${i + 1}/${imagePrompts.length}`,
       async () => {
         // Call the image generation service
-        const result = await aiService.generateImage({
+        const result = await generateImageToS3({
           prompt: promptData.imagePrompt,
           width: 576,
           height: 1024, // Optimized 9:16 aspect ratio fitting within Cloudflare (max 1024) limits

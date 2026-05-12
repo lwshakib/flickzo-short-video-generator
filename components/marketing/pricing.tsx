@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { DAILY_FREE_VIDEO_LIMIT } from "@/lib/constants";
 import { Sparkles, ArrowRight, Check, Star, Zap, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 const plans = [
   {

@@ -13,8 +13,11 @@ export const BETTER_AUTH_URL = process.env.BETTER_AUTH_URL;
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
-// Google API keys (potentially for Gemini or other services)
+// Google AI (Gemini / Gen AI SDK)
 export const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+
+/** Deepgram (TTS STT flows from tmp/code_examples.md) */
+export const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 
 // Media Storage (AWS S3 / Cloudflare R2)
 export const AWS_REGION = process.env.AWS_REGION;
@@ -25,9 +28,3 @@ export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME;
 
 // Database connection string for Prisma
 export const DATABASE_URL = process.env.DATABASE_URL;
-
-// Cloudflare AI Gateway
-export const CLOUDFLARE_AI_GATEWAY_API_KEY =
-  process.env.CLOUDFLARE_AI_GATEWAY_API_KEY;
-export const CLOUDFLARE_AI_GATEWAY_ENDPOINT =
-  process.env.CLOUDFLARE_AI_GATEWAY_ENDPOINT;

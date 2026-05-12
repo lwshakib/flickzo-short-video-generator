@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { aiService } from "@/services/ai.services";
+import { generateObject } from "@/llm";
 import { SCRIPT_GENERATE_PROMPT } from "@/lib/prompts";
 
 /**
@@ -36,8 +36,8 @@ export async function POST(req: Request) {
       additionalProperties: false,
     };
 
-    // 3. Request structured data from the LLM via AIService
-    const object = await aiService.generateObject({
+    // 3. Request structured data from the LLM
+    const object = await generateObject({
       messages: [
         { role: "system", content: SCRIPT_GENERATE_PROMPT },
         { role: "user", content: `Topic: ${topic}` },

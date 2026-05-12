@@ -9,8 +9,12 @@ import { PrismaClient } from "@/generated/prisma/client";
  * in development (especially during Hot Module Replacement).
  */
 
-// Construct the database connection string from environment variables
-const connectionString = `${process.env.DATABASE_URL}`;
+// PrismaPg requires a URL string; `next build` and `prisma generate` run without
+// DATABASE_URL in CI. Use a well-formed placeholder — real queries still need a
+// working DATABASE_URL at runtime.
+const connectionString =
+  process.env.DATABASE_URL ??
+  "postgresql://build:build@127.0.0.1:5432/build?schema=public";
 
 // Initialize the PostgreSQL adapter
 const adapter = new PrismaPg({ connectionString });

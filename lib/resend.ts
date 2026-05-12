@@ -3,7 +3,11 @@ import { NotificationEmail } from "@/components/emails/notification-email-templa
 
 const DEFAULT_FROM = "Flickzo <noreply@lwshakib.site>";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Resend throws if neither a constructor key nor RESEND_API_KEY is set; Next.js
+// evaluates this module during `next build` without a real key in CI.
+const resend = new Resend(
+  process.env.RESEND_API_KEY ?? "re_local_build_placeholder_not_for_sending",
+);
 
 export async function sendSuccessEmail(
   email: string,
