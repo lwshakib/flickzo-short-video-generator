@@ -8,7 +8,7 @@ Flickzo is a platform that uses AI to turn text and ideas into short cinematic v
 
 ## Features
 
-- **AI script generation**: Scripts from a topic or brief via an LLM (Cloudflare AI Gateway).
+- **AI script generation**: Scripts from a topic or brief via an LLM (Google AI API).
 - **Voice & captions**: Text-to-speech and transcription (e.g. Deepgram) wired through the pipeline.
 - **Visual synthesis**: Image generation aligned to the script, stored on S3-compatible object storage.
 - **Automated editing**: Remotion composes audio, images, and captions into a finished video.
@@ -25,7 +25,7 @@ Flickzo is a platform that uses AI to turn text and ideas into short cinematic v
 - **Video**: [Remotion](https://www.remotion.dev/)
 - **Jobs**: [Inngest](https://www.inngest.com/)
 - **Storage**: AWS S3–compatible APIs (e.g. **Cloudflare R2**)
-- **AI**: [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/) (script, images, audio/transcription as configured in code)
+- **AI**: Google AI API (Gemini and related models; wire-up as configured in code)
 
 ## Architecture
 
@@ -53,7 +53,7 @@ graph TD
 - **Node.js** 20+ (LTS recommended; Next 16 expects a current runtime)
 - **[Bun](https://bun.sh/)** (used in scripts and docs here; npm/pnpm can run equivalent commands)
 - **PostgreSQL** reachable from your machine (local install, Docker, or hosted)
-- **Accounts / keys** for: Google OAuth (sign-in), S3-compatible bucket, Cloudflare AI Gateway, [Resend](https://resend.com/) (email), and [Inngest](https://www.inngest.com/) (background jobs; local dev uses the Inngest dev server)
+- **Accounts / keys** for: Google OAuth (sign-in), Google API key (`GOOGLE_API_KEY` for AI features), S3-compatible bucket, [Resend](https://resend.com/) (email), and [Inngest](https://www.inngest.com/) (background jobs; local dev uses the Inngest dev server)
 
 ## Installation
 
@@ -74,13 +74,15 @@ graph TD
 
 3. **Configure environment variables**
 
-   Copy the example file and fill in real values:
+   Copy one of the example files and fill in real values:
 
    ```bash
    cp .env.example .env
    ```
 
-   See [.env.example](.env.example) for all variable names. At minimum you need a valid `DATABASE_URL`, auth-related values (`BETTER_AUTH_SECRET`, `NEXT_PUBLIC_BASE_URL`, `BETTER_AUTH_URL`, Google OAuth client ID/secret), AWS/S3 fields for your bucket, `CLOUDFLARE_AI_GATEWAY_*`, and `RESEND_API_KEY`.
+   For local overrides (optional), you can mirror the same variables in `.env.local` using [.env.local.example](.env.local.example) as a template.
+
+   See [.env.example](.env.example) for all variable names. At minimum you need a valid `DATABASE_URL`, auth-related values (`BETTER_AUTH_SECRET`, `NEXT_PUBLIC_BASE_URL`, `BETTER_AUTH_URL`, Google OAuth client ID/secret), AWS/S3 fields for your bucket, `GOOGLE_API_KEY`, and `RESEND_API_KEY`.
 
 4. **Create the database schema**
 

@@ -64,7 +64,7 @@ Detailed environment and run instructions live in [README.md](README.md). Short 
    cp .env.example .env
    ```
 
-   You need working values for database, Better Auth + Google OAuth, S3-compatible storage, Cloudflare AI Gateway, Resend, and Inngest as described in the README and `.env.example`.
+   You need working values for database, Better Auth + Google OAuth, Google API key (`GOOGLE_API_KEY`), S3-compatible storage, Resend, and Inngest as described in the README and `.env.example`.
 
 4. Apply database migrations:
 
