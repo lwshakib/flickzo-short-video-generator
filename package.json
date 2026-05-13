@@ -16,7 +16,8 @@
     "format:check": "prettier --check .",
     "bucket:setup": "pnpm exec tsx scripts/bucket-setup.ts",
     "bucket:teardown": "pnpm exec tsx scripts/bucket-teardown.ts",
-    "typecheck": "pnpm exec tsc --noEmit"
+    "typecheck": "pnpm exec tsc --noEmit",
+    "inngest:dev": "pnpm dlx inngest-cli@latest dev"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1029.0",
