@@ -3,11 +3,15 @@ import { NotificationEmail } from "@/components/emails/notification-email-templa
 
 const DEFAULT_FROM = "Flickzo <noreply@lwshakib.site>";
 
-// Resend throws if neither a constructor key nor RESEND_API_KEY is set; Next.js
-// evaluates this module during `next build` without a real key in CI.
-const resend = new Resend(
-  process.env.RESEND_API_KEY ?? "re_local_build_placeholder_not_for_sending"
-);
+function getResendClient(): Resend {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error(
+      "RESEND_API_KEY is required to send emails. Set it in your environment before calling email functions."
+    );
+  }
+  return new Resend(apiKey);
+}
 
 export async function sendSuccessEmail(
   email: string,
@@ -15,6 +19,7 @@ export async function sendSuccessEmail(
   videoTitle: string,
   videoId: string
 ): Promise<void> {
+  const resend = getResendClient();
   await resend.emails.send({
     from: DEFAULT_FROM,
     to: email,
@@ -33,6 +38,7 @@ export async function sendFailureEmail(
   userName: string,
   videoTitle: string
 ): Promise<void> {
+  const resend = getResendClient();
   await resend.emails.send({
     from: DEFAULT_FROM,
     to: email,
@@ -47,7 +53,8 @@ export async function sendFailureEmail(
 }
 
 export async function sendEmail(
-  options: Parameters<(typeof resend)["emails"]["send"]>[0]
+  options: Parameters<Resend["emails"]["send"]>[0]
 ): Promise<void> {
+  const resend = getResendClient();
   await resend.emails.send(options);
 }

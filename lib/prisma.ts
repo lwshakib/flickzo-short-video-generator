@@ -9,23 +9,36 @@ import { PrismaClient } from "@/generated/prisma/client";
  * in development (especially during Hot Module Replacement).
  */
 
-// PrismaPg requires a URL string; `next build` and `prisma generate` run without
-// DATABASE_URL in CI. Use a well-formed placeholder — real queries still need a
-// working DATABASE_URL at runtime.
-const connectionString =
-  process.env.DATABASE_URL ??
-  "postgresql://build:build@127.0.0.1:5432/build?schema=public";
+function createPrismaClient(): PrismaClient {
+  const connectionString = process.env.DATABASE_URL?.trim();
+  if (!connectionString) {
+    throw new Error(
+      "DATABASE_URL is required to initialize Prisma. Set it before running database queries."
+    );
+  }
 
-// Initialize the PostgreSQL adapter
-const adapter = new PrismaPg({ connectionString });
+  const adapter = new PrismaPg({ connectionString });
+  return new PrismaClient({ adapter });
+}
 
 // Global variable to hold the Prisma client instance
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const globalForPrisma = global as unknown as { prisma?: PrismaClient };
 
-// Use the existing global instance if available, otherwise create a new one
-const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
+const prisma =
+  globalForPrisma.prisma ??
+  (process.env.DATABASE_URL?.trim()
+    ? createPrismaClient()
+    : new Proxy({} as PrismaClient, {
+        get() {
+          throw new Error(
+            "Prisma client is unavailable because DATABASE_URL is not set."
+          );
+        },
+      }));
 
 // In development, store the instance on the global object to persist across reloads
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production" && process.env.DATABASE_URL?.trim()) {
+  globalForPrisma.prisma = prisma;
+}
 
 export default prisma;

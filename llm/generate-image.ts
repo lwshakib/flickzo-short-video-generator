@@ -4,10 +4,7 @@ import { IMAGE_MODEL_ID } from "@/llm/constants";
 import { dimensionsToGeminiAspectRatio, imageInputToBase64 } from "@/llm/utils";
 import { getGoogleGenAI } from "@/llm/client";
 import { uploadImage } from "@/lib/s3";
-import type {
-  GenerateImageOptions,
-  GenerateImageResult,
-} from "@/llm/types";
+import type { GenerateImageOptions, GenerateImageResult } from "@/llm/types";
 
 /**
  * Gemini-native image generation + S3 Upload.
