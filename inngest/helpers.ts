@@ -1,7 +1,7 @@
 import {
-  generateAudio,
+  textToSpeech,
   generateCaptions,
-  generateImageToS3,
+  generateImage,
   generateObject,
 } from "@/llm";
 import type { CaptionWord } from "@/llm/types";
@@ -27,7 +27,7 @@ interface ImageResult {
  */
 export async function generateVideoAudio(text: string, voice: string) {
   // Call the LLM service to generate and upload the audio
-  const audioResult = await generateAudio({ text, voice });
+  const audioResult = await textToSpeech({ text, voice });
   if (!audioResult.success || !audioResult.audioPath) {
     throw new Error(audioResult.error || "Failed to generate audio");
   }
@@ -103,7 +103,7 @@ export async function generateImages(
       `generate-image-${i + 1}/${imagePrompts.length}`,
       async () => {
         // Call the image generation service
-        const result = await generateImageToS3({
+        const result = await generateImage({
           prompt: promptData.imagePrompt,
           width: 576,
           height: 1024, // Optimized 9:16 aspect ratio fitting within Cloudflare (max 1024) limits

@@ -1,18 +1,21 @@
 import { ThinkingLevel } from "@google/genai";
 import type { GoogleGenAI } from "@google/genai";
 import { IMAGE_MODEL_ID } from "@/llm/constants";
-import { dimensionsToGeminiAspectRatio } from "@/llm/aspect-ratio";
+import { dimensionsToGeminiAspectRatio, imageInputToBase64 } from "@/llm/utils";
 import { getGoogleGenAI } from "@/llm/client";
-import { imageInputToBase64 } from "@/llm/to-base64";
-import type { GenerateImageLlmResult, GenerateImageOptions } from "@/llm/types";
+import { uploadImage } from "@/lib/s3";
+import type {
+  GenerateImageOptions,
+  GenerateImageResult,
+} from "@/llm/types";
 
 /**
- * Gemini-native image (“Nano Banana” style flow from `tmp/code_examples.md`).
+ * Gemini-native image generation + S3 Upload.
  */
 export async function generateImage(
   options: GenerateImageOptions,
   client?: GoogleGenAI
-): Promise<GenerateImageLlmResult> {
+): Promise<GenerateImageResult> {
   const {
     prompt,
     images = [],
@@ -97,10 +100,17 @@ export async function generateImage(
       throw new Error("Gemini image generation returned no raster data");
     }
 
+    // Upload to S3
+    const imageBuffer = Buffer.from(generatedImageBase64, "base64");
+    const fileName = `generated-${Date.now()}.png`;
+    const imagePath = await uploadImage(imageBuffer, fileName);
+
     return {
       success: true,
-      image: `data:image/png;base64,${generatedImageBase64}`,
+      imagePath,
       prompt,
+      width,
+      height,
       model: IMAGE_MODEL_ID,
     };
   } catch (error: unknown) {
