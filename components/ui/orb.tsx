@@ -94,12 +94,14 @@ function Scene({
   const { gl } = useThree();
   const circleRef =
     useRef<THREE.Mesh<THREE.CircleGeometry, THREE.ShaderMaterial>>(null);
-  const initialColorsRef = useRef<[string, string]>(colors);
   const targetColor1Ref = useRef(new THREE.Color(colors[0]));
   const targetColor2Ref = useRef(new THREE.Color(colors[1]));
   const animSpeedRef = useRef(0.1);
   const perlinNoiseTexture = useTexture(
-    "https://storage.googleapis.com/eleven-public-cdn/images/perlin-noise.png"
+    "https://storage.googleapis.com/eleven-public-cdn/images/perlin-noise.png",
+    (texture) => {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    }
   );
 
   const agentRef = useRef<AgentState>(agentState);
@@ -233,26 +235,19 @@ function Scene({
   }, [gl]);
 
   const uniforms = useMemo(() => {
-    // eslint-disable-next-line
-    perlinNoiseTexture.wrapS = THREE.RepeatWrapping;
-    // eslint-disable-next-line
-    perlinNoiseTexture.wrapT = THREE.RepeatWrapping;
-    const isDark =
-      typeof document !== "undefined" &&
-      document.documentElement.classList.contains("dark");
     return {
-      uColor1: new THREE.Uniform(new THREE.Color(initialColorsRef.current[0])),
-      uColor2: new THREE.Uniform(new THREE.Color(initialColorsRef.current[1])),
+      uColor1: new THREE.Uniform(new THREE.Color(colors[0])),
+      uColor2: new THREE.Uniform(new THREE.Color(colors[1])),
       uOffsets: { value: offsets },
       uPerlinTexture: new THREE.Uniform(perlinNoiseTexture),
       uTime: new THREE.Uniform(0),
       uAnimation: new THREE.Uniform(0.1),
-      uInverted: new THREE.Uniform(isDark ? 1 : 0),
+      uInverted: new THREE.Uniform(0),
       uInputVolume: new THREE.Uniform(0),
       uOutputVolume: new THREE.Uniform(0),
       uOpacity: new THREE.Uniform(0),
     };
-  }, [perlinNoiseTexture, offsets]);
+  }, [perlinNoiseTexture, offsets, colors]);
 
   return (
     <mesh ref={circleRef}>

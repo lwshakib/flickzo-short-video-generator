@@ -22,9 +22,7 @@ export async function textToSpeech(
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Deepgram TTS error (${response.status}): ${errorText}`
-      );
+      throw new Error(`Deepgram TTS error (${response.status}): ${errorText}`);
     }
 
     const buffer = Buffer.from(await response.arrayBuffer());

@@ -72,10 +72,7 @@ export async function generateObject<T>(
   try {
     return JSON.parse(response.text) as T;
   } catch {
-    console.error(
-      "Gemini: Failed to parse structured output:",
-      response.text
-    );
+    console.error("Gemini: Failed to parse structured output:", response.text);
     throw new Error("Gemini returned invalid JSON for generateObject");
   }
 }

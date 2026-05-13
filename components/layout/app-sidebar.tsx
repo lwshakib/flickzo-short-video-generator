@@ -116,8 +116,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, [session, setRecentVideos]);
 
   React.useEffect(() => {
-    fetchRecentVideos();
-    fetchCredits();
+    void (async () => {
+      await fetchRecentVideos();
+      await fetchCredits();
+    })();
   }, [fetchRecentVideos, fetchCredits]);
 
   // Subscribe to realtime updates
@@ -127,8 +129,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   React.useEffect(() => {
     if (latestData) {
-      fetchRecentVideos();
-      fetchCredits();
+      void (async () => {
+        await fetchRecentVideos();
+        await fetchCredits();
+      })();
     }
   }, [latestData, fetchRecentVideos, fetchCredits]);
 

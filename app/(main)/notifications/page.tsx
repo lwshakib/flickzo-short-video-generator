@@ -52,17 +52,16 @@ export default function NotificationsPage() {
   };
 
   useEffect(() => {
-    fetchNotifications();
+    void (async () => {
+      await fetchNotifications();
 
-    // Mark all as read as soon as they visit the page
-    const markAllAsRead = async () => {
+      // Mark all as read as soon as they visit the page
       try {
         await axios.patch("/api/notifications", { isRead: true });
       } catch (err) {
         console.error("Failed to mark all as read", err);
       }
-    };
-    markAllAsRead();
+    })();
   }, []);
 
   const clearAllNotifications = async () => {

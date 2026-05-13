@@ -34,9 +34,7 @@ export async function generateImage(
         images.slice(0, 14).map(async (img) => {
           const data = await imageInputToBase64(img);
           const mimeType =
-            img instanceof Blob || img instanceof File
-              ? img.type
-              : "image/png";
+            img instanceof Blob || img instanceof File ? img.type : "image/png";
           return {
             inlineData: {
               data,
@@ -49,8 +47,7 @@ export async function generateImage(
     }
 
     const aspectRatio =
-      aspectRatioOpt ??
-      dimensionsToGeminiAspectRatio(width, height ?? width);
+      aspectRatioOpt ?? dimensionsToGeminiAspectRatio(width, height ?? width);
 
     const tl =
       thinkingLevel === "High" ? ThinkingLevel.HIGH : ThinkingLevel.MINIMAL;

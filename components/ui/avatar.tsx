@@ -28,32 +28,33 @@ function AvatarImage({
   src,
   alt,
 }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+  const isDirect =
+    typeof src === "string" &&
+    (src.startsWith("http") || src.startsWith("data:"));
+
   const [resolvedSrc, setResolvedSrc] = React.useState<string | undefined>(
-    undefined
+    isDirect ? (src as string) : undefined
   );
 
   React.useEffect(() => {
-    if (typeof src === "string") {
-      if (src.startsWith("http") || src.startsWith("data:")) {
-        setResolvedSrc(src);
-      } else {
-        // Resolve raw S3 path via API
-        fetch("/api/s3/signed-url", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ path: src }),
+    if (typeof src === "string" && !isDirect) {
+      // Resolve raw S3 path via API
+      fetch("/api/s3/signed-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: src }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.url) setResolvedSrc(data.url);
+          else setResolvedSrc(src);
         })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.url) setResolvedSrc(data.url);
-            else setResolvedSrc(src);
-          })
-          .catch(() => setResolvedSrc(src));
-      }
-    } else {
-      setResolvedSrc(undefined);
+        .catch(() => setResolvedSrc(src));
+    } else if (!isDirect && resolvedSrc !== undefined) {
+      const id = requestAnimationFrame(() => setResolvedSrc(undefined));
+      return () => cancelAnimationFrame(id);
     }
-  }, [src]);
+  }, [src, isDirect, resolvedSrc]);
 
   return (
     <div className={cn("relative aspect-square h-full w-full", className)}>

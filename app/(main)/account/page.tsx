@@ -96,9 +96,11 @@ export default function AccountPage() {
 
   useEffect(() => {
     if (session?.user) {
-      setName(session.user.name || "");
-      void fetchSessions();
-      void fetchAccounts();
+      void (async () => {
+        setName(session.user.name || "");
+        await fetchSessions();
+        await fetchAccounts();
+      })();
     }
   }, [session]);
 

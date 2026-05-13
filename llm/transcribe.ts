@@ -27,8 +27,7 @@ export async function transcribeAudioUrl(
     if (!("results" in res)) {
       return [];
     }
-    const words =
-      res.results.channels?.[0]?.alternatives?.[0]?.words ?? [];
+    const words = res.results.channels?.[0]?.alternatives?.[0]?.words ?? [];
     return words as CaptionWord[];
   } catch (error) {
     console.error("[GENERATE_CAPTIONS_ERROR]", error);
