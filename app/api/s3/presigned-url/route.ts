@@ -16,7 +16,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: presignedUrl, path });
   } catch (error) {
-    console.error("Error generating presigned URL", error);
+    // Attempt to extract values from body if possible or use defaults
+    console.error("Failed to generate presigned URL:", { error });
     return NextResponse.json(
       { error: "Failed to generate presigned URL" },
       { status: 500 }
