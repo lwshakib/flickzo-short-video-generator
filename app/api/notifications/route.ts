@@ -12,17 +12,19 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const [notifications] = await Promise.all([
-    prisma.notification.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 50,
-    }),
-    prisma.notification.updateMany({
+  const notifications = await prisma.notification.findMany({
+    where: {
+      userId: session.user.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 50,
+  });
+
+  // Mark as read asynchronously, without blocking the response
+  void prisma.notification
+    .updateMany({
       where: {
         userId: session.user.id,
         isRead: false,
@@ -30,8 +32,12 @@ export async function GET() {
       data: {
         isRead: true,
       },
-    }),
-  ]);
+    })
+    .catch((err) =>
+      console.error("Failed to mark notifications as read:", err)
+    );
+
+  return NextResponse.json(notifications);
 
   return NextResponse.json(notifications);
 }
