@@ -31,88 +31,85 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Check and update daily video generation limit
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { dailyVideosGenerated: true, lastResetDate: true },
-    });
+    // 3. Check, Create, and Update in a single transaction to prevent race conditions
+    try {
+      const result = await prisma.$transaction(async (tx) => {
+        const user = await tx.user.findUnique({
+          where: { id: session.user.id },
+          select: { dailyVideosGenerated: true, lastResetDate: true },
+        });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+        if (!user) throw new Error("User not found");
 
-    const now = new Date();
-    const lastReset = new Date(user.lastResetDate);
-    const isNewDay =
-      now.getUTCDate() !== lastReset.getUTCDate() ||
-      now.getUTCMonth() !== lastReset.getUTCMonth() ||
-      now.getUTCFullYear() !== lastReset.getUTCFullYear();
+        const now = new Date();
+        const lastReset = new Date(user.lastResetDate);
+        const isNewDay =
+          now.getUTCDate() !== lastReset.getUTCDate() ||
+          now.getUTCMonth() !== lastReset.getUTCMonth() ||
+          now.getUTCFullYear() !== lastReset.getUTCFullYear();
 
-    let currentDailyCount = user.dailyVideosGenerated;
+        const currentDailyCount = isNewDay ? 0 : user.dailyVideosGenerated;
 
-    if (isNewDay) {
-      currentDailyCount = 0;
-      await prisma.user.update({
-        where: { id: session.user.id },
+        if (currentDailyCount >= DAILY_FREE_VIDEO_LIMIT) {
+          throw new Error("DAILY_LIMIT_REACHED");
+        }
+
+        // Create video record
+        const video = await tx.video.create({
+          data: {
+            userId: session.user.id,
+            title,
+            topic,
+            voice,
+            videoStyle,
+            captionStyle: captionStyle as object,
+            script: script,
+            audio: {}, // Initial empty JSON metadata
+            status: "PENDING",
+          },
+        });
+
+        // Increment the daily counter
+        await tx.user.update({
+          where: { id: session.user.id },
+          data: {
+            dailyVideosGenerated: isNewDay ? 1 : { increment: 1 },
+            lastResetDate: isNewDay ? now : user.lastResetDate,
+          },
+        });
+
+        return { videoId: video.id };
+      });
+
+      /**
+       * 4. Hand off the heavy lifting to Inngest.
+       */
+      await inngest.send({
+        name: "video.created",
         data: {
-          dailyVideosGenerated: 0,
-          lastResetDate: now,
+          videoId: result.videoId,
+          userId: session.user.id,
+          topic,
+          voice,
+          videoStyle,
+          captionStyle,
+          script,
         },
       });
+
+      return NextResponse.json({ videoId: result.videoId });
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message === "DAILY_LIMIT_REACHED") {
+        return NextResponse.json(
+          {
+            error:
+              "Daily limit reached. Pro accounts are coming soon for more videos!",
+          },
+          { status: 429 }
+        );
+      }
+      throw error;
     }
-
-    if (currentDailyCount >= DAILY_FREE_VIDEO_LIMIT) {
-      return NextResponse.json(
-        {
-          error:
-            "Daily limit reached. Pro accounts are coming soon for more videos!",
-        },
-        { status: 429 }
-      );
-    }
-
-    // 4. Create the initial "PENDING" video record in Prisma
-    const video = await prisma.video.create({
-      data: {
-        userId: session.user.id,
-        title,
-        topic,
-        voice,
-        videoStyle,
-        captionStyle: captionStyle as object,
-        script: script,
-        audio: {}, // Initial empty JSON metadata
-        status: "PENDING",
-      },
-    });
-
-    // 5. Increment the daily counter
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: {
-        dailyVideosGenerated: { increment: 1 },
-      },
-    });
-
-    /**
-     * 4. Hand off the heavy lifting to Inngest.
-     * We send a 'video.created' event which triggers the asynchronous
-     * generation of audio, captions, and images.
-     */
-    await inngest.send({
-      name: "video.created",
-      data: {
-        videoId: video.id,
-        userId: session.user.id,
-        topic,
-        voice,
-        videoStyle,
-        captionStyle,
-        script,
-      },
-    });
-
-    return NextResponse.json({ videoId: video.id });
   } catch (error: unknown) {
     console.error("Error creating video:", error);
     return NextResponse.json(
