@@ -181,7 +181,10 @@ export default function AccountPage() {
       toast.success("Profile image updated!", { id: "upload-avatar" });
       refetchSession();
     } catch (error) {
-      console.error(error);
+      console.error("Failed to update profile image:", {
+        error,
+        userId: session.session.userId,
+      });
       toast.error("An error occurred while uploading", { id: "upload-avatar" });
     }
   };
