@@ -75,7 +75,11 @@ export async function uploadImage(
 }
 
 /** Presigned GET URL for reading an object (1 hour). */
+/** Presigned GET URL for reading an object (1 hour). */
 export async function getSignedUrl(path: string): Promise<string> {
+  if (path.includes("..") || !path.startsWith("flickzo/")) {
+    throw new Error("Invalid S3 path");
+  }
   const client = getClient();
   const command = new GetObjectCommand({
     Bucket: AWS_S3_BUCKET_NAME,
