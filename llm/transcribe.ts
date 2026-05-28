@@ -31,6 +31,8 @@ export async function transcribeAudioUrl(
     return words as CaptionWord[];
   } catch (error) {
     console.error("[GENERATE_CAPTIONS_ERROR]", error);
-    return [];
+    throw new Error(
+      `Transcription failed: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
   }
 }
