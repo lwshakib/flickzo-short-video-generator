@@ -71,6 +71,7 @@ export interface GenerateImageResult {
   height?: number;
   model: string;
   error?: string;
+  truncated?: boolean;
 }
 
 export interface GenerateObjectOptions<O = Record<string, unknown>> {
