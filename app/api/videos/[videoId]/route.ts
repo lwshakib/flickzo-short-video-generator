@@ -97,7 +97,7 @@ export async function DELETE(
     }
 
     // 3. Cleanup assets from S3
-    try {
+    // 3. Cleanup assets from S3
       // Audio Cleanup
       const audio = video.audio as { audioPath?: string } | null;
       if (audio?.audioPath) {
@@ -117,19 +117,6 @@ export async function DELETE(
           })
         );
       }
-    } catch (cleanupError) {
-      console.error(
-        `[S3_CLEANUP_FAILURE] Failed to cleanup assets for video ${videoId}:`,
-        {
-          cleanupError,
-          videoId,
-          audioPath: (video.audio as { audioPath?: string } | null)?.audioPath,
-          imagePaths: (video.images as { path?: string }[] | null)?.map(
-            (i) => i.path
-          ),
-        }
-      );
-    }
 
     // 4. Purge the record from the database
     await prisma.video.delete({
