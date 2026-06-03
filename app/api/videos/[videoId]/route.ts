@@ -97,37 +97,24 @@ export async function DELETE(
     }
 
     // 3. Cleanup assets from S3
-    try {
-      // Audio Cleanup
-      const audio = video.audio as { audioPath?: string } | null;
-      if (audio?.audioPath) {
-        await deleteObject(audio.audioPath);
-        console.info(`[S3_CLEANUP] Deleted audio: ${audio.audioPath}`);
-      }
+    // 3. Cleanup assets from S3
+    // Audio Cleanup
+    const audio = video.audio as { audioPath?: string } | null;
+    if (audio?.audioPath) {
+      await deleteObject(audio.audioPath);
+      console.info(`[S3_CLEANUP] Deleted audio: ${audio.audioPath}`);
+    }
 
-      // Images Cleanup
-      const images = video.images as { path?: string }[] | null;
-      if (images && images.length > 0) {
-        await Promise.all(
-          images.map(async (img) => {
-            if (img.path) {
-              await deleteObject(img.path);
-              console.info(`[S3_CLEANUP] Deleted image: ${img.path}`);
-            }
-          })
-        );
-      }
-    } catch (cleanupError) {
-      console.error(
-        `[S3_CLEANUP_FAILURE] Failed to cleanup assets for video ${videoId}:`,
-        {
-          cleanupError,
-          videoId,
-          audioPath: (video.audio as { audioPath?: string } | null)?.audioPath,
-          imagePaths: (video.images as { path?: string }[] | null)?.map(
-            (i) => i.path
-          ),
-        }
+    // Images Cleanup
+    const images = video.images as { path?: string }[] | null;
+    if (images && images.length > 0) {
+      await Promise.all(
+        images.map(async (img) => {
+          if (img.path) {
+            await deleteObject(img.path);
+            console.info(`[S3_CLEANUP] Deleted image: ${img.path}`);
+          }
+        })
       );
     }
 
